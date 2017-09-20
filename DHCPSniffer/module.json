@@ -1,0 +1,11 @@
+{
+    "id": "{E93BCE5E-BA95-424E-8C3A-BF6AEE6CB976}",
+    "name": "DHCP Sniffer",
+    "type": 3,
+    "vendor": "Nall-chan",
+    "aliases": [],  
+    "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
+    "childRequirements": [],
+    "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}"],
+    "prefix": "DHCP"
+}

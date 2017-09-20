@@ -1,0 +1,45 @@
+{
+    "elements":
+            [
+                {
+                    "name": "Protocol",
+                    "type": "Select",
+                    "caption": "Protocol",
+                    "options": [
+                        {
+                            "label": "DHCP",
+                            "value": 0
+                        },
+                        {
+                            "label": "BOOTP",
+                            "value": 1
+                        },
+                        {
+                            "label": "DHCP & BOOTP",
+                            "value": 2
+                        }
+                    ]
+                }, {
+                    "name": "Address",
+                    "type": "ValidationTextBox",
+                    "caption": "MAC Address"
+                }, {
+                    "name": "Action",
+                    "type": "Select",
+                    "caption": "State",
+                    "options": [
+                        {
+                            "label": "Event (true)",
+                            "value": 0
+                        },
+                        {
+                            "label": "Impulse (monostabil)",
+                            "value": 1
+                        },
+                        {
+                            "label": "Toggle (bistabil)",
+                            "value": 2
+                        }
+                    ]
+                }]
+}
