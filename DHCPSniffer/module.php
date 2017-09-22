@@ -135,7 +135,7 @@ class DHCPSniffer extends ipsmodule
         $isDHCP = (substr($Data, 236, 4) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63));
         $isDHCPDiscover = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x03));
         $this->SendDebug('isDHCP', $isDHCP, 0);
-        $this->SendDebug('isDHCPRequest, $isDHCPRequest,0);
+        $this->SendDebug('isDHCPRequest', $isDHCPRequest,0);
         switch ($this->ReadPropertyInteger('Protocol'))
         {
             case 0: // DHCP
