@@ -133,13 +133,13 @@ class DHCPSniffer extends ipsmodule
         $Data = utf8_decode(json_decode($JSONString)->Buffer);
         $this->SendDebug('Data', $Data, 1);
         $isDHCP = (substr($Data, 236, 4) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63));
-        $isDHCPDiscover = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x01));
+        $isDHCPDiscover = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x03));
         $this->SendDebug('isDHCP', $isDHCP, 0);
-        $this->SendDebug('isDHCPDiscover', $isDHCPDiscover, 0);
+        $this->SendDebug('isDHCPRequest, $isDHCPRequest,0);
         switch ($this->ReadPropertyInteger('Protocol'))
         {
             case 0: // DHCP
-                if ($isDHCPDiscover)
+                if ($isDHCPRequest)
                     $this->SendEvent();
                 break;
             case 1: // Bootp
@@ -147,7 +147,7 @@ class DHCPSniffer extends ipsmodule
                     $this->SendEvent();
                 break;
             case 2: // both
-                if ($isDHCPDiscover)
+                if ($isDHCPRequest)
                     $this->SendEvent();
                 if (!$isDHCP)
                     $this->SendEvent();
