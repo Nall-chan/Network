@@ -23,8 +23,22 @@ class DHCPSniffer extends ipsmodule
         $this->RegisterPropertyString('Address', '');
         $this->RegisterPropertyInteger('Protocol', 2);
         $this->RegisterPropertyInteger('Action', 0);
-        //Always create our own MultiCast I/O, when no parent is already available
-        $this->RequireParent("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
+        $instance = IPS_GetInstance($this->InstanceID);
+        if ($instance['ConnectionID'] == 0)
+        {
+            $ids = IPS_GetInstanceListByModuleID("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
+            foreach ($ids as $id)
+            {
+                if (IPS_GetObject($id)['ObjectIdent'] == 'DHCPSniffer')
+                {
+                    IPS_ConnectInstance($this->InstanceID, $id);
+                    return;
+                }
+            }
+            //Always create our own MultiCast I/O, when no parent is already available
+            $this->RequireParent("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
+            IPS_SetIdent(IPS_GetInstance($this->InstanceID)['ConnectionID'], 'DHCPSniffer');
+        }
     }
 
     // Überschreibt die intere IPS_ApplyChanges($id) Funktion
@@ -135,7 +149,7 @@ class DHCPSniffer extends ipsmodule
         $isDHCP = (substr($Data, 236, 4) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63));
         $isDHCPRequest = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x03));
         $this->SendDebug('isDHCP', $isDHCP, 0);
-        $this->SendDebug('isDHCPRequest', $isDHCPRequest,0);
+        $this->SendDebug('isDHCPRequest', $isDHCPRequest, 0);
         switch ($this->ReadPropertyInteger('Protocol'))
         {
             case 0: // DHCP
