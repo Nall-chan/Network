@@ -55,9 +55,9 @@ class DHCPSniffer extends ipsmodule
         $Mac = $this->ReadPropertyString('Address');
         if ($Mac == '')
             $Mac = "FFFFFFFFFFFF";
-        $Mac = str_replace(array(':', '-'), array('', ''), $Mac);
-        $Mac = substr(json_encode(utf8_encode(hex2bin($Mac)), JSON_UNESCAPED_UNICODE), 1, -1);
-        $Filter = '.*\\\\u0001\\\\u0001\\\\u0006.*' . $Mac . '.*'; // Alles
+        $Mac = str_replace(array(' ', ':', '-'), array('', '', ''), $Mac);
+        $Mac = preg_quote(utf8_encode(hex2bin($Mac)), '\\');
+        $Filter = '.*\\\\u0001\\\\u0001\\\\u0006' . '.*' . $Mac . '.*'; // Alles
 
         $this->SendDebug('FILTER', $Filter, 0);
         $this->SetReceiveDataFilter($Filter);
@@ -143,7 +143,6 @@ class DHCPSniffer extends ipsmodule
 
     public function ReceiveData($JSONString)
     {
-//        $this->SendDebug('RAW', $JSONString, 0);
         $Data = utf8_decode(json_decode($JSONString)->Buffer);
         $this->SendDebug('Data', $Data, 1);
         $isDHCP = (substr($Data, 236, 4) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63));
