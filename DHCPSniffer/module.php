@@ -56,7 +56,8 @@ class DHCPSniffer extends ipsmodule
         if ($Mac == '')
             $Mac = "FFFFFFFFFFFF";
         $Mac = str_replace(array(' ', ':', '-'), array('', '', ''), $Mac);
-        $Mac = preg_quote(utf8_encode(hex2bin($Mac)), '\\');
+        $Mac = substr(json_encode(utf8_encode(hex2bin($Mac)), JSON_UNESCAPED_UNICODE), 1, -1);
+        $Mac = preg_quote($Mac, '\\');
         $Filter = '.*\\\\u0001\\\\u0001\\\\u0006' . '.*' . $Mac . '.*'; // Alles
 
         $this->SendDebug('FILTER', $Filter, 0);
