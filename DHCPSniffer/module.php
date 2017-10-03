@@ -56,9 +56,25 @@ class DHCPSniffer extends ipsmodule
         if ($Mac == '')
             $Mac = "FFFFFFFFFFFF";
         $Mac = str_replace(array(' ', ':', '-'), array('', '', ''), $Mac);
-        $Mac = substr(json_encode(utf8_encode(hex2bin($Mac)), JSON_UNESCAPED_UNICODE), 1, -1);
-        $Mac = preg_quote($Mac, '\\');
-        $Filter = '.*\\\\u0001\\\\u0001\\\\u0006' . '.*' . $Mac . '.*'; // Alles
+        $Mac = hex2bin($Mac);
+
+        if (strlen($Mac) != 6)
+        {
+            $Mac = "FFFFFFFFFFFF";
+            $this->SetStatus(IS_EBASE + 1);
+        }
+        else
+            $this->SetStatus(IS_ACTIVE);
+
+        $MacJSONencoded = array();
+        for ($index = 0; $index < 6; $index++)
+        {
+            $MacJSONencoded[$index] = substr(json_encode(utf8_encode($Mac[$index]), JSON_UNESCAPED_UNICODE), 1, -1);
+            if (strlen($MacJSONencoded[$index]) == 6)
+                $MacJSONencoded[$index] = '\\u' . substr(strtoupper($MacJSONencoded[$index]), 2);
+        }
+        $MacMatch = preg_quote(implode('', $MacJSONencoded), '\\');
+        $Filter = '.*\\\\u0001\\\\u0001\\\\u0006' . '.*' . $MacMatch . '.*'; // Alles
 
         $this->SendDebug('FILTER', $Filter, 0);
         $this->SetReceiveDataFilter($Filter);
@@ -198,5 +214,3 @@ class DHCPSniffer extends ipsmodule
     }
 
 }
-
-?>

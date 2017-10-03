@@ -41,5 +41,18 @@
                             "value": 2
                         }
                     ]
-                }]
+                }],
+    "status":
+            [
+                {
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "Mac ok."
+                },
+                {
+                    "code": 201,
+                    "icon": "error",
+                    "caption": "Mac invalid."
+                }
+            ]
 }
