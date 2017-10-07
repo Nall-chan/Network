@@ -1,0 +1,27 @@
+{
+    "translations": {
+        "de": {
+            "Caution: Only use TLS with authentication if the port is accessible externally!": "Achtung: Verwenden sie nur TLS mit authentifizierung, wenn der Port von extern erreichbar ist!",
+            "Active": "Aktiv",
+            "Port": "Port",
+            "URI": "URI",
+            "Timeout": "Timeout",
+            "Mode": "Modus",
+            "no TLS": "kein TLS",
+            "both": "beides",
+            "only TLS": "nur TLS",
+            "Optional Certificate:": "Optionales Zertifikat:",
+            "Certificate": "Zertifikat",
+            "Private key": "privater Schlüssel",
+            "Password": "Passwort",
+            "Optional HTTP Basic-Authentication:": "Optionale HTTP Basis-Authentifizierung:",
+            "Username": "Benutzername",
+            "Password": "Passwort",
+            "Interface open": "Interface geöffnet",
+            "Interface closed": "Interface geschlossen",
+            "Certificate or key missing or not found": "Zertifikat oder Schlüssel fehlen oder wurden nicht gefunden",
+            "Ping interval to small": "Ping Intervall zu klein",
+            "Port invalid": "Port ungültig"
+        }
+    }
+}

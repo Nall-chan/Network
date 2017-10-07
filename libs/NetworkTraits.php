@@ -1,5 +1,16 @@
 <?
 
+/* @addtogroup network
+ * @{
+ *
+ * @package       Network
+ * @author        Michael Tröger <micha@nall-chan.net>
+ * @copyright     2017 Michael Tröger
+ * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ * @version       1.0
+ * @example <b>Ohne</b>
+ */
+
 if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind.
 {
 // --- BASE MESSAGE
@@ -154,16 +165,29 @@ trait DebugHelper
 {
 
     /**
-     * Ergänzt SendDebug um Möglichkeit Objekte und Array auszugeben.
+     * Ergänzt SendDebug um die Möglichkeit Objekte und Array auszugeben.
      *
      * @access protected
      * @param string $Message Nachricht für Data.
-     * @param TXB_API_Data|mixed $Data Daten für die Ausgabe.
+     * @param WebSocketFrame|mixed $Data Daten für die Ausgabe.
      * @return int $Format Ausgabeformat für Strings.
      */
     protected function SendDebug($Message, $Data, $Format)
     {
-        if (is_object($Data))
+        if (is_a($Data, 'WebSocketFrame'))
+        {
+            $this->SendDebug($Message . ' FIN', ($Data->Fin ? "true" : "false"), 0);
+            $this->SendDebug($Message . ' OpCode', WebSocketOPCode::ToString($Data->OpCode), 0);
+            $this->SendDebug($Message . ' Mask', ($Data->Mask ? "true" : "false"), 0);
+            if ($Data->MaskKey != "")
+                $this->SendDebug($Message . ' MaskKey', $Data->MaskKey, 1);
+            if ($Data->Payload != "")
+                $this->SendDebug($Message . ' Payload', $Data->Payload, ($Data->OpCode == WebSocketOPCode::text ? (int) $Data->Mask : ($Format)));
+
+            if ($Data->PayloadRAW != "")
+                $this->SendDebug($Message . ' PayloadRAW', $Data->PayloadRAW, ($Data->OpCode == WebSocketOPCode::text ? 0 : 1));
+        }
+        elseif (is_object($Data))
         {
             foreach ($Data as $Key => $DebugData)
             {
@@ -188,3 +212,143 @@ trait DebugHelper
     }
 
 }
+
+/**
+ * Trait mit Hilfsfunktionen für den Datenaustausch.
+ */
+trait InstanceStatus
+{
+
+        /**
+     * Interne Funktion des SDK.
+     *
+     * @access public
+     */
+    protected function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    {
+        switch ($Message)
+        {
+            case DM_CONNECT:
+                $this->RegisterParent();
+                if ($this->HasActiveParent())
+                    $this->IOChangeState(IS_ACTIVE);
+                else
+                    $this->IOChangeState(IS_INACTIVE);
+                break;
+            case DM_DISCONNECT:
+                $this->RegisterParent();
+                $this->IOChangeState(IS_INACTIVE);
+                break;
+            case IM_CHANGESTATUS:
+                if ($SenderID == $this->ParentID)
+                    $this->IOChangeState($Data[0]);
+                break;
+        }
+    }
+    
+    /**
+     * Ermittelt den Parent und verwaltet die Einträge des Parent im MessageSink
+     * Ermöglicht es das Statusänderungen des Parent empfangen werden können.
+     * 
+     * @access protected
+     * @return int ID des Parent.
+     */
+    protected function RegisterParent()
+    {
+        $OldParentId = $this->ParentID;
+        $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($ParentId <> $OldParentId)
+        {
+            if ($OldParentId > 0)
+                $this->UnregisterMessage($OldParentId, IM_CHANGESTATUS);
+            if ($ParentId > 0)
+                $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
+            else
+                $ParentId = 0;
+            $this->ParentID = $ParentId;
+        }
+        return $ParentId;
+    }
+
+    /**
+     * Prüft den Parent auf vorhandensein und Status.
+     * 
+     * @access protected
+     * @return bool True wenn Parent vorhanden und in Status 102, sonst false.
+     */
+    protected function HasActiveParent()
+    {
+        $instance = @IPS_GetInstance($this->InstanceID);
+        if ($instance['ConnectionID'] > 0)
+        {
+            $parent = IPS_GetInstance($instance['ConnectionID']);
+            if ($parent['InstanceStatus'] == 102)
+                return true;
+        }
+        return false;
+    }
+
+}
+
+/**
+ * Trait welcher Objekt-Eigenschaften in den Instance-Buffer schreiben und lesen kann.
+ */
+trait BufferHelper
+{
+
+    /**
+     * Wert einer Eigenschaft aus den InstanceBuffer lesen.
+     * 
+     * @access public
+     * @param string $name Propertyname
+     * @return mixed Value of Name
+     */
+    public function __get($name)
+    {
+        if (strpos($name, 'Multi_') === 0)
+        {
+            $Lines = "";
+            foreach ($this->{"BufferListe_" . $name} as $BufferIndex)
+            {
+                $Lines .= $this->{'Part_' . $name . $BufferIndex};
+            }
+            return unserialize($Lines);
+        }
+        return unserialize($this->GetBuffer($name));
+    }
+
+    /**
+     * Wert einer Eigenschaft in den InstanceBuffer schreiben.
+     * 
+     * @access public
+     * @param string $name Propertyname
+     * @param mixed Value of Name
+     */
+    public function __set($name, $value)
+    {
+        $Data = serialize($value);
+        if (strpos($name, 'Multi_') === 0)
+        {
+            $OldBuffers = $this->{"BufferListe_" . $name};
+            if ($OldBuffers == false)
+                $OldBuffers = array();
+            $Lines = str_split($Data, 8000);
+            foreach ($Lines as $BufferIndex => $BufferLine)
+            {
+                $this->{'Part_' . $name . $BufferIndex} = $BufferLine;
+            }
+            $NewBuffers = array_keys($Lines);
+            $this->{"BufferListe_" . $name} = $NewBuffers;
+            $DelBuffers = array_diff_key($OldBuffers, $NewBuffers);
+            foreach ($DelBuffers as $DelBuffer)
+            {
+                $this->{'Part_' . $name . $DelBuffer} = "";
+            }
+            return;
+        }
+        $this->SetBuffer($name, $Data);
+    }
+
+}
+
+/** @} */

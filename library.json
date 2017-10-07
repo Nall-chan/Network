@@ -2,12 +2,12 @@
     "id": "{6E9A9B31-7232-449C-AE1E-48CB511D3FA8}",
     "name": "Network Library",
     "author": "Michael Tr\u00f6ger",
-    "url": "git.nall-chan.net",
+    "url": "https://github.com/Nall-chan/IPSNetwork/",
     "compatibility": {
         "version": "4.3",
         "date": 1498241677
     },
     "version": "2.0",
-    "build": 0,
+    "build": 300,
     "date": 1498241677
 }

@@ -1,0 +1,11 @@
+{
+    "id": "{3AB77A94-3467-4E66-8A73-840B4AD89582}",
+    "name": "WebsocketClient",
+    "type": 2,
+    "vendor": "",
+    "aliases": ["Websocket Client"],
+    "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
+    "childRequirements": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}","{C51A4B94-8195-4673-B78D-04D91D52D2DD}"],
+    "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}","{BC49DE11-24CA-484D-85AE-9B6F24D89321}"],
+    "prefix": "WSC"
+}

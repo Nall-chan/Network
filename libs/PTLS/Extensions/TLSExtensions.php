@@ -1,0 +1,132 @@
+<?php
+
+namespace PTLS\Extensions;
+
+use PTLS\Core;
+
+/**
+ * https://tools.ietf.org/html/rfc5246#section-7.4.1.4
+ * Hello Extensions
+ */
+class TLSExtensions
+{
+    const TYPE_ELLIPTIC_CURVES  = 10;
+    const TYPE_EC_POINT_FORMATS = 11;
+    const TYPE_SIGNATURE_ALGORITHM = 13;
+
+    public static $supportedList = [
+        self::TYPE_ELLIPTIC_CURVES      => 'Curve',
+        self::TYPE_EC_POINT_FORMATS     => 'Curve',
+        self::TYPE_SIGNATURE_ALGORITHM  => 'SignatureAlgorithm',
+    ];
+
+    private $core;
+    private $instances;
+
+    public function __construct( $core)
+    {
+        $this->core = $core;
+        $this->instances = [];
+
+        foreach(self::$supportedList as $type => $className)
+        {
+            if( isset( $this->instances[$className] ) )
+                continue;
+
+            $this->instances[$className] = $this->getExtension($type);
+        }
+    }
+
+    private function getExtension($type)
+    {
+        switch($type)
+        {
+            case self::TYPE_ELLIPTIC_CURVES:
+            case self::TYPE_EC_POINT_FORMATS:
+                return new Curve($this->core);
+            case self::TYPE_SIGNATURE_ALGORITHM:
+                return new SignatureAlgorithm($this->core);
+        } 
+
+        return null;
+    }
+
+    private function onEncode( $method,  $extensions)
+    {
+        // $extensions[] = ['type' => $extType, 'data' => $extData];
+        foreach( $extensions as $extension )
+        {
+            if( !isset( $extension['type'] ) || !isset( $extension['data'] ) )
+                throw new Exception("Invalid Extension Paramenter");
+
+            $type = $extension['type'];
+            $data = $extension['data'];
+
+            if( array_key_exists( $type, self::$supportedList ) )
+            {
+                $className = self::$supportedList[$type];
+
+                if( !isset( $this->instances[$className] ) )
+                    $this->instances[$className] = $this->getExtension($type);
+
+                $ins = $this->instances[$className];
+
+                if( !$ins instanceof ExtensionAbstract )
+                    throw new Exception("Not ExtensionAbstract");
+                call_user_func(array($ins, $method) , $type, $data);// fix php 5.6
+                //[$ins, $method]($type, $data);
+            }
+        }
+    }
+
+    private function onDecode( $method)
+    {
+        $out = '';
+
+        if( !count( $this->instances ) )
+        {
+            return $out;
+        }
+
+        foreach( $this->instances as $className => $ins )
+        {
+            //$out .= [$ins, $method]();
+            $out .= call_user_func(array($ins, $method)); // fix php 5.6
+        }
+
+        return $out;
+    }
+
+    public function __call( $method,  $args)
+    {
+        if( false !== strpos($method, 'onEncode') )
+        {
+            return $this->onEncode($method, $args[0]);
+        }
+
+        if( false !== strpos($method, 'onDecode') )
+        {
+            return $this->onDecode($method);
+        }
+    }
+
+    /**
+     * API call
+     */
+    public function call($className, $method, $default, ...$args)
+    {
+        if( isset( $this->instances[$className] ) && 
+            is_callable( [$this->instances[$className], $method] ) )
+        {
+            return call_user_func(array($this->instances[$className], $method),...$args);
+//            return [$this->instances[$className], $method](...$args);
+        }
+
+        return $default;
+    }
+}
+
+
+
+
+

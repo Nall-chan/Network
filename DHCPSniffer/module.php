@@ -2,9 +2,28 @@
 
 include_once(__DIR__ . "/../libs/NetworkTraits.php");
 
+/*
+ * @addtogroup network
+ * @{
+ *
+ * @package       Network
+ * @file          module.php
+ * @author        Michael Tröger <micha@nall-chan.net>
+ * @copyright     2017 Michael Tröger
+ * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ * @version       1.0
+ */
+
 /**
- * bla bla bla Erklärung Doku bla
+ * DHCPSniffer Klasse implementiert einen Sniffer für DHCP Requests.
+ * Erweitert IPSModule.
  * 
+ * @package       Network
+ * @author        Michael Tröger <micha@nall-chan.net>
+ * @copyright     2017 Michael Tröger
+ * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ * @version       1.0
+ * @example <b>Ohne</b>
  */
 class DHCPSniffer extends ipsmodule
 {
@@ -13,12 +32,11 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Interne Funktion des SDK.
-     * Wird immer ausgeführt wenn IPS startet und wenn eine Instanz neu erstellt wird.
+     *
      * @access public
      */
     public function Create()
     {
-        // Diese Zeile nicht löschen.
         parent::Create();
         $this->RegisterPropertyString('Address', '');
         $this->RegisterPropertyInteger('Protocol', 2);
@@ -35,21 +53,22 @@ class DHCPSniffer extends ipsmodule
                     return;
                 }
             }
-            //Always create our own MultiCast I/O, when no parent is already available
             $this->RequireParent("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
             IPS_SetIdent(IPS_GetInstance($this->InstanceID)['ConnectionID'], 'DHCPSniffer');
         }
     }
 
-    // Überschreibt die intere IPS_ApplyChanges($id) Funktion
+    /**
+     * Interne Funktion des SDK.
+     *
+     * @access public
+     */
     public function ApplyChanges()
     {
-        // Wir wollen wissen wann IPS fertig ist mit dem starten, weil vorher funktioniert der Datenaustausch nicht.
         $this->RegisterMessage(0, IPS_KERNELSTARTED);
 
         parent::ApplyChanges();
 
-        // Wenn Kernel nicht bereit, dann warten... IPS_KERNELSTARTED/KR_READY kommt ja gleich
         if (IPS_GetKernelRunlevel() <> KR_READY)
             return;
         $Mac = $this->ReadPropertyString('Address');
@@ -119,7 +138,7 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Interne Funktion des SDK.
-     * Verarbeitet alle Nachrichten auf die wir uns registriert haben.
+     * 
      * @access public
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -158,6 +177,12 @@ class DHCPSniffer extends ipsmodule
         return json_encode($Config);
     }
 
+    /**
+     * Empfängt Daten vom Parent.
+     * 
+     * @access public
+     * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
+     */
     public function ReceiveData($JSONString)
     {
         $Data = utf8_decode(json_decode($JSONString)->Buffer);
@@ -185,6 +210,11 @@ class DHCPSniffer extends ipsmodule
         }
     }
 
+    /**
+     * Beschreibt die Statusvariable.
+     * 
+     * @access protected
+     */
     protected function SendEvent()
     {
         $this->SendDebug('FIRE', 'EVENT', 0);

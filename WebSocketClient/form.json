@@ -1,0 +1,145 @@
+{
+    "elements":
+            [
+                {
+                    "name": "Open",
+                    "type": "CheckBox",
+                    "caption": "Open"
+                },
+                {
+                    "type": "Label",
+                    "label": "Use ws:// or wss:// and :port when using none HTTP-default Ports."
+                },
+                {
+                    "type": "Label",
+                    "label": "Example: wss://my.host.org:9091/websocket/"
+                },
+                {
+                    "name": "URL",
+                    "type": "ValidationTextBox",
+                    "caption": "URL"
+                },
+                {
+                    "type": "Label",
+                    "label": "--------------------------------------------------"
+                },
+                {
+                    "type": "Label",
+                    "label": "Advanced settings:"
+                },
+                {
+                    "name": "Protocol",
+                    "type": "ValidationTextBox",
+                    "caption": "Used protocol"
+                },
+                {
+                    "name": "Version",
+                    "type": "Select",
+                    "caption": "Version",
+                    "options": [
+                        {
+                            "label": "6",
+                            "value": 6
+                        },
+                        {
+                            "label": "8",
+                            "value": 8
+                        },
+                        {
+                            "label": "13",
+                            "value": 13
+                        }
+                    ]
+                },
+                {
+                    "name": "Origin",
+                    "type": "ValidationTextBox",
+                    "caption": "Send origin"
+                },
+                {
+                    "type": "Label",
+                    "label": "Send Ping:"
+                },
+                {
+                    "name": "PingInterval",
+                    "type": "IntervalBox",
+                    "caption": "seconds"
+                },
+                {
+                    "name": "PingPayload",
+                    "type": "ValidationTextBox",
+                    "caption": "Ping payload"
+                },
+                {
+                    "name": "Frame",
+                    "type": "Select",
+                    "caption": "Default for SendText",
+                    "options": [
+                        {
+                            "label": "text",
+                            "value": 1
+                        },
+                        {
+                            "label": "binary",
+                            "value": 2
+                        }
+                    ]
+                },
+                {
+                    "type": "Label",
+                    "label": "--------------------------------------------------"
+                },
+                {
+                    "type": "Label",
+                    "label": "Optional HTTP Basic-Authentication:"
+                },
+                {
+                    "name": "BasisAuth",
+                    "type": "CheckBox",
+                    "caption": "Active"
+                },
+                {
+                    "name": "Username",
+                    "type": "ValidationTextBox",
+                    "caption": "Username"
+                },
+                {
+                    "name": "Password",
+                    "type": "PasswordTextBox",
+                    "caption": "Password"
+                }
+            ],
+    "status":
+            [
+                {
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "Connected"
+                },
+                {
+                    "code": 104,
+                    "icon": "inactive",
+                    "caption": "Interface closed"
+                },
+                {
+                    "code": 201,
+                    "icon": "error",
+                    "caption": "Connection lost"
+                },
+                {
+                    "code": 202,
+                    "icon": "error",
+                    "caption": "URL invalid"
+                },
+                {
+                    "code": 203,
+                    "icon": "error",
+                    "caption": "Handshake error"
+                },
+                {
+                    "code": 204,
+                    "icon": "error",
+                    "caption": "Ping interval to small"
+                }
+            ]
+}

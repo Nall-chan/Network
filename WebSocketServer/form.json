@@ -1,0 +1,135 @@
+{
+    "elements":
+            [{
+                    "type": "Label",
+                    "label": "Caution: Only use TLS with authentication if the port is accessible externally!"
+                }, {
+                    "type": "Label",
+                    "label": "Configure port an open socket in the parent IO-instance."
+                },
+                {
+                    "name": "URI",
+                    "type": "ValidationTextBox",
+                    "caption": "URI"
+                }, {
+                    "name": "Interval",
+                    "type": "NumberSpinner",
+                    "caption": "Timeout"
+                }, {
+                    "type": "Select",
+                    "name": "Mode",
+                    "caption": "Mode",
+                    "options": [
+                        {
+                            "label": "no TLS",
+                            "value": [
+                                {
+                                    "name": "TLS",
+                                    "value": false
+                                },
+                                {
+                                    "name": "Plain",
+                                    "value": true
+                                }
+                            ]
+                        },
+                        {
+                            "label": "both",
+                            "value": [
+                                {
+                                    "name": "TLS",
+                                    "value": true
+                                },
+                                {
+                                    "name": "Plain",
+                                    "value": true
+                                }
+                            ]
+                        },
+                        {
+                            "label": "only TLS",
+                            "value": [
+                                {
+                                    "name": "TLS",
+                                    "value": true
+                                },
+                                {
+                                    "name": "Plain",
+                                    "value": false
+                                }
+                            ]
+                        }
+                    ]
+                }, {
+                    "type": "Label",
+                    "label": "--------------------------------------------------"
+                }, {
+                    "type": "Label",
+                    "label": "Optional Certificate:"
+                }, {
+                    "name": "CertFile",
+                    "type": "SelectFile",
+                    "extensions": ".pem,.crt,.cer",
+                    "caption": "Certificate"
+                }, {
+                    "name": "KeyFile",
+                    "type": "SelectFile",
+                    "extensions": ".pem,.key",
+                    "caption": "Private key"
+                },
+                {
+                    "name": "KeyPassword",
+                    "type": "PasswordTextBox",
+                    "caption": "Password"
+                }, {
+                    "type": "Label",
+                    "label": "--------------------------------------------------"
+                }, {
+                    "type": "Label",
+                    "label": "Optional HTTP Basic-Authentication:"
+                },
+                {
+                    "name": "BasisAuth",
+                    "type": "CheckBox",
+                    "caption": "Active"
+                },
+                {
+                    "name": "Username",
+                    "type": "ValidationTextBox",
+                    "caption": "Username"
+                },
+                {
+                    "name": "Password",
+                    "type": "PasswordTextBox",
+                    "caption": "Password"
+                }
+            ],
+    "status":
+            [
+                {
+                    "code": 102,
+                    "icon": "active",
+                    "caption": "Interface open"
+                },
+                {
+                    "code": 104,
+                    "icon": "inactive",
+                    "caption": "Interface closed"
+                },
+                {
+                    "code": 201,
+                    "icon": "error",
+                    "caption": "Certificate or key missing or not found"
+                },
+                {
+                    "code": 202,
+                    "icon": "error",
+                    "caption": "Port invalid"
+                },
+                {
+                    "code": 204,
+                    "icon": "error",
+                    "caption": "Ping interval to small"
+                }
+            ]
+}
