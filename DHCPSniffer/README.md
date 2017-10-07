@@ -1,7 +1,7 @@
 # DHCPSniffer (IPSNetwork)
 
 Modul für IP-Symcon ab Version 4.3 ermöglicht es auf Events von Geräten zu reagieren, die eine Anfrage ins Netzwerk per DHCP oder dem Bootstrap Protocol stellen.
-So lässt sich zum Beispiel auf das Drücken eines Dashbuttons (siehe [Anhang](#8-anhang)) reagieren oder auf das Anmelden eines Geräts, wie ein Smartphone, in einem LAN.
+So lässt sich zum Beispiel auf das Drücken eines Dashbuttons (siehe [Anhang](#7-anhang)) reagieren oder auf das Anmelden eines Geräts, wie ein Smartphone, in einem LAN.
 
 ## Dokumentation
 
