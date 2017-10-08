@@ -1,0 +1,10 @@
+{
+    "translations": {
+        "de": {
+            "Host": "Host",
+            "New Hub": "Neuer Hub",
+            "Search Sensors": "Suche Sensoren",
+            "No hubs defined!":"Keine Hubs eingerichtet!"
+        }
+    }
+}

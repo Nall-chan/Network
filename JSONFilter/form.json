@@ -1,0 +1,116 @@
+{
+    "elements":
+            [
+                {
+                    "type": "Select",
+                    "name": "Condition",
+                    "caption": "Condition",
+                    "options": [
+                        {
+                            "label": "and",
+                            "value": 0
+                        },
+                        {
+                            "label": "or",
+                            "value": 1
+                        }
+                    ]
+                }, {
+                    "type": "List",
+                    "name": "FilterItems",
+                    "rowCount": 20,
+                    "add": true,
+                    "delete": true,
+                    "sort": {
+                        "column": "Item",
+                        "direction": "ascending"
+                    },
+                    "columns": [{
+                            "label": "Item",
+                            "name": "Item",
+                            "width": "auto",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        }, {
+                            "label": "Value",
+                            "name": "Value",
+                            "width": "100px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        }, {
+                            "label": "Type",
+                            "name": "Type",
+                            "width": "50px",
+                            "add": 3,
+                            "edit": {
+                                "type": "Select",
+                                "caption": "Variabletyp",
+                                "options": [
+                                    {
+                                        "label": "boolean",
+                                        "value": 0
+                                    },
+                                    {
+                                        "label": "integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "label": "float",
+                                        "value": 2
+                                    },
+                                    {
+                                        "label": "string",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        }, {
+                            "label": "Condition",
+                            "name": "Condition",
+                            "width": "50px",
+                            "add": 0,
+                            "edit": {
+                                "type": "Select",
+                                "caption": "Condition",
+                                "options": [
+                                    {
+                                        "label": "void",
+                                        "value": 0
+                                    },
+                                    {
+                                        "label": "match",
+                                        "value": 1
+                                    },
+                                    {
+                                        "label": "include (only string)",
+                                        "value": 2
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "values": []
+                }, {
+                    "type": "Select",
+                    "name": "Type",
+                    "caption": "Filter of",
+                    "options": [
+                        {
+                            "label": "Sub-Item",
+                            "value": 0
+                        },
+                        {
+                            "label": "Self-Item",
+                            "value": 1
+                        },
+                        {
+                            "label": "all",
+                            "value": 2
+                        }
+                    ]
+                }]
+}

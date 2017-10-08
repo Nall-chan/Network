@@ -1,0 +1,39 @@
+{
+    "translations": {
+        "de": {
+            "Instance has no active parent.": "Instanz hat keinen aktiven Parent.",
+            "Error on read MiFlora data": "Fehler beim lesen der MiFlora Daten",
+            "UUID": "UUID",
+            "Interval": "Intervall",
+            "Read data": "Lese Daten",
+            "Lux": "Helligkeit",
+            "BatteryLevel": "Batterie",
+            "Temperature": "Temperatur",
+            "Firmware": "Firmware",
+            "SoilMoisture": "Bodenfeuchtigkeit",
+            "SoilElectricalConductivity": "Bodenleitfähigkeit",
+            "Use of min/max enables Data logging !": "Verwendung von min/max aktiviert das Logging !",
+            "min Electrical Conductivity": "min Bodenleitfähigkeit",
+            "max Electrical Conductivity": "max Bodenleitfähigkeit",
+            "Electrical Conductivity hint": "Empfehlung Bodenleitfähigkeit",
+            "fertilize": "Düngen",
+            "OK": "OK",
+            "over fertilize": "Überdüngt",
+            "min Lux": "min Helligkeit",
+            "max Lux": "max Helligkeit",
+            "Lux hint": "Empfehlung Helligkeit",
+            "too dark": "zu dunkel",
+            "too bright": "zu hell",
+            "min Moisture": "min Bodenfeuchtigkeit",
+            "max Moisture": "max Bodenfeuchtigkeit",
+            "Moisture hint": "Empfehlung Bodenfeuchte",
+            "too dry": "zu trocken",
+            "too moist": "zu feucht",
+            "min Temperature": "min Temperatur",
+            "max Temperature": "max Temperatur",
+            "Temperature hint": "Empfehlung Temperatur",
+            "too cold": "zu kalt",
+            "too warm": "zu warm"
+        }
+    }
+}

@@ -219,7 +219,7 @@ trait DebugHelper
 trait InstanceStatus
 {
 
-        /**
+    /**
      * Interne Funktion des SDK.
      *
      * @access public
@@ -245,7 +245,7 @@ trait InstanceStatus
                 break;
         }
     }
-    
+
     /**
      * Ermittelt den Parent und verwaltet die Einträge des Parent im MessageSink
      * Ermöglicht es das Statusänderungen des Parent empfangen werden können.
@@ -347,6 +347,53 @@ trait BufferHelper
             return;
         }
         $this->SetBuffer($name, $Data);
+    }
+
+}
+
+trait UTF8Coder
+{
+
+    /**
+     * Führt eine UTF8-Dekodierung für einen String oder ein Objekt durch (rekursiv)
+     * 
+     * @access private
+     * @param string|object $item Zu dekodierene Daten.
+     * @return string|object Dekodierte Daten.
+     */
+    private function DecodeUTF8($item)
+    {
+        if (is_string($item))
+            $item = utf8_decode($item);
+        else if (is_object($item))
+        {
+            foreach ($item as $property => $value)
+            {
+                $item->{$property} = $this->DecodeUTF8($value);
+            }
+        }
+        return $item;
+    }
+
+    /**
+     * Führt eine UTF8-Enkodierung für einen String oder ein Objekt durch (rekursiv)
+     * 
+     * @access private
+     * @param string|object $item Zu Enkodierene Daten.
+     * @return string|object Enkodierte Daten.
+     */
+    private function EncodeUTF8($item)
+    {
+        if (is_string($item))
+            $item = utf8_encode($item);
+        else if (is_object($item))
+        {
+            foreach ($item as $property => $value)
+            {
+                $item->{$property} = $this->EncodeUTF8($value);
+            }
+        }
+        return $item;
     }
 
 }

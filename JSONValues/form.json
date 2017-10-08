@@ -1,0 +1,53 @@
+{
+    "elements":
+            [
+                {
+                    "type": "List",
+                    "name": "Items",
+                    "rowCount": 20,
+                    "add": true,
+                    "delete": true,
+                    "sort": {
+                        "column": "Item",
+                        "direction": "ascending"
+                    },
+                    "columns": [{
+                            "label": "Item",
+                            "name": "Item",
+                            "width": "auto",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        }, {
+                            "label": "Type",
+                            "name": "Type",
+                            "width": "150px",
+                            "add": 3,
+                            "edit": {
+                                "type": "Select",
+                                "caption": "Variabletyp",
+                                "options": [
+                                    {
+                                        "label": "boolean",
+                                        "value": 0
+                                    },
+                                    {
+                                        "label": "integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "label": "float",
+                                        "value": 2
+                                    },
+                                    {
+                                        "label": "string",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "values": []
+                }]
+}
