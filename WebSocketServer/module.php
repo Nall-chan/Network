@@ -697,6 +697,7 @@ class WebsocketServer extends IPSModule
      */
     private function SendDisconnect(Websocket_Client $Client)
     {
+        $ret = false;
         if ($Client->State == WebSocketState::CloseReceived)
         {
             $ret = true;
@@ -952,7 +953,7 @@ class WebsocketServer extends IPSModule
             if (!isset($TLS))
                 $TLS = $this->{"Multi_TLS_" . $Client->ClientIP};
 
-            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && ((substr($Data, 1, 2) == "\x03\x03")or (substr($Data, 1, 2) == "\x03\x02")))
+            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && ((substr($Data, 1, 2) == "\x03\x03")or ( substr($Data, 1, 2) == "\x03\x02")))
             {
                 if (($Client->State == WebSocketState::TLSisSend) or ( $Client->State == WebSocketState::TLSisReceived))
                 {
