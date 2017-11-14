@@ -12,7 +12,7 @@ use PTLS\Exceptions\TLSAlertException;
  *
  * @package       Network
  * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
+ * @author        Michael Tröger <micha@nall-chan.net>get
  * @copyright     2017 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
  * @version       1.0
@@ -226,21 +226,25 @@ class WebsocketServer extends IPSModule
                     $CertFile = base64_decode($CertFile);
                     $KeyFile = base64_decode($KeyFile);
                 }
+
                 if ($CertFile)
                     $this->CertData = 'data://text/plain;base64,' . base64_encode($CertFile);
                 else
                     throw new Exception('Certificate missing or not found');
+
                 if ($KeyFile)
                     $this->KeyData = 'data://text/plain;base64,' . base64_encode($KeyFile);
                 else
-                    throw new Exception('Key missing or not found');
-                if (strlen($this->ReadPropertyString("KeyPassword")) == 0)
-                    throw new Exception('Password for key missing');
+                    throw new Exception('Private key missing or not found');
+
+//                if (strlen($this->ReadPropertyString("KeyPassword")) == 0)
+//                    throw new Exception('Password for private key missing');
+
                 $this->KeyPassword = $this->ReadPropertyString("KeyPassword");
             }
             catch (Exception $exc)
             {
-                trigger_error($exc->getMessage(), E_USER_NOTICE);
+                echo $this->Translate($exc->getMessage());
                 $this->UseTLS = false;
                 $NewState = IS_EBASE + 1;
             }
@@ -257,7 +261,7 @@ class WebsocketServer extends IPSModule
             {
                 $NewState = IS_EBASE + 2;
                 $Open = false;
-                trigger_error('Port invalid', E_USER_NOTICE);
+                trigger_error($this->Translate('Port invalid'), E_USER_NOTICE);
             }
             else
             {
@@ -266,7 +270,7 @@ class WebsocketServer extends IPSModule
                     $this->PingInterval = 0;
                     $NewState = IS_EBASE + 4;
                     $Open = false;
-                    trigger_error('Ping interval to small', E_USER_NOTICE);
+                    trigger_error($this->Translate('Ping interval to small'), E_USER_NOTICE);
                 }
             }
         }
@@ -699,7 +703,7 @@ class WebsocketServer extends IPSModule
             $this->SendDebug('Send', 'Answer Client stream close !', 0);
             $this->Send("", WebSocketOPCode::close, $Client);
         }
-        else
+        if ($Client->State == WebSocketState::Connected)
         {
             $this->SendDebug('Send', 'Server send stream close !', 0);
             $Clients = $this->Clients;
@@ -835,12 +839,12 @@ class WebsocketServer extends IPSModule
         $Client = $this->Clients->GetByIP($Data->ClientIP);
         if ($Client === false)
         {
-            trigger_error('Unknow client', E_USER_NOTICE);
+            trigger_error($this->Translate('Unknow client'), E_USER_NOTICE);
             return false;
         }
         if ($Client->State != WebSocketState::Connected)
         {
-            trigger_error('Client not connected', E_USER_NOTICE);
+            trigger_error($this->Translate('Client not connected'), E_USER_NOTICE);
             return false;
         }
         $this->SendDebug("Forward", utf8_decode($Data->Buffer), 0);
@@ -853,7 +857,7 @@ class WebsocketServer extends IPSModule
                 return $this->SendPing($Client->ClientIP, utf8_decode($Data->Buffer));
             if (($Data->FrameTyp < 0) || ($Data->FrameTyp > 2))
             {
-                trigger_error('FrameTyp', E_USER_NOTICE);
+                trigger_error($this->Translate('FrameTyp invalid'), E_USER_NOTICE);
                 return false;
             }
         }
@@ -907,14 +911,14 @@ class WebsocketServer extends IPSModule
         $Data = utf8_decode($data->Buffer);
         $Clients = $this->Clients;
         $Client = $Clients->GetByIP($data->ClientIP);
-        if (($Client === false) or ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Data, $match)) or ( ((ord($Data[0]) & 0xFC) == 0x14) && (substr($Data, 1, 2) == "\x03\x03") && (substr($Data, 5, 1) == "\x01")))
+        if (($Client === false) or ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Data, $match)) or ( ((ord($Data[0]) & 0xFC) == 0x14) && ((substr($Data, 1, 2) == "\x03\x03") or ( substr($Data, 1, 2) == "\x03\x02")) && (substr($Data, 5, 1) == "\x01")))
         { // neu oder neu verbunden!
             if ($this->NoNewClients) //Server start neu... keine neuen Verbindungen annehmen.
                 return;
 
             $this->SendDebug(($Client ? "RECONNECT" : "NEW") . ' CLIENT', $Data, 0);
 
-            if ($this->UseTLS and ( (ord($Data[0]) & 0xFC) == 0x14) && (substr($Data, 1, 2) == "\x03\x03") && (substr($Data, 5, 1) == "\x01"))
+            if ($this->UseTLS and ( (ord($Data[0]) & 0xFC) == 0x14) && ((substr($Data, 1, 2) == "\x03\x03") or ( substr($Data, 1, 2) == "\x03\x02")) && (substr($Data, 5, 1) == "\x01"))
             { //valid header wenn TLS is active
                 $Client = new Websocket_Client($data->ClientIP, $data->ClientPort, WebSocketState::TLSisReceived, true);
                 $Clients->Update($Client);
@@ -948,7 +952,7 @@ class WebsocketServer extends IPSModule
             if (!isset($TLS))
                 $TLS = $this->{"Multi_TLS_" . $Client->ClientIP};
 
-            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (substr($Data, 1, 2) == "\x03\x03"))
+            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && ((substr($Data, 1, 2) == "\x03\x03")or (substr($Data, 1, 2) == "\x03\x02")))
             {
                 if (($Client->State == WebSocketState::TLSisSend) or ( $Client->State == WebSocketState::TLSisReceived))
                 {
@@ -1119,13 +1123,13 @@ class WebsocketServer extends IPSModule
         if ($Client === false)
         {
             $this->SendDebug('Unknow client', $ClientIP, 0);
-            trigger_error('Unknow client', E_USER_NOTICE);
+            trigger_error($this->Translate('Unknow client'), E_USER_NOTICE);
             return false;
         }
         if ($Client->State != WebSocketState::Connected)
         {
             $this->SendDebug('Client not connected', $ClientIP, 0);
-            trigger_error('Client not connected', E_USER_NOTICE);
+            trigger_error($this->Translate('Client not connected'), E_USER_NOTICE);
             return false;
         }
         $this->SendDebug('Send Ping' . $Client->ClientIP, $Text, 0);
@@ -1135,14 +1139,14 @@ class WebsocketServer extends IPSModule
         if ($Result === false)
         {
             $this->SendDebug('Timeout ' . $Client->ClientIP, "", 0);
-            trigger_error('Timeout', E_USER_NOTICE);
+            trigger_error($this->Translate('Timeout'), E_USER_NOTICE);
             $this->Clients->Remove($Client->ClientIP);
             return false;
         }
         if ($Result !== $Text)
         {
             $this->SendDebug('Error in Pong ' . $Client->ClientIP, $Result, 0);
-            trigger_error('Wrong pong received', E_USER_NOTICE);
+            trigger_error($this->Translate('Wrong pong received'), E_USER_NOTICE);
             $this->Clients->Remove($Client->ClientIP);
             return false;
         }
@@ -1150,6 +1154,5 @@ class WebsocketServer extends IPSModule
     }
 
 }
-
 
 /** @} */

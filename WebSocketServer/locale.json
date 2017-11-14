@@ -21,7 +21,15 @@
             "Interface closed": "Interface geschlossen",
             "Certificate or key missing or not found": "Zertifikat oder Schlüssel fehlen oder wurden nicht gefunden",
             "Ping interval to small": "Ping Intervall zu klein",
-            "Port invalid": "Port ungültig"
+            "Port invalid": "Port ungültig",
+            "Private key missing or not found": "privater Schlüssel fehlt oder wurde nicht gefunden",
+            "Password for private key missing": "Passwort für privaten Schlüssel fehlt",
+            "Certificate missing or not found'": "Zertifikat fehlt oder wurde nicht gefunden",
+            "Unknow client": "Unbekannter Client",
+            "Client not connected": "Client nicht verbunden",
+            "FrameTyp invalid": "FrameTyp ungültig",
+            "Timeout": "Zeitüberschreitung",
+            "Wrong pong received": "Falschen pong empfangen"
         }
     }
 }

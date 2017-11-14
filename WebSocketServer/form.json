@@ -4,8 +4,14 @@
                     "type": "Label",
                     "label": "Caution: Only use TLS with authentication if the port is accessible externally!"
                 }, {
-                    "type": "Label",
-                    "label": "Configure port an open socket in the parent IO-instance."
+                    "name": "Open",
+                    "type": "CheckBox",
+                    "caption": "Active"
+                },
+                {
+                    "name": "Port",
+                    "type": "NumberSpinner",
+                    "caption": "Port"
                 },
                 {
                     "name": "URI",
