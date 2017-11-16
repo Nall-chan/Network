@@ -86,7 +86,7 @@
                 {
                     "name": "KeyPassword",
                     "type": "PasswordTextBox",
-                    "caption": "Password"
+                    "caption": "Passphrase(optional)"
                 }, {
                     "type": "Label",
                     "label": "--------------------------------------------------"

@@ -81,7 +81,7 @@ class HTTP_ERROR_CODES
         switch ($Code)
         {
             case 101: return '101 Web Socket Protocol Handshake';
-            case 400: return '400 Bad Request (maybe wrong WebSocket-Version)';
+            case 400: return '400 Bad Request';
             case 401: return '401 Unauthorized';
             case 403: return '403 Forbidden';
             case 404: return '404 Not Found';

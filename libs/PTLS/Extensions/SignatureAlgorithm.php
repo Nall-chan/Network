@@ -31,9 +31,9 @@ use PTLS\X509;
  */
 class SignatureAlgorithm extends ExtensionAbstract
 {
-    const TYPE_DEFAULT_RSA = 0x0201; //sha1 rsa
 
-    const TYPE_SHA512_RSA = 0x0601;    
+    const TYPE_DEFAULT_RSA = 0x0201; //sha1 rsa
+    const TYPE_SHA512_RSA = 0x0601;
     const TYPE_SHA384_RSA = 0x0501;
     const TYPE_SHA256_RSA = 0x0401;
 
@@ -42,7 +42,6 @@ class SignatureAlgorithm extends ExtensionAbstract
         self::TYPE_SHA384_RSA,
         self::TYPE_SHA256_RSA,
     ];
-
     private $core;
     private $algorithm;
 
@@ -56,8 +55,8 @@ class SignatureAlgorithm extends ExtensionAbstract
     {
         $core = $this->core;
 
-        if( $type != TLSExtensions::TYPE_SIGNATURE_ALGORITHM )
-            return; 
+        if ($type != TLSExtensions::TYPE_SIGNATURE_ALGORITHM)
+            return;
 
         $protoVersion = $core->getProtocolVersion();
 
@@ -67,20 +66,20 @@ class SignatureAlgorithm extends ExtensionAbstract
          * However, even if clients do offer it, the rules specified in [TLSEXT]
          * require servers to ignore extensions they do not understand.
          */
-        if( $protoVersion < 32 )
+        if ($protoVersion < 32)
             return;
 
         $length = Core::_unpack('n', $data[0] . $data[1]);
         $data = substr($data, 2);
 
-        for( $i = 0; $i < $length; $i += 2 )
+        for ($i = 0; $i < $length; $i += 2)
         {
             $hash = Core::_unpack('C', $data[$i]);
-            $sig  = Core::_unpack('C', $data[$i+1]);
+            $sig = Core::_unpack('C', $data[$i + 1]);
 
             $algorithm = $hash << 8 | $sig;
 
-            if( in_array( $algorithm, self::$supportedAlgorithmList ) )
+            if (in_array($algorithm, self::$supportedAlgorithmList))
             {
                 $this->algorithm = $algorithm;
                 break;
@@ -92,22 +91,25 @@ class SignatureAlgorithm extends ExtensionAbstract
     {
         $sigData = '';
 
-        foreach(self::$supportedAlgorithmList as $algorithm)
+        foreach (self::$supportedAlgorithmList as $algorithm)
         {
             $sigData .= Core::_pack('C', $algorithm >> 8) . Core::_pack('C', $algorithm & 0x00ff);
         }
-     
-        $sigData = Core::_pack('n', strlen($sigData) ) . $sigData;
+
+        $sigData = Core::_pack('n', strlen($sigData)) . $sigData;
 
         $this->extType = TLSExtensions::TYPE_SIGNATURE_ALGORITHM;
-        $this->length  = strlen($sigData);
+        $this->length = strlen($sigData);
 
         $data = $this->decodeHeader() . $sigData;
 
         return $data;
     }
 
-    public function onDecodeServerHello(){}
+    public function onDecodeServerHello()
+    {
+        
+    }
 
     public function getAlgorithm()
     {
@@ -150,7 +152,7 @@ class SignatureAlgorithm extends ExtensionAbstract
          *       };
          * } Signature;
          */
-        if( $protoVersion < 32 )
+        if ($protoVersion < 32)
         {
             $this->getSignatureMD5Sha1($dataSign, $signature, $privateKey);
             return $signature;
@@ -166,31 +168,32 @@ class SignatureAlgorithm extends ExtensionAbstract
          *    DH_RSA, RSA_PSK, ECDH_RSA, ECDHE_RSA), behave as if client had
          *    sent the value {sha1,rsa}.
          */
-        if( is_null( $this->algorithm ) )
+        if (is_null($this->algorithm))
         {
-            openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA1);
-            return $signature;
+            $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA1);
+            if ($ret)
+                return $signature;
+            throw new \PTLS\Exceptions\TLSException('Key invalid');
         }
 
-        switch( $this->algorithm )
+        switch ($this->algorithm)
         {
             case self::TYPE_SHA512_RSA:
-                openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA512);
+                $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA512);
                 break;
             case self::TYPE_SHA384_RSA:
-                openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA384);
+                $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA384);
                 break;
             case self::TYPE_SHA256_RSA:
-                openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA256);
+                $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA256);
                 break;
+            default:
+                $ret = false;
         }
+        if ($ret)
+            return $signature;
 
-        return $signature;
+        throw new \PTLS\Exceptions\TLSException('Key invalid');
     }
+
 }
-
-
-
-
-
-
