@@ -326,7 +326,7 @@ class Websocket_Client
      */
     public function __sleep()
     {
-        return array('ClientPort', 'State', 'Timestamp', 'UseTLS');
+        return array('ClientIP', 'ClientPort', 'State', 'Timestamp', 'UseTLS');
     }
 
     /**
@@ -379,32 +379,31 @@ class WebSocket_ClientList
      */
     public function Update(Websocket_Client $Client)
     {
-        $this->Items[$Client->ClientIP] = $Client;
+        $this->Items[$Client->ClientIP . $Client->ClientPort] = $Client;
     }
 
     /**
      * Löscht einen Eintrag aus $Items.
      * @access public
-     * @param string $ClientIP Der Index des zu löschenden Items.
+     * @param Websocket_Client $Client Der Index des zu löschenden Items.
      */
-    public function Remove(string $ClientIP)
+    public function Remove(Websocket_Client $Client)
     {
-        if (isset($this->Items[$ClientIP]))
-            unset($this->Items[$ClientIP]);
+        if (isset($this->Items[$Client->ClientIP . $Client->ClientPort]))
+            unset($this->Items[$Client->ClientIP . $Client->ClientPort]);
     }
 
     /**
      * Liefert einen bestimmten Eintrag aus den Items anhand der IP-Adresse.
      * @access public
-     * @param string $ClientIP
-     * @return Websocket_Client
+     * @param Websocket_Client $Client Der zu suchende Client
+     * @return Websocket_Client Das Original Objekt aus dem Buffer.
      */
-    public function GetByIP(string $ClientIP)
+    public function GetByIpPort(Websocket_Client $Client)
     {
-        if (!isset($this->Items[$ClientIP]))
+        if (!isset($this->Items[$Client->ClientIP . $Client->ClientPort]))
             return false;
-        $Client = $this->Items[$ClientIP];
-        $Client->ClientIP = $ClientIP;
+        $Client = $this->Items[$Client->ClientIP . $Client->ClientPort];
         return $Client;
     }
 
@@ -415,10 +414,9 @@ class WebSocket_ClientList
     public function GetClients()
     {
         $list = array();
-        foreach ($this->Items as $IP => $Client)
+        foreach ($this->Items as $Client)
         {
-            $Client->ClientIP = $IP;
-            $list[$IP] = $Client;
+            $list[$Client->ClientPort . $Client->ClientPort] = $Client;
         }
         return $list;
     }
@@ -433,7 +431,7 @@ class WebSocket_ClientList
     {
         $Timestamp = time() + $Offset;
         $FoundClient = false;
-        foreach ($this->Items as $ClientIP => $Client)
+        foreach ($this->Items as $Client)
         {
             if ($Client->Timestamp == 0)
                 continue;
@@ -441,7 +439,6 @@ class WebSocket_ClientList
             {
                 $Timestamp = $Client->Timestamp;
                 $FoundClient = $Client;
-                $FoundClient->ClientIP = $ClientIP;
             }
         }
         return $FoundClient;

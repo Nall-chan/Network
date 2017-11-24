@@ -158,6 +158,9 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 
 **Changlog:**  
 
+Version 1.2:  
+ - Mehrfache Verbindungen von einer IP sind nun möglich
+
 Version 1.1:  
  - In IPSNetwork-Library integriert
 
