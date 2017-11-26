@@ -663,7 +663,11 @@ class WebsocketServer extends IPSModule
         if ($Client === false)
             $next = 0;
         else
+        {
             $next = $Client->Timestamp - time();
+            if ($next < 0)
+                $next = 0;
+        }
         $this->SendDebug('TIMER NEXT', $next, 0);
         $this->SetTimerInterval('KeepAlivePing', $next * 1000);
     }
@@ -913,7 +917,8 @@ class WebsocketServer extends IPSModule
         $Data = utf8_decode($data->Buffer);
         $Clients = $this->Multi_Clients;
         $Client = $Clients->GetByIpPort(new Websocket_Client($data->ClientIP, $data->ClientPort));
-        if (($Client === false) or ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Data, $match)) or ( (ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (ord($Data[1]) == 0x03) && (ord($Data[5]) == 0x01)))
+//        if (($Client === false) or ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Data, $match)) or ( (ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (ord($Data[1]) == 0x03) && (ord($Data[5]) == 0x01)))
+        if (($Client === false) or ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Data, $match)) or ( (ord($Data[0]) == 0x16) && (ord($Data[1]) == 0x03) && (ord($Data[5]) == 0x01)))
         { // neu oder neu verbunden!
             if ($this->NoNewClients) //Server start neu... keine neuen Verbindungen annehmen.
                 return;
@@ -999,14 +1004,15 @@ class WebsocketServer extends IPSModule
                         $SendData = $this->MakeJSON($Client, $out, false);
                         if ($SendData)
                             $this->SendDataToParent($SendData);
+                    } else
+                    {
+                        $this->SendDebug('Send TLS EMPTY', $out, 0);
                     }
                     if ($TLS->isHandshaked())
-                    {
-                        $Clients = $this->Multi_Clients;
                         $Client->State = WebSocketState::HandshakeReceived;
-                        $Clients->Update($Client);
-                        $this->Multi_Clients = $Clients;
-                    }
+                    $Clients = $this->Multi_Clients;
+                    $Clients->Update($Client);
+                    $this->Multi_Clients = $Clients;
                     $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = "";
                     $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = $TLS;
                     return;
