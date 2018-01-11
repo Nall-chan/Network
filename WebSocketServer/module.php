@@ -95,12 +95,12 @@ class WebsocketServer extends IPSModule
             case IPS_KERNELSHUTDOWN:
                 $this->DisconnectAllClients();
                 break;
-            case DM_DISCONNECT:
+            case FM_DISCONNECT:
                 $this->NoNewClients = true;
                 $this->RemoveAllClients();
                 $this->RegisterParent();
                 break;
-            case DM_CONNECT:
+            case FM_CONNECT:
                 $this->ApplyChanges();
                 break;
             case IM_CHANGESTATUS:
@@ -168,8 +168,8 @@ class WebsocketServer extends IPSModule
             $this->RegisterMessage(0, IPS_KERNELSHUTDOWN);
         }
 
-        $this->RegisterMessage($this->InstanceID, DM_CONNECT);
-        $this->RegisterMessage($this->InstanceID, DM_DISCONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
         if (IPS_GetKernelRunlevel() <> KR_READY)
             return;
@@ -599,6 +599,7 @@ class WebsocketServer extends IPSModule
             $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = $TLS;
             $Data = $Send;
         }
+        $this->SendDebug('Send', $Data, 0);
         $SendData['DataID'] = "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}";
         $SendData['Buffer'] = utf8_encode($Data);
         $SendData['ClientIP'] = $Client->ClientIP;
@@ -1009,7 +1010,16 @@ class WebsocketServer extends IPSModule
                         $this->SendDebug('Send TLS EMPTY', $out, 0);
                     }
                     if ($TLS->isHandshaked())
+                    {
                         $Client->State = WebSocketState::HandshakeReceived;
+                        $this->SendDebug('TLS ProtocolVersion', $TLS->getDebug()->getProtocolVersion(), 0);
+                        $UsingCipherSuite = explode("\n", $TLS->getDebug()->getUsingCipherSuite());
+                        unset($UsingCipherSuite[0]);
+                        foreach ($UsingCipherSuite as $Line)
+                        {
+                            $this->SendDebug(trim(substr($Line, 0, 14)), trim(substr($Line, 15)), 0);
+                        }
+                    }
                     $Clients = $this->Multi_Clients;
                     $Clients->Update($Client);
                     $this->Multi_Clients = $Clients;
@@ -1071,10 +1081,10 @@ class WebsocketServer extends IPSModule
             }
             else // Daten komplett, aber defekt.
             {
-                $Clients->Remove($Client);
-                $this->Multi_Clients = $Clients;
                 $this->SendHandshake($CheckData, $NewData, $Client);
-                $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = "";
+                //$Clients->Remove($Client);
+                $this->Multi_Clients = $Clients;
+                //$this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = "";
             }
         }
         elseif ($Client->State == WebSocketState::Connected)

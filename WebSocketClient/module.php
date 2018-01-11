@@ -97,11 +97,11 @@ class WebsocketClient extends IPSModule
             case IPS_KERNELSHUTDOWN:
                 $this->SendDisconnect();
                 break;
-            case DM_DISCONNECT:
+            case FM_DISCONNECT:
                 $this->RegisterParent();
                 $this->State = WebSocketState::unknow; // zum abmelden ist es schon zu spät, da Verbindung weg ist.
                 break;
-            case DM_CONNECT:
+            case FM_CONNECT:
                 $this->ForceRefresh();
                 break;
             case IM_CHANGESTATUS:
@@ -177,8 +177,8 @@ class WebsocketClient extends IPSModule
             $this->RegisterMessage(0, IPS_KERNELSHUTDOWN);
         }
 
-        $this->RegisterMessage($this->InstanceID, DM_CONNECT);
-        $this->RegisterMessage($this->InstanceID, DM_DISCONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
         if (IPS_GetKernelRunlevel() <> KR_READY)
             return;
