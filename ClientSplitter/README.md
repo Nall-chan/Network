@@ -22,7 +22,7 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
   Dieses Modul ermöglicht es anhand der IP-Adresse der Clients, die verschiedenen Datenströme von einem ServerSocket oder WebSocket-Server, sauber sortiert an andere Instanzen weiterleitet.  
   Somit können die Daten pro Client z.B. in einer RegisterVariable weiter verarbeitet werden.  
   Werden Daten an einen Client versendet, wird auch zielgerichtet nur an den einen Client geantwortet.  
-  Enthalten ist sowohl ein WebSocket-Client, als auch ein WebSocket-Server.  
+
 
 ## 2. Voraussetzungen
 
