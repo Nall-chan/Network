@@ -1,4 +1,4 @@
-<?
+<?php
 
 /* * @addtogroup network
  * @{
@@ -21,7 +21,6 @@ $autoloader->register();
  */
 class WebSocketState
 {
-
     const unknow = 0;
     const HandshakeSend = 1;
     const HandshakeReceived = 2;
@@ -35,14 +34,13 @@ class WebSocketState
 
     /**
      *  Liefert den Klartext zu einem Status.
-     * 
+     *
      * @param int $Code
      * @return string
      */
     public static function ToString(int $Code)
     {
-        switch ($Code)
-        {
+        switch ($Code) {
             case self::unknow:
                 return 'unknow';
             case self::HandshakeSend:
@@ -59,12 +57,10 @@ class WebSocketState
                 return 'TLSisReceived';
         }
     }
-
 }
 
 class HTTP_ERROR_CODES
 {
-
     const Web_Socket_Protocol_Handshake = 101;
     const Bad_Request = 400;
     const Unauthorized = 401;
@@ -78,8 +74,7 @@ class HTTP_ERROR_CODES
 
     public static function ToString(int $Code)
     {
-        switch ($Code)
-        {
+        switch ($Code) {
             case 101: return '101 Web Socket Protocol Handshake';
             case 400: return '400 Bad Request';
             case 401: return '401 Unauthorized';
@@ -93,7 +88,6 @@ class HTTP_ERROR_CODES
             default: return $Code . ' Handshake error';
         }
     }
-
 }
 
 /**
@@ -101,7 +95,6 @@ class HTTP_ERROR_CODES
  */
 class WebSocketOPCode
 {
-
     const continuation = 0x0;
     const text = 0x1;
     const binary = 0x2;
@@ -111,14 +104,13 @@ class WebSocketOPCode
 
     /**
      *  Liefert den Klartext zu einem OPCode
-     * 
+     *
      * @param int $Code
      * @return string
      */
     public static function ToString(int $Code)
     {
-        switch ($Code)
-        {
+        switch ($Code) {
             case self::continuation:
                 return 'continuation';
             case self::text:
@@ -135,7 +127,6 @@ class WebSocketOPCode
                 return bin2hex(chr($Code));
         }
     }
-
 }
 
 /**
@@ -143,9 +134,7 @@ class WebSocketOPCode
  */
 class WebSocketMask
 {
-
     const mask = 0x80;
-
 }
 
 /**
@@ -153,7 +142,6 @@ class WebSocketMask
  */
 class WebSocketFrame extends stdClass
 {
-
     public $Fin = false;
     public $OpCode = WebSocketOPCode::continuation;
     public $Mask = false;
@@ -164,38 +152,34 @@ class WebSocketFrame extends stdClass
 
     /**
      * Erzeugt einen Frame anhand der übergebenen Daten.
-     * 
+     *
      * @param object|string|null|WebSocketOPCode Aus den übergeben Daten wird das Objekt erzeugt
      * @param string $Payload Das Payload wenn Frame den WebSocketOPCode darstellt.
      */
     public function __construct($Frame = null, $Payload = null)
     {
-        if (is_null($Frame))
+        if (is_null($Frame)) {
             return;
-        if (is_object($Frame))
-        {
-            if ($Frame->DataID == '') //GUID Virtual IO TX
-            {
+        }
+        if (is_object($Frame)) {
+            if ($Frame->DataID == '') { //GUID Virtual IO TX
                 $this->Fin = true;
                 $this->OpCode = WebSocketOPCode::text;
                 $this->Payload = utf8_decode($Frame->Buffer);
             }
-            if ($Frame->DataID == '') //GUID textFrame
-            {
+            if ($Frame->DataID == '') { //GUID textFrame
                 $this->Fin = true;
                 $this->OpCode = WebSocketOPCode::text;
                 $this->Payload = utf8_decode($Frame->Buffer);
             }
-            if ($Frame->DataID == '') //GUID BINFrame
-            {
+            if ($Frame->DataID == '') { //GUID BINFrame
                 $this->Fin = true;
                 $this->OpCode = WebSocketOPCode::binary;
                 $this->Payload = utf8_decode($Frame->Buffer);
             }
             return;
         }
-        if (!is_null($Payload))
-        {
+        if (!is_null($Payload)) {
             $this->Fin = true;
             $this->OpCode = $Frame;
             $this->Payload = $Payload;
@@ -208,29 +192,22 @@ class WebSocketFrame extends stdClass
 
         $len = ord($Frame[1]) & 0x7F;
         $start = 2;
-        if ($len == 126)
-        {
+        if ($len == 126) {
             $len = unpack("n", substr($Frame, 2, 2))[1];
             $start = 4;
-        }
-        elseif ($len == 127)
-        {
+        } elseif ($len == 127) {
             $len = unpack("J", substr($Frame, 2, 8))[1];
             $start = 10;
         }
-        if ($this->Mask)
-        {
+        if ($this->Mask) {
             $this->MaskKey = substr($Frame, $start, 4);
             $start = $start + 4;
         }
         //Prüfen ob genug daten da sind !
-        if (strlen($Frame) >= $start + $len)
-        {
+        if (strlen($Frame) >= $start + $len) {
             $this->Payload = substr($Frame, $start, $len);
-            if ($this->Mask and ( $len > 0))
-            {
-                for ($i = 0; $i < strlen($this->Payload); $i++)
-                {
+            if ($this->Mask and ($len > 0)) {
+                for ($i = 0; $i < strlen($this->Payload); $i++) {
                     $this->Payload[$i] = $this->Payload[$i] ^ $this->MaskKey[$i % 4];
                 }
             }
@@ -241,32 +218,26 @@ class WebSocketFrame extends stdClass
 
     /**
      * Liefert den Byte-String für den Versand an den IO-Parent
-     * 
+     *
      */
     public function ToFrame($Masked = false)
     {
-
         $Frame = chr(($this->Fin ? 0x80 : 0x00) | $this->OpCode);
         $len = strlen($this->Payload);
         $len2 = "";
-        if ($len > 0xFFFF)
-        {
+        if ($len > 0xFFFF) {
             $len2 = pack("J", $len);
             $len = 127;
-        }
-        elseif ($len > 125)
-        {
+        } elseif ($len > 125) {
             $len2 = pack("n", $len);
             $len = 126;
         }
         $this->Mask = $Masked;
-        if ($this->Mask and ( $len > 0))
-        {
+        if ($this->Mask and ($len > 0)) {
             $this->PayloadRAW = $this->Payload;
             $len = $len | WebSocketMask::mask;
             $this->MaskKey = openssl_random_pseudo_bytes(4);
-            for ($i = 0; $i < strlen($this->Payload); $i++)
-            {
+            for ($i = 0; $i < strlen($this->Payload); $i++) {
                 $this->Payload[$i] = $this->Payload[$i] ^ $this->MaskKey[$i % 4];
             }
         }
@@ -276,7 +247,6 @@ class WebSocketFrame extends stdClass
         $Frame .= $this->Payload;
         return $Frame;
     }
-
 }
 
 /**
@@ -331,7 +301,7 @@ class Websocket_Client
 
     /**
      * Erzeugt ein Websocket_Client-Objekt aus den übergebenden Daten.
-     * 
+     *
      * @access public
      * @param string $ClientIP Die IP-Adresse des Clients.
      * @param int $ClientPort Der Empfangs-Port des Clients.
@@ -346,7 +316,6 @@ class Websocket_Client
         $this->Timestamp = 0;
         $this->UseTLS = $UseTLS;
     }
-
 }
 
 /**
@@ -389,8 +358,9 @@ class WebSocket_ClientList
      */
     public function Remove(Websocket_Client $Client)
     {
-        if (isset($this->Items[$Client->ClientIP . $Client->ClientPort]))
+        if (isset($this->Items[$Client->ClientIP . $Client->ClientPort])) {
             unset($this->Items[$Client->ClientIP . $Client->ClientPort]);
+        }
     }
 
     /**
@@ -401,21 +371,21 @@ class WebSocket_ClientList
      */
     public function GetByIpPort(Websocket_Client $Client)
     {
-        if (!isset($this->Items[$Client->ClientIP . $Client->ClientPort]))
+        if (!isset($this->Items[$Client->ClientIP . $Client->ClientPort])) {
             return false;
+        }
         $Client = $this->Items[$Client->ClientIP . $Client->ClientPort];
         return $Client;
     }
 
     /**
      * Liefert ein Array mit allen Clients.
-     * @return Websocket_Client[] Ein Array mit allen Websocket_Client-Objekten. 
+     * @return Websocket_Client[] Ein Array mit allen Websocket_Client-Objekten.
      */
     public function GetClients()
     {
         $list = array();
-        foreach ($this->Items as $Client)
-        {
+        foreach ($this->Items as $Client) {
             $list[$Client->ClientPort . $Client->ClientPort] = $Client;
         }
         return $list;
@@ -431,19 +401,17 @@ class WebSocket_ClientList
     {
         $Timestamp = time() + $Offset;
         $FoundClient = false;
-        foreach ($this->Items as $Client)
-        {
-            if ($Client->Timestamp == 0)
+        foreach ($this->Items as $Client) {
+            if ($Client->Timestamp == 0) {
                 continue;
-            if ($Client->Timestamp < $Timestamp)
-            {
+            }
+            if ($Client->Timestamp < $Timestamp) {
                 $Timestamp = $Client->Timestamp;
                 $FoundClient = $Client;
             }
         }
         return $FoundClient;
     }
-
 }
 
 /** @} */

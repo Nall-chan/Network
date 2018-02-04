@@ -10,7 +10,7 @@ class Finished extends HandshakeAbstract
 {
     const PRF_LENGTH = 12;
 
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         parent::__construct($core);
     }
@@ -21,7 +21,7 @@ class Finished extends HandshakeAbstract
 
         $protoVersion = $core->getProtocolVersion();
 
-        $finishedLabel = ( $isServer ) ? "server finished" : "client finished";
+        $finishedLabel = ($isServer) ? "server finished" : "client finished";
         $prf = $core->prf;
 
         /*
@@ -31,19 +31,17 @@ class Finished extends HandshakeAbstract
          *   PRF(master_secret, finished_label, MD5(handshake_messages) +
          *   SHA-1(handshake_messages)) [0..11];
          */
-        if( $protoVersion == 31 )
-        {
+        if ($protoVersion == 31) {
             $seedHash = md5($handshakeMessages, true) . sha1($handshakeMessages, true);
         }
         /*
-         * [TLS 1.2] 
+         * [TLS 1.2]
          * 7.4.0 https://tools.ietf.org/html/rfc5246
          * verify_data
          * PRF(master_secret, finished_label, Hash(handshake_messages))
          *    [0..verify_data_length-1];
         */
-        else // 1.2
-        {
+        else { // 1.2
             $cipherSuite = $core->cipherSuite;
             $seedHash = hash($cipherSuite->getHashAlogV33(), $handshakeMessages, true);
         }
@@ -77,9 +75,10 @@ class Finished extends HandshakeAbstract
         // Get verify data
         $verifyData = $this->getVerifyData($core->isServer ^ true, $handshakeMessages);
 
-        if( $this->verifyData != $verifyData )
-            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), 
-                "Handshake Finished: verifyData mismatched:" . base64_encode( $this->verifyData ) . "<=>" . base64_encode( $verifyData ));
+        if ($this->verifyData != $verifyData) {
+            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC),
+                "Handshake Finished: verifyData mismatched:" . base64_encode($this->verifyData) . "<=>" . base64_encode($verifyData));
+        }
     }
 
     public function decode()
@@ -106,8 +105,3 @@ class Finished extends HandshakeAbstract
               . "Verify Data: " . base64_encode($this->verifyData) . "\n";
     }
 }
-
-
-
-
-

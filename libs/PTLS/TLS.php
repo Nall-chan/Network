@@ -7,11 +7,10 @@ use PTLS\Exceptions\TLSException;
 
 class TLS implements DataConverterInterface
 {
-
     private $core;
     private $bufferOut;
 
-    function __construct($isServer, Config $config)
+    public function __construct($isServer, Config $config)
     {
         $this->core = new Core($isServer, $config);
         $this->bufferOut = new Buffer();
@@ -39,12 +38,9 @@ class TLS implements DataConverterInterface
 
         $in = $core->getInDuplex();
 
-        try
-        {
+        try {
             $in->encodeRecord($data);
-        }
-        catch (TLSAlertException $e)
-        {
+        } catch (TLSAlertException $e) {
             // Set output if any
             $e->setOutput($core);
 
@@ -60,16 +56,19 @@ class TLS implements DataConverterInterface
 
         $out = '';
 
-        if ($coreBufferOut->length() > 0)
+        if ($coreBufferOut->length() > 0) {
             $out = $coreBufferOut->flush();
+        }
 
-        if (!$core->isHandshaked)
+        if (!$core->isHandshaked) {
             return $out;
+        }
 
         $payload = $this->bufferOut->flush();
 
-        if (0 >= strlen($payload))
+        if (0 >= strlen($payload)) {
             return $out;
+        }
 
         $connOut = $core->getOutDuplex();
 
@@ -83,13 +82,15 @@ class TLS implements DataConverterInterface
         $core = $this->core;
         $bufferOut = $this->bufferOut;
 
-        if (!$core->isHandshaked)
+        if (!$core->isHandshaked) {
             throw new TLSException('Handshake is not done');
+        }
 
-        if ($isAppend)
+        if ($isAppend) {
             $bufferOut->append($data);
-        else
+        } else {
             $bufferOut->set($data);
+        }
 
         return $this;
     }
@@ -103,5 +104,4 @@ class TLS implements DataConverterInterface
     {
         return new Debug($this->core);
     }
-
 }

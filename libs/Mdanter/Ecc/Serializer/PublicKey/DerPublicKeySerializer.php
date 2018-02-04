@@ -14,7 +14,6 @@ use Mdanter\Ecc\Serializer\PublicKey\Der\Parser;
  */
 class DerPublicKeySerializer implements PublicKeySerializerInterface
 {
-
     const X509_ECDSA_OID = '1.2.840.10045.2.1';
 
     /**

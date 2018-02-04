@@ -11,7 +11,6 @@ use Mdanter\Ecc\Primitives\CurveFpInterface;
 
 class CurveOidMapper
 {
-
     const NIST_P192_OID = '1.2.840.10045.3.1.1';
 
     const NIST_P224_OID = '1.3.132.0.33';

@@ -34,4 +34,3 @@ class ChangeCipherSpec extends ProtocolAbstract
         return "[ChangeCipherSpec]\n";
     }
 }
-

@@ -57,12 +57,14 @@ class Core
      *
      * TLS Protocol Version
      */
-    private $vMajor = null, $vMinor = null;
+    private $vMajor = null;
+    private $vMinor = null;
 
     /**
      *  Set default TLS version as 1.2
      */
-    private $vMajorDefault = 3, $vMinorDefault = 3;
+    private $vMajorDefault = 3;
+    private $vMinorDefault = 3;
     private $protocolVersion;
 
     /**
@@ -81,7 +83,7 @@ class Core
      * https://tools.ietf.org/html/rfc5246#section-7.4.1.1
      * This message MUST NOT be included in the message hashes that are
      * maintained throughout the handshake and used in the Finished messages
-     * and the certificate verify message 
+     * and the certificate verify message
      */
     private $handshakeMessages;
 
@@ -106,9 +108,10 @@ class Core
     private $server; // ConnectionDuplex
     private $client; // ConnectionDuplex
 
-    private $bufferIn, $bufferOut; // Buffer
+    private $bufferIn;
+    private $bufferOut; // Buffer
 
-    function __construct($isServer, Config $config)
+    public function __construct($isServer, Config $config)
     {
         $this->config = $config;
 
@@ -135,13 +138,10 @@ class Core
 
         $this->handshakeMessages = [];
 
-        if( $isServer )
-        {
+        if ($isServer) {
             $this->crtDers = $this->config->get('crt_ders');
             $this->content = new ServerContent($this);
-        }
-        else // Client
-        {
+        } else { // Client
             $this->content = new ClientContent($this);
             $this->setVersion(3, $config->get('version', $this->vMinorDefault));
         }
@@ -152,41 +152,46 @@ class Core
      */
     public function __call($name, $args)
     {
-        if( strlen($name) < 3 ) 
+        if (strlen($name) < 3) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Core::$name too short");
+        }
 
         $properties = ['bufferIn', 'bufferOut', 'sessionID', 'compressionMethod', 'masterSecret', 'crtDers'];
 
         $getOrSet = substr($name, 0, 3);
 
-        if( $getOrSet != 'get' && $getOrSet != 'set' )
+        if ($getOrSet != 'get' && $getOrSet != 'set') {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Core::$name not exist");
+        }
 
         $property = substr($name, 3);
         $property[0] = strtolower($property[0]);
 
-        if( !in_array($property, $properties) )
+        if (!in_array($property, $properties)) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Core::$property not exist");
+        }
 
         // Getter
-        if( $getOrSet == 'get' )
+        if ($getOrSet == 'get') {
             return $this->$property;
+        }
 
-        if( !isset( $args[0] ) )
+        if (!isset($args[0])) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "No args set for Core::$property");
+        }
 
-        // Setter    
-        $this->$property = $args[0]; 
+        // Setter
+        $this->$property = $args[0];
     }
 
     public function getOutDuplex()
     {
-        return ($this->isServer ) ? $this->server : $this->client;
+        return ($this->isServer) ? $this->server : $this->client;
     }
 
     public function getInDuplex()
     {
-        return ($this->isServer ) ? $this->client : $this->server;
+        return ($this->isServer) ? $this->client : $this->server;
     }
 
     public function getProtocolVersion()
@@ -196,29 +201,34 @@ class Core
 
     public function getVersion()
     {
-        if( $this->vMajor == 0 || $this->vMinor == 0 )
+        if ($this->vMajor == 0 || $this->vMinor == 0) {
             return [$this->vMajorDefault, $this->vMinorDefault];
+        }
 
         return [$this->vMajor, $this->vMinor];
     }
 
     public function setVersion($vMajor, $vMinor)
     {
-        if( $vMajor != 3 || ( $vMinor > 3 && $vMinor < 2 ) )
+        if ($vMajor != 3 || ($vMinor > 3 && $vMinor < 2)) {
             throw new TLSAlertException(Alert::create(Alert::PROTOCOL_VERSION), "Unsupported Protocol $vMajor:$vMinor");
+        }
 
-        if( !is_null( $this->protocolVersion ) )
+        if (!is_null($this->protocolVersion)) {
             return;
+        }
 
         $this->vMajor = $vMajor;
         $this->vMinor = $vMinor;
 
         // TLS1.2
-        if( $this->vMinor == 3 )
+        if ($this->vMinor == 3) {
             $this->protocolVersion = 32;
+        }
         // TLS1.1
-        else
+        else {
             $this->protocolVersion = 31;
+        }
     }
 
     /**
@@ -226,18 +236,20 @@ class Core
      */
     public function countHandshakeMessages($msg)
     {
-        if( $this->isHandshaked )
+        if ($this->isHandshaked) {
             return;
+        }
 
         $this->handshakeMessages[] = $msg;
     }
 
     public function getHandshakeMessages($sub = 0)
     {
-        if( $sub != 0 )
+        if ($sub != 0) {
             $msg = implode('', array_slice($this->handshakeMessages, 0, count($this->handshakeMessages) - $sub));
-        else
+        } else {
             $msg = implode('', $this->handshakeMessages);
+        }
 
         return $msg;
     }
@@ -254,30 +266,26 @@ class Core
     {
         $random = openssl_random_pseudo_bytes($length, $strong);
 
-        if( true !== $strong )
+        if (true !== $strong) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Random byte not strong");
+        }
 
         return $random;
     }
 
-    public static function _unpack( $f, $d )
+    public static function _unpack($f, $d)
     {
-        $r = unpack( $f, $d );
+        $r = unpack($f, $d);
 
-        if( !is_array($r) || !isset($r[1]) )
+        if (!is_array($r) || !isset($r[1])) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "unpack failed. format: $f, data: $d");
+        }
 
         return $r[1];
     }
 
-    public static function _pack( $f, $d )
+    public static function _pack($f, $d)
     {
-        return pack( $f, $d );
+        return pack($f, $d);
     }
 }
-
-
-
-
-
-

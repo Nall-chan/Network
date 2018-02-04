@@ -1,4 +1,4 @@
-<?
+<?php
 
 include_once(__DIR__ . "/../libs/NetworkTraits.php");
 
@@ -17,7 +17,7 @@ include_once(__DIR__ . "/../libs/NetworkTraits.php");
 /**
  * DHCPSniffer Klasse implementiert einen Sniffer für DHCP Requests.
  * Erweitert IPSModule.
- * 
+ *
  * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2017 Michael Tröger
@@ -27,7 +27,6 @@ include_once(__DIR__ . "/../libs/NetworkTraits.php");
  */
 class DHCPSniffer extends ipsmodule
 {
-
     use DebugHelper; // Erweitert die SendDebug Methode von IPS um Arrays, Objekte und bool.
 
     /**
@@ -42,13 +41,10 @@ class DHCPSniffer extends ipsmodule
         $this->RegisterPropertyInteger('Protocol', 2);
         $this->RegisterPropertyInteger('Action', 0);
         $instance = IPS_GetInstance($this->InstanceID);
-        if ($instance['ConnectionID'] == 0)
-        {
+        if ($instance['ConnectionID'] == 0) {
             $ids = IPS_GetInstanceListByModuleID("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
-            foreach ($ids as $id)
-            {
-                if (IPS_GetObject($id)['ObjectIdent'] == 'DHCPSniffer')
-                {
+            foreach ($ids as $id) {
+                if (IPS_GetObject($id)['ObjectIdent'] == 'DHCPSniffer') {
                     IPS_ConnectInstance($this->InstanceID, $id);
                     return;
                 }
@@ -69,28 +65,29 @@ class DHCPSniffer extends ipsmodule
 
         parent::ApplyChanges();
 
-        if (IPS_GetKernelRunlevel() <> KR_READY)
+        if (IPS_GetKernelRunlevel() <> KR_READY) {
             return;
+        }
         $Mac = $this->ReadPropertyString('Address');
-        if ($Mac == '')
+        if ($Mac == '') {
             $Mac = "FFFFFFFFFFFF";
+        }
         $Mac = str_replace(array(' ', ':', '-'), array('', '', ''), $Mac);
         $Mac = hex2bin($Mac);
 
-        if (strlen($Mac) != 6)
-        {
+        if (strlen($Mac) != 6) {
             $Mac = "FFFFFFFFFFFF";
             $this->SetStatus(IS_EBASE + 1);
-        }
-        else
+        } else {
             $this->SetStatus(IS_ACTIVE);
+        }
 
         $MacJSONencoded = array();
-        for ($index = 0; $index < 6; $index++)
-        {
+        for ($index = 0; $index < 6; $index++) {
             $MacJSONencoded[$index] = substr(json_encode(utf8_encode($Mac[$index]), JSON_UNESCAPED_UNICODE), 1, -1);
-            if (strlen($MacJSONencoded[$index]) == 6)
+            if (strlen($MacJSONencoded[$index]) == 6) {
                 $MacJSONencoded[$index] = '\\u' . substr(strtoupper($MacJSONencoded[$index]), 2);
+            }
         }
         $MacMatch = preg_quote(implode('', $MacJSONencoded), '\\');
         $Filter = '.*\\\\u0001\\\\u0001\\\\u0006' . '.*' . $MacMatch . '.*'; // Alles
@@ -98,53 +95,60 @@ class DHCPSniffer extends ipsmodule
         $this->SendDebug('FILTER', $Filter, 0);
         $this->SetReceiveDataFilter($Filter);
 
-        switch ($this->ReadPropertyInteger('Action'))
-        {
+        switch ($this->ReadPropertyInteger('Action')) {
             case 0: //EVENT
                 $vid = @$this->GetIDForIdent('EVENT');
-                if (!$vid)
+                if (!$vid) {
                     $this->RegisterVariableBoolean('EVENT', 'EVENT');
+                }
                 $vid = @$this->GetIDForIdent('IMPULSE');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('IMPULSE');
+                }
                 $vid = @$this->GetIDForIdent('TOGGLE');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('TOGGLE');
+                }
                 break;
             case 1: // IMPULSE
                 $vid = @$this->GetIDForIdent('EVENT');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('EVENT');
+                }
                 $vid = @$this->GetIDForIdent('IMPULSE');
-                if (!$vid)
+                if (!$vid) {
                     $this->RegisterVariableBoolean('IMPULSE', 'IMPULSE');
+                }
                 $vid = @$this->GetIDForIdent('TOGGLE');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('TOGGLE');
+                }
                 break;
             case 2: // Toggle
                 $vid = @$this->GetIDForIdent('EVENT');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('EVENT');
+                }
                 $vid = @$this->GetIDForIdent('IMPULSE');
-                if ($vid > 0)
+                if ($vid > 0) {
                     $this->UnregisterVariable('IMPULSE');
+                }
                 $vid = @$this->GetIDForIdent('TOGGLE');
-                if (!$vid)
+                if (!$vid) {
                     $this->RegisterVariableBoolean('TOGGLE', 'TOGGLE');
+                }
                 break;
         }
     }
 
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-        switch ($Message)
-        {
+        switch ($Message) {
             case IPS_KERNELSTARTED: // Nach dem IPS-Start
                 $this->KernelReady(); // Sagt alles.
                 break;
@@ -179,7 +183,7 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Empfängt Daten vom Parent.
-     * 
+     *
      * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
      */
@@ -191,44 +195,46 @@ class DHCPSniffer extends ipsmodule
         $isDHCPRequest = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x03));
         $this->SendDebug('isDHCP', $isDHCP, 0);
         $this->SendDebug('isDHCPRequest', $isDHCPRequest, 0);
-        switch ($this->ReadPropertyInteger('Protocol'))
-        {
+        switch ($this->ReadPropertyInteger('Protocol')) {
             case 0: // DHCP
-                if ($isDHCPRequest)
+                if ($isDHCPRequest) {
                     $this->SendEvent();
+                }
                 break;
             case 1: // Bootp
-                if (!$isDHCP)
+                if (!$isDHCP) {
                     $this->SendEvent();
+                }
                 break;
             case 2: // both
-                if ($isDHCPRequest)
+                if ($isDHCPRequest) {
                     $this->SendEvent();
-                if (!$isDHCP)
+                }
+                if (!$isDHCP) {
                     $this->SendEvent();
+                }
                 break;
         }
     }
 
     /**
      * Beschreibt die Statusvariable.
-     * 
+     *
      * @access protected
      */
     protected function SendEvent()
     {
         $this->SendDebug('FIRE', 'EVENT', 0);
-        switch ($this->ReadPropertyInteger('Action'))
-        {
+        switch ($this->ReadPropertyInteger('Action')) {
             case 0: //EVENT
                 $vid = @$this->GetIDForIdent('EVENT');
-                if ($vid > 0)
+                if ($vid > 0) {
                     SetValueBoolean($vid, true);
+                }
                 break;
             case 1: // IMPULSE
                 $vid = @$this->GetIDForIdent('IMPULSE');
-                if ($vid > 0)
-                {
+                if ($vid > 0) {
                     SetValueBoolean($vid, true);
                     IPS_Sleep(1);
                     SetValueBoolean($vid, false);
@@ -237,10 +243,10 @@ class DHCPSniffer extends ipsmodule
                 break;
             case 2: // Toggle
                 $vid = @$this->GetIDForIdent('TOGGLE');
-                if ($vid > 0)
+                if ($vid > 0) {
                     SetValueBoolean($vid, !GetValueBoolean($vid));
+                }
                 break;
         }
     }
-
 }

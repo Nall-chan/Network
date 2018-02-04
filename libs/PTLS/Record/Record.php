@@ -16,7 +16,7 @@ use PTLS\Content\Alert;
 class Record extends ProtocolAbstract
 {
     const MAX_LENGTH = 17408; // 2^14 + 1024
-    const MAX_BUFFER_LENGTH = 34816; // 17408 * 2 
+    const MAX_BUFFER_LENGTH = 34816; // 17408 * 2
 
     public $contentType;
     
@@ -55,25 +55,23 @@ class Record extends ProtocolAbstract
     {
         $data = $this->encodeBuffer->flush() . $data;
 
-        $this->contentType = Core::_unpack( 'C', $data[0] );
+        $this->contentType = Core::_unpack('C', $data[0]);
 
-        $vMajor = Core::_unpack( 'C', $data[1] );
-        $vMinor = Core::_unpack( 'C', $data[2] );
+        $vMajor = Core::_unpack('C', $data[1]);
+        $vMinor = Core::_unpack('C', $data[2]);
 
-        $this->length = Core::_unpack( 'n', $data[3] . $data[4] );
+        $this->length = Core::_unpack('n', $data[3] . $data[4]);
 
-        if( $this->length > $this->maxLength )//|| strlen($data) > self::MAX_BUFFER_LENGTH )
-        {
+        if ($this->length > $this->maxLength) {//|| strlen($data) > self::MAX_BUFFER_LENGTH )
             /*
              * A TLSCiphertext record was received that had a length more than
              * 2^14+2048 bytes, or a record decrypted to a TLSCompressed record
              * with more than 2^14+1024 bytes.
              */
-            throw new TLSAlertException(Alert::create(Alert::RECORD_OVERFLOW), "Exceed max length of payload: " . strlen($data) );
+            throw new TLSAlertException(Alert::create(Alert::RECORD_OVERFLOW), "Exceed max length of payload: " . strlen($data));
         }
 
-        if( $this->length > strlen( $data ) )
-        {
+        if ($this->length > strlen($data)) {
             $this->encodeBuffer->set($data);
             return false;
         }
@@ -96,8 +94,9 @@ class Record extends ProtocolAbstract
     {
         $this->reset();
 
-        if( !$this->encodeHeader($data) )
+        if (!$this->encodeHeader($data)) {
             return;
+        }
 
         $this->encodeContent();
     }
@@ -107,8 +106,7 @@ class Record extends ProtocolAbstract
      */
     public function get($property, $default = null)
     {
-        if( $property == 'length' )
-        {
+        if ($property == 'length') {
             return 5 + $this->length;
         }
 
@@ -122,8 +120,7 @@ class Record extends ProtocolAbstract
     {
         parent::set($property, $value);
 
-        if( $property == 'payload' )
-        {
+        if ($property == 'payload') {
             $this->length = strlen($this->payload);
         }
 
@@ -153,8 +150,9 @@ class Record extends ProtocolAbstract
               . $this->payload;
 
         // Handshake
-        if( $this->contentType == ContentType::HANDSHAKE && !$this->conn->isCipherChanged )
+        if ($this->contentType == ContentType::HANDSHAKE && !$this->conn->isCipherChanged) {
             $core->countHandshakeMessages($this->payload);
+        }
 
         $this->reset();
 
@@ -175,9 +173,3 @@ class Record extends ProtocolAbstract
         return $r;
     }
 }
-
-
-
-
-
-

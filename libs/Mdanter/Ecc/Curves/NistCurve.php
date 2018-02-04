@@ -39,7 +39,6 @@ use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
  */
 class NistCurve
 {
-
     const NAME_P192 = 'nistp192';
     const NAME_P224 = 'nistp224';
     const NAME_P256 = 'nistp256';

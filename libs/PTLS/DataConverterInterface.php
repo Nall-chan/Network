@@ -7,10 +7,10 @@ interface DataConverterInterface
     /**
      * Unserialize
      */
-    function encode($data);
+    public function encode($data);
 
     /**
      *  Serialize to TLS format
      */
-    function decode();
+    public function decode();
 }

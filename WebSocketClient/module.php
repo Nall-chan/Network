@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once(__DIR__ . "/../libs/NetworkTraits.php");
 require_once(__DIR__ . "/../libs/WebsocketClass.php");  // diverse Klassen
@@ -21,7 +21,7 @@ use PTLS\Exceptions\TLSAlertException;
 /**
  * WebsocketClient Klasse implementiert das Websocket Protokoll als HTTP-Client
  * Erweitert IPSModule.
- * 
+ *
  * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2017 Michael Tröger
@@ -44,7 +44,6 @@ use PTLS\Exceptions\TLSAlertException;
  */
 class WebsocketClient extends IPSModule
 {
-
     use DebugHelper,
         InstanceStatus,
         BufferHelper;
@@ -84,13 +83,14 @@ class WebsocketClient extends IPSModule
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-        if ($this->State == WebSocketState::init)
+        if ($this->State == WebSocketState::init) {
             return;
-        switch ($Message)
-        {
+        }
+        switch ($Message) {
             case IPS_KERNELMESSAGE:
-                if ($Data[0] != KR_READY)
+                if ($Data[0] != KR_READY) {
                     break;
+                }
             case IPS_KERNELSTARTED:
                 $this->KernelReady();
                 break;
@@ -105,12 +105,12 @@ class WebsocketClient extends IPSModule
                 $this->ForceRefresh();
                 break;
             case IM_CHANGESTATUS:
-                if ($SenderID == $this->ParentID)
-                {
-                    if ($Data[0] == IS_ACTIVE)
+                if ($SenderID == $this->ParentID) {
+                    if ($Data[0] == IS_ACTIVE) {
                         $this->ForceRefresh();
-                    else
-                        $this->State = WebSocketState::unknow; // zum abmelden ist es schon zu spät, da Verbindung weg ist.
+                    } else {
+                        $this->State = WebSocketState::unknow;
+                    } // zum abmelden ist es schon zu spät, da Verbindung weg ist.
                 }
                 break;
         }
@@ -134,14 +134,13 @@ class WebsocketClient extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function GetConfigurationForParent()
     {
         $Config['Host'] = (string) parse_url($this->ReadPropertyString('URL'), PHP_URL_HOST);
-        switch ((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME))
-        {
+        switch ((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME)) {
             case 'https':
             case 'wss':
                 $Port = 443;
@@ -150,29 +149,31 @@ class WebsocketClient extends IPSModule
                 $Port = 80;
         }
         $OtherPort = (int) parse_url($this->ReadPropertyString('URL'), PHP_URL_PORT);
-        if ($OtherPort != 0)
+        if ($OtherPort != 0) {
             $Port = $OtherPort;
+        }
 
         $Config['Port'] = $Port;
         $Config['Open'] = $this->ReadPropertyBoolean('Open');
-        if ($Config['Host'] == '')
+        if ($Config['Host'] == '') {
             $Config['Open'] = false;
-        if (( $Config['Port'] < 1) || ( $Config['Port'] > 65536))
+        }
+        if (($Config['Port'] < 1) || ($Config['Port'] > 65536)) {
             $Config['Open'] = false;
+        }
         return json_encode($Config);
     }
 
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function ApplyChanges()
     {
-        if ((float) IPS_GetKernelVersion() < 4.2)
+        if ((float) IPS_GetKernelVersion() < 4.2) {
             $this->RegisterMessage(0, IPS_KERNELMESSAGE);
-        else
-        {
+        } else {
             $this->RegisterMessage(0, IPS_KERNELSTARTED);
             $this->RegisterMessage(0, IPS_KERNELSHUTDOWN);
         }
@@ -180,21 +181,22 @@ class WebsocketClient extends IPSModule
         $this->RegisterMessage($this->InstanceID, FM_CONNECT);
         $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
-        if (IPS_GetKernelRunlevel() <> KR_READY)
+        if (IPS_GetKernelRunlevel() <> KR_READY) {
             return;
+        }
 
         $this->SetTimerInterval('KeepAlive', 0);
 
         $OldState = $this->State;
 
 
-        if (( ($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init))
+        if ((($OldState != WebSocketState::unknow) and ($OldState != WebSocketState::Connected)) or ($OldState == WebSocketState::init)) {
             return;
+        }
 
         $ParentID = $this->ParentID;
 
-        if ($OldState == WebSocketState::Connected)
-        {
+        if ($OldState == WebSocketState::Connected) {
             $Result = $this->SendDisconnect();
             $this->SendDebug('Result SendDisconnect', ($Result ? "true" : "false"), 0);
             IPS_SetProperty($ParentID, 'Open', false);
@@ -210,20 +212,15 @@ class WebsocketClient extends IPSModule
         $Open = $this->ReadPropertyBoolean('Open');
         $NewState = IS_ACTIVE;
 
-        if (!$Open)
+        if (!$Open) {
             $NewState = IS_INACTIVE;
-        else
-        {
-            if (!in_array((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME), array('http', 'https', 'ws', 'wss')))
-            {
+        } else {
+            if (!in_array((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME), array('http', 'https', 'ws', 'wss'))) {
                 $NewState = IS_EBASE + 2;
                 $Open = false;
                 trigger_error('Invalid URL', E_USER_NOTICE);
-            }
-            else
-            {
-                if (($this->ReadPropertyInteger('PingInterval') != 0) and ( $this->ReadPropertyInteger('PingInterval') < 5))
-                {
+            } else {
+                if (($this->ReadPropertyInteger('PingInterval') != 0) and ($this->ReadPropertyInteger('PingInterval') < 5)) {
                     $NewState = IS_EBASE + 4;
                     $Open = false;
                     trigger_error('Ping interval to small', E_USER_NOTICE);
@@ -233,12 +230,11 @@ class WebsocketClient extends IPSModule
         $ParentID = $this->RegisterParent();
 
         // Zwangskonfiguration des ClientSocket
-        if ($ParentID > 0)
-        {
-            if (IPS_GetProperty($ParentID, 'Host') <> (string) parse_url($this->ReadPropertyString('URL'), PHP_URL_HOST))
+        if ($ParentID > 0) {
+            if (IPS_GetProperty($ParentID, 'Host') <> (string) parse_url($this->ReadPropertyString('URL'), PHP_URL_HOST)) {
                 IPS_SetProperty($ParentID, 'Host', (string) parse_url($this->ReadPropertyString('URL'), PHP_URL_HOST));
-            switch ((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME))
-            {
+            }
+            switch ((string) parse_url($this->ReadPropertyString('URL'), PHP_URL_SCHEME)) {
                 case 'https':
                 case 'wss':
                     $Port = 443;
@@ -249,32 +245,29 @@ class WebsocketClient extends IPSModule
                     $this->UseTLS = false;
             }
             $OtherPort = (int) parse_url($this->ReadPropertyString('URL'), PHP_URL_PORT);
-            if ($OtherPort != 0)
+            if ($OtherPort != 0) {
                 $Port = $OtherPort;
-            if (IPS_GetProperty($ParentID, 'Port') !== $Port)
+            }
+            if (IPS_GetProperty($ParentID, 'Port') !== $Port) {
                 IPS_SetProperty($ParentID, 'Port', $Port);
-            if (IPS_GetProperty($ParentID, 'Open') !== $Open)
+            }
+            if (IPS_GetProperty($ParentID, 'Open') !== $Open) {
                 IPS_SetProperty($ParentID, 'Open', $Open);
-            if (IPS_HasChanges($ParentID) == true)
+            }
+            if (IPS_HasChanges($ParentID) == true) {
                 @IPS_ApplyChanges($ParentID);
-        }
-        else
-        {
-            if ($Open)
-            {
+            }
+        } else {
+            if ($Open) {
                 $NewState = IS_INACTIVE;
                 $Open = false;
             }
         }
 
-        if ($Open)
-        {
-            if ($this->HasActiveParent($ParentID))
-            {
-                if ($this->UseTLS)
-                {
-                    if (!$this->CreateTLSConnection())
-                    {
+        if ($Open) {
+            if ($this->HasActiveParent($ParentID)) {
+                if ($this->UseTLS) {
+                    if (!$this->CreateTLSConnection()) {
                         $this->SetStatus(IS_EBASE + 3);
                         $this->State = WebSocketState::unknow;
                         return;
@@ -282,34 +275,30 @@ class WebsocketClient extends IPSModule
                 }
 
                 $ret = $this->InitHandshake();
-                if ($ret !== true)
-                {
+                if ($ret !== true) {
                     $NewState = IS_EBASE + 3;
                 }
-            }
-            else
-            {
+            } else {
                 $NewState = IS_EBASE + 1;
                 trigger_error('Could not connect.', E_USER_NOTICE);
             }
         }
 
-        if ($NewState != IS_ACTIVE)
-        {
+        if ($NewState != IS_ACTIVE) {
             $this->State = WebSocketState::unknow;
             $this->SetTimerInterval('KeepAlive', 0);
-        }
-        else
+        } else {
             $this->SetTimerInterval('KeepAlive', $this->ReadPropertyInteger('PingInterval') * 1000);
+        }
 
         $this->SetStatus($NewState);
     }
 
-################## PRIVATE     
+    ################## PRIVATE
 
     /**
      * Baut eine TLS Verbindung auf.
-     * 
+     *
      * @access private
      * @return boolean True wenn der TLS Handshake erfolgreich war.
      */
@@ -326,12 +315,10 @@ class WebsocketClient extends IPSModule
         $JSON['Buffer'] = utf8_encode($SendData);
         $JsonString = json_encode($JSON);
         parent::SendDataToParent($JsonString);
-        while (!$TLS->isHandshaked() && ($loop < 10))
-        {
+        while (!$TLS->isHandshaked() && ($loop < 10)) {
             $loop++;
             $Result = $this->WaitForResponse(WebSocketState::TLSisReceived);
-            if ($Result === false)
-            {
+            if ($Result === false) {
                 $this->SendDebug('TLS no answer', '', 0);
                 trigger_error('TLS no answer', E_USER_NOTICE);
                 break;
@@ -339,16 +326,13 @@ class WebsocketClient extends IPSModule
             $this->State = WebSocketState::TLSisSend;
 
             $this->SendDebug('Get TLS Handshake', $Result, 0);
-            try
-            {
+            try {
                 $TLS->encode($Result);
-                if ($TLS->isHandshaked())
+                if ($TLS->isHandshaked()) {
                     break;
-            }
-            catch (TLSAlertException $e)
-            {
-                if (strlen($out = $e->decode()))
-                {
+                }
+            } catch (TLSAlertException $e) {
+                if (strlen($out = $e->decode())) {
                     $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
                     $JSON['Buffer'] = utf8_encode($SendData);
                     $JsonString = json_encode($JSON);
@@ -359,27 +343,24 @@ class WebsocketClient extends IPSModule
             }
 
             $SendData = $TLS->decode();
-            if (strlen($SendData) > 0)
-            {
+            if (strlen($SendData) > 0) {
                 $this->SendDebug('TLS loop ' . $loop, $SendData, 0);
                 $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
                 $JSON['Buffer'] = utf8_encode($SendData);
                 $JsonString = json_encode($JSON);
                 parent::SendDataToParent($JsonString);
-            }
-            else
-            {
+            } else {
                 $this->SendDebug('TLS waiting loop ' . $loop, $SendData, 0);
             }
         }
-        if (!$TLS->isHandshaked())
+        if (!$TLS->isHandshaked()) {
             return false;
+        }
         $this->Multi_TLS = $TLS;
         $this->SendDebug('TLS ProtocolVersion', $TLS->getDebug()->getProtocolVersion(), 0);
         $UsingCipherSuite = explode("\n", $TLS->getDebug()->getUsingCipherSuite());
         unset($UsingCipherSuite[0]);
-        foreach ($UsingCipherSuite as $Line)
-        {
+        foreach ($UsingCipherSuite as $Line) {
             $this->SendDebug(trim(substr($Line, 0, 14)), trim(substr($Line, 15)), 0);
         }
         return true;
@@ -387,22 +368,22 @@ class WebsocketClient extends IPSModule
 
     /**
      * Baut eine WebSocket Verbindung zu einem Server auf.
-     * 
+     *
      * @access private
      * @return boolean True wenn WebSocket Verbindung besteht.
      */
     private function InitHandshake()
     {
         $URL = parse_url($this->ReadPropertyString('URL'));
-        if (!isset($URL['path']))
+        if (!isset($URL['path'])) {
             $URL['path'] = "/";
+        }
 
         $SendKey = base64_encode(openssl_random_pseudo_bytes(12));
         $Key = base64_encode(sha1($SendKey . "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
         $Header[] = 'GET ' . $URL['path'] . ' HTTP/1.1';
         $Header[] = 'Host: ' . $URL['host'];
-        if ($this->ReadPropertyBoolean("BasisAuth"))
-        {
+        if ($this->ReadPropertyBoolean("BasisAuth")) {
             $realm = base64_encode($this->ReadPropertyString("Username") . ':' . $this->ReadPropertyString("Password"));
             $Header[] = 'Authorization: Basic ' . $realm;
         }
@@ -410,16 +391,17 @@ class WebsocketClient extends IPSModule
         $Header[] = 'Connection: Upgrade';
 
         $Origin = $this->ReadPropertyString('Origin');
-        if ($Origin <> "")
-        {
-            if ($this->ReadPropertyInteger('Version') >= 13)
+        if ($Origin <> "") {
+            if ($this->ReadPropertyInteger('Version') >= 13) {
                 $Header[] = 'Origin: ' . $Origin;
-            else
+            } else {
                 $Header[] = 'Sec-WebSocket-Origin: ' . $Origin;
+            }
         }
         $Protocol = $this->ReadPropertyString('Protocol');
-        if ($Protocol <> "")
+        if ($Protocol <> "") {
             $Header[] = 'Sec-WebSocket-Protocol: ' . $Protocol;
+        }
 
         $Header[] = 'Sec-WebSocket-Key: ' . $SendKey;
         $Header[] = 'Sec-WebSocket-Version: ' . $this->ReadPropertyInteger('Version');
@@ -427,10 +409,8 @@ class WebsocketClient extends IPSModule
         $SendData = implode("\r\n", $Header);
         $this->SendDebug('Send Handshake', $SendData, 0);
         $this->State = WebSocketState::HandshakeSend;
-        try
-        {
-            if ($this->UseTLS)
-            {
+        try {
+            if ($this->UseTLS) {
                 $TLS = $this->Multi_TLS;
                 $SendData = $TLS->output($SendData)->decode();
                 $this->Multi_TLS = $TLS;
@@ -442,29 +422,36 @@ class WebsocketClient extends IPSModule
             parent::SendDataToParent($JsonString);
             // Antwort lesen
             $Result = $this->WaitForResponse(WebSocketState::HandshakeReceived);
-            if ($Result === false)
+            if ($Result === false) {
                 throw new Exception('no answer');
+            }
 
             $this->SendDebug('Get Handshake', $Result, 0);
 
-            if (preg_match("/HTTP\/1.1 (\d{3}) /", $Result, $match))
-                if ((int) $match[1] <> 101)
+            if (preg_match("/HTTP\/1.1 (\d{3}) /", $Result, $match)) {
+                if ((int) $match[1] <> 101) {
                     throw new Exception(HTTP_ERROR_CODES::ToString((int) $match[1]));
+                }
+            }
 
-            if (preg_match("/Connection: (.*)\r\n/", $Result, $match))
-                if (strtolower($match[1]) != 'upgrade')
+            if (preg_match("/Connection: (.*)\r\n/", $Result, $match)) {
+                if (strtolower($match[1]) != 'upgrade') {
                     throw new Exception('Handshake "Connection upgrade" error');
+                }
+            }
 
-            if (preg_match("/Upgrade: (.*)\r\n/", $Result, $match))
-                if (strtolower($match[1]) != 'websocket')
+            if (preg_match("/Upgrade: (.*)\r\n/", $Result, $match)) {
+                if (strtolower($match[1]) != 'websocket') {
                     throw new Exception('Handshake "Upgrade websocket" error');
+                }
+            }
 
-            if (preg_match("/Sec-WebSocket-Accept: (.*)\r\n/", $Result, $match))
-                if ($match[1] <> $Key)
+            if (preg_match("/Sec-WebSocket-Accept: (.*)\r\n/", $Result, $match)) {
+                if ($match[1] <> $Key) {
                     throw new Exception('Sec-WebSocket not match');
-        }
-        catch (Exception $exc)
-        {
+                }
+            }
+        } catch (Exception $exc) {
             $this->State = WebSocketState::unknow;
             trigger_error($exc->getMessage(), E_USER_NOTICE);
             return false;
@@ -475,7 +462,7 @@ class WebsocketClient extends IPSModule
 
     /**
      * Dekodiert die empfangenen Daten und sendet sie an die Childs bzw. bearbeitet die Anfrage.
-     * 
+     *
      * @access private
      * @param WebSocketFrame $Frame Ein Objekt welches einen kompletten Frame enthält.
      */
@@ -483,8 +470,7 @@ class WebsocketClient extends IPSModule
     {
         $this->SendDebug('Receive', $Frame, ($Frame->OpCode == WebSocketOPCode::continuation) ? $this->PayloadTyp - 1 : $Frame->OpCode - 1);
 
-        switch ($Frame->OpCode)
-        {
+        switch ($Frame->OpCode) {
             case WebSocketOPCode::ping:
                 $this->SendPong($Frame->Payload);
                 return;
@@ -510,19 +496,16 @@ class WebsocketClient extends IPSModule
                 return;
         }
 
-        if ($Frame->Fin)
-        {
+        if ($Frame->Fin) {
             $this->SendDataToChilds($Data); // RAW Childs
-        }
-        else
-        {
+        } else {
             $this->PayloadReceiveBuffer = $Data;
         }
     }
 
     /**
      * Senden einen Pong als Antwort an den Server.
-     * 
+     *
      * @access private
      * @param string $Payload Der Payload welche mit dem Pong versendet wird.
      */
@@ -533,13 +516,12 @@ class WebsocketClient extends IPSModule
 
     /**
      * Sendet einen Disconnect Frame an den Server.
-     * 
+     *
      * @return boolean True wenn gesendet bzw. erwartet Antwort eingetroffen ist.
      */
     private function SendDisconnect()
     {
-        if ($this->State == WebSocketState::CloseReceived)
-        {
+        if ($this->State == WebSocketState::CloseReceived) {
             $this->SendDebug('Send', 'Answer Server stream close !', 0);
             $this->Send("", WebSocketOPCode::close);
             $this->State = WebSocketState::unknow;
@@ -555,14 +537,13 @@ class WebsocketClient extends IPSModule
 
     /**
      * Versendet RawData mit OpCode an den IO.
-     * 
+     *
      * @access private
-     * @param string $RawData 
+     * @param string $RawData
      * @param WebSocketOPCode $OPCode
      */
     private function Send(string $RawData, int $OPCode, $Fin = true)
     {
-
         $WSFrame = new WebSocketFrame($OPCode, $RawData);
         $WSFrame->Fin = $Fin;
         $Frame = $WSFrame->ToFrame(true);
@@ -572,15 +553,13 @@ class WebsocketClient extends IPSModule
 
     /**
      * Wartet auf eine Handshake-Antwort.
-     * 
+     *
      * @access private
      */
     private function WaitForResponse(int $State)
     {
-        for ($i = 0; $i < 500; $i++)
-        {
-            if ($this->State == $State)
-            {
+        for ($i = 0; $i < 500; $i++) {
+            if ($this->State == $State) {
                 $Handshake = $this->Handshake;
                 $this->Handshake = "";
                 return $Handshake;
@@ -592,15 +571,13 @@ class WebsocketClient extends IPSModule
 
     /**
      * Wartet auf einen Pong.
-     * 
+     *
      * @access private
      */
     private function WaitForPong()
     {
-        for ($i = 0; $i < 500; $i++)
-        {
-            if ($this->WaitForPong === true)
-            {
+        for ($i = 0; $i < 500; $i++) {
+            if ($this->WaitForPong === true) {
                 $this->WaitForPong = false;
                 $Handshake = $this->Handshake;
                 $this->Handshake = "";
@@ -611,29 +588,26 @@ class WebsocketClient extends IPSModule
         return false;
     }
 
-################## DATAPOINTS CHILDS
+    ################## DATAPOINTS CHILDS
 
     /**
      * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
-     * 
+     *
      * @access public
      * @param string $JSONString
      * @result bool true wenn Daten gesendet werden konnten, sonst false.
      */
     public function ForwardData($JSONString)
     {
-        if ($this->State <> WebSocketState::Connected)
-        {
+        if ($this->State <> WebSocketState::Connected) {
             trigger_error("Not connected", E_USER_NOTICE);
             return false;
         }
         $Data = json_decode($JSONString);
-        if ($Data->DataID == "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}") //Raw weitersenden
-        {
+        if ($Data->DataID == "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}") { //Raw weitersenden
             $this->SendText(utf8_decode($Data->Buffer));
         }
-        if ($Data->DataID == "{BC49DE11-24CA-484D-85AE-9B6F24D89321}") // WSC send
-        {
+        if ($Data->DataID == "{BC49DE11-24CA-484D-85AE-9B6F24D89321}") { // WSC send
             $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Data->Fin);
         }
         return true;
@@ -641,7 +615,7 @@ class WebsocketClient extends IPSModule
 
     /**
      * Sendet die Rohdaten an die Childs.
-     * 
+     *
      * @access private
      * @param string $RawData
      */
@@ -659,11 +633,11 @@ class WebsocketClient extends IPSModule
         $this->SendDataToChildren($Data);
     }
 
-################## DATAPOINTS PARENT    
+    ################## DATAPOINTS PARENT
 
     /**
      * Empfängt Daten vom Parent.
-     * 
+     *
      * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
      * @result bool True wenn Daten verarbeitet wurden, sonst false.
@@ -671,12 +645,10 @@ class WebsocketClient extends IPSModule
     public function ReceiveData($JSONString)
     {
         $data = json_decode($JSONString);
-        if ($this->UseTLS)
-        {
+        if ($this->UseTLS) {
             $Data = $this->TLSBuffer . utf8_decode($data->Buffer);
 
-            if (($this->State == WebSocketState::TLSisSend) or ( $this->State == WebSocketState::TLSisReceived))
-            {
+            if (($this->State == WebSocketState::TLSisSend) or ($this->State == WebSocketState::TLSisReceived)) {
                 $this->WaitForResponse(WebSocketState::TLSisSend);
                 $this->TLSBuffer = "";
                 $this->SendDebug('Receive TLS Handshake', $Data, 0);
@@ -685,64 +657,60 @@ class WebsocketClient extends IPSModule
                 return;
             }
 
-            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (substr($Data, 1, 2) == "\x03\x03"))
-            {
+            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (substr($Data, 1, 2) == "\x03\x03")) {
                 $TLSData = $Data;
                 $Data = "";
                 $TLS = $this->Multi_TLS;
-                while (strlen($TLSData) > 0)
-                {
+                while (strlen($TLSData) > 0) {
                     $len = unpack("n", substr($TLSData, 3, 2))[1] + 5;
-                    if (strlen($TLSData) >= $len)
-                    {
+                    if (strlen($TLSData) >= $len) {
                         $Part = substr($TLSData, 0, $len);
                         $TLSData = substr($TLSData, $len);
                         $this->SendDebug('Receive TLS Frame', $Part, 0);
                         $TLS->encode($Part);
                         $Data .= $TLS->input();
-                    }
-                    else
+                    } else {
                         break;
+                    }
                 }
                 $this->Multi_TLS = $TLS;
                 $this->TLSBuffer = $TLSData;
-                if (strlen($TLSData) > 0)
+                if (strlen($TLSData) > 0) {
                     $this->SendDebug('Receive TLS Part', $TLSData, 0);
-            }
-            else // Anfang (inkl. Buffer) paßt nicht
-            {
+                }
+            } else { // Anfang (inkl. Buffer) paßt nicht
                 $this->TLSBuffer = "";
                 return;
             }
-        }
-        else
+        } else {
             $Data = utf8_decode($data->Buffer);
+        }
 
         $Data = $this->Buffer . $Data;
-        if ($Data == "")
+        if ($Data == "") {
             return;
-        switch ($this->State)
-        {
+        }
+        switch ($this->State) {
             case WebSocketState::HandshakeSend:
-                if (strpos($Data, "\r\n\r\n") !== false)
-                {
+                if (strpos($Data, "\r\n\r\n") !== false) {
                     $this->Handshake = $Data;
                     $this->State = WebSocketState::HandshakeReceived;
                     $Data = "";
-                }
-                else
+                } else {
                     $this->SendDebug('Receive inclomplete Handshake', $Data, 0);
+                }
                 $this->Buffer = $Data;
                 break;
             case WebSocketState::Connected:
                 $this->SendDebug('ReceivePacket', $Data, 1);
-                while (true)
-                {
-                    if (strlen($Data) < 2)
+                while (true) {
+                    if (strlen($Data) < 2) {
                         break;
+                    }
                     $Frame = new WebSocketFrame($Data);
-                    if ($Data == $Frame->Tail)
+                    if ($Data == $Frame->Tail) {
                         break;
+                    }
                     $Data = $Frame->Tail;
                     $Frame->Tail = null;
                     $this->DecodeFrame($Frame);
@@ -758,15 +726,14 @@ class WebsocketClient extends IPSModule
 
     /**
      * Sendet ein Paket an den Parent.
-     * 
+     *
      * @access protected
      * @param string $Data
      */
     protected function SendDataToParent($Data)
     {
         $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
-        if ($this->UseTLS)
-        {
+        if ($this->UseTLS) {
             $TLS = $this->Multi_TLS;
             $this->SendDebug('Send TLS', $Data, 0);
             $Data = $TLS->output($Data)->decode();
@@ -778,18 +745,17 @@ class WebsocketClient extends IPSModule
         parent::SendDataToParent($JsonString);
     }
 
-################## PUBLIC
+    ################## PUBLIC
 
     /**
      * Versendet RawData mit OpCode an den IO.
-     * 
+     *
      * @access public
-     * @param string $Text 
+     * @param string $Text
      */
     public function SendText(string $Text)
     {
-        if ($this->State <> WebSocketState::Connected)
-        {
+        if ($this->State <> WebSocketState::Connected) {
             trigger_error("Not connected", E_USER_NOTICE);
             return false;
         }
@@ -799,7 +765,7 @@ class WebsocketClient extends IPSModule
 
     /**
      * Versendet ein String
-     * 
+     *
      * @access public
      * @param bool $Fin
      * @param int $OPCode
@@ -807,13 +773,11 @@ class WebsocketClient extends IPSModule
      */
     public function SendPacket(bool $Fin, int $OPCode, string $Text)
     {
-        if (($OPCode < 0) || ($OPCode > 2))
-        {
+        if (($OPCode < 0) || ($OPCode > 2)) {
             trigger_error('OpCode invalid', E_USER_NOTICE);
             return false;
         }
-        if ($this->State <> WebSocketState::Connected)
-        {
+        if ($this->State <> WebSocketState::Connected) {
             trigger_error("Not connected", E_USER_NOTICE);
             return false;
         }
@@ -823,14 +787,13 @@ class WebsocketClient extends IPSModule
 
     /**
      * Wird durch den Timer aufgerufen und senden einen Ping an den Server.
-     * 
+     *
      * @access public
      */
     public function Keepalive()
     {
         $result = @$this->SendPing($this->ReadPropertyString('PingPayload'));
-        if ($result !== true)
-        {
+        if ($result !== true) {
             $this->SetStatus(IS_EBASE + 1);
             $this->SetTimerInterval('KeepAlive', 0);
             trigger_error('Ping timeout', E_USER_NOTICE);
@@ -839,7 +802,7 @@ class WebsocketClient extends IPSModule
 
     /**
      * Versendet einen Ping an den Server.
-     * 
+     *
      * @access public
      * @param string $Text Der zu versendene Payload im Ping.
      * @return bool True wenn Ping bestätigt wurde, sonst false.
@@ -848,39 +811,35 @@ class WebsocketClient extends IPSModule
     {
         $this->Send($Text, WebSocketOPCode::ping);
         $Result = $this->WaitForPong();
-        if ($Result === false)
-        {
+        if ($Result === false) {
             trigger_error('Timeout', E_USER_NOTICE);
             return false;
         }
 
-        if ($Result != $Text)
-        {
+        if ($Result != $Text) {
             trigger_error('Wrong pong received', E_USER_NOTICE);
             return false;
         }
         return true;
     }
 
-################## PARENT
+    ################## PARENT
 
     /**
      * Erzeugt einen neuen Parent, wenn keiner vorhanden ist.
-     * 
+     *
      * @param string $ModuleID Die GUID des benötigten Parent.
      */
     protected function RequireParent($ModuleID)
     {
         $instance = IPS_GetInstance($this->InstanceID);
-        if ($instance['ConnectionID'] == 0)
-        {
+        if ($instance['ConnectionID'] == 0) {
             $parentID = IPS_CreateInstance($ModuleID);
             $instance = IPS_GetInstance($parentID);
             IPS_SetName($parentID, "Clientsocket for WebsocketClient");
             IPS_ConnectInstance($this->InstanceID, $parentID);
         }
     }
-
 }
 
 /** @} */

@@ -17,11 +17,11 @@ abstract class ExtensionAbstract
 
     protected function decodeHeader()
     {
-                  // MsgType
-        $header = Core::_pack('C', 0 ) 
+        // MsgType
+        $header = Core::_pack('C', 0)
                 . Core::_pack('C', $this->extType)
                   // Length
-                . Core::_pack( 'n', $this->length );
+                . Core::_pack('n', $this->length);
 
         return $header;
     }

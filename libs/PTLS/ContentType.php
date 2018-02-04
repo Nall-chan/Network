@@ -23,8 +23,7 @@ class ContentType
 
     public static function getString($type)
     {
-        switch($type)
-        {
+        switch ($type) {
             case self::CHANGE_CIPHER_SPEC: return "CHANGE_CIPHER_SPEC";
             case self::ALERT: return "ALERT";
             case self::HANDSHAKE: return "HANDSHAKE";
@@ -34,4 +33,3 @@ class ContentType
         return "UNKNOWN";
     }
 }
-

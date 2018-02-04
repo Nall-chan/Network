@@ -1,10 +1,9 @@
-<?
+<?php
 
 require_once(__DIR__ . "/../libs/NetworkTraits.php");
 
 class JSONFilter extends IPSModule
 {
-
     use DebugHelper,
         UTF8Coder;
 
@@ -22,36 +21,35 @@ class JSONFilter extends IPSModule
         parent::ApplyChanges();
         $Items = json_decode($this->ReadPropertyString('FilterItems'), true);
 
-        if (count($Items) > 0)
-        {
-            foreach ($Items as $Item)
-            {
+        if (count($Items) > 0) {
+            foreach ($Items as $Item) {
                 $Value = "";
-                switch ($Item['Type'])
-                {
+                switch ($Item['Type']) {
                     case 0:
-                        if (is_numeric($Item['Value']))
+                        if (is_numeric($Item['Value'])) {
                             $Value = (bool) $Item['Value'] ? "true" : "false";
-                        else if (is_string($Item['Value']))
+                        } elseif (is_string($Item['Value'])) {
                             $Value = strtolower($Item['Value']) == "true" ? "true" : "false";
-                        else
+                        } else {
                             $Value = "false";
+                        }
                         break;
                     case 1:
-                        if (is_numeric($Item['Value']))
+                        if (is_numeric($Item['Value'])) {
                             $Value = (int) $Item['Value'] . '\D';
-                        else
+                        } else {
                             $Value = '0\D';
+                        }
                         break;
                     case 2:
-                        if (is_numeric($Item['Value']))
+                        if (is_numeric($Item['Value'])) {
                             $Value = (float) $Item['Value'] . '\D';
-                        else
+                        } else {
                             $Value = '0\D';
+                        }
                         break;
                     case 3:
-                        switch ($Item['Condition'])
-                        {
+                        switch ($Item['Condition']) {
                             case 0:
                                 $Value = '';
                                 break;
@@ -67,23 +65,21 @@ class JSONFilter extends IPSModule
                 }
                 $Types[$Item['Item']][] = $Value;
             }
-            foreach ($Types as $Key => $Typ)
-            {
-                if (sizeof($Typ) > 1)
-                {
+            foreach ($Types as $Key => $Typ) {
+                if (sizeof($Typ) > 1) {
                     $ValueLine = '(' . implode('|', $Typ) . ')';
-                }
-                else
+                } else {
                     $ValueLine = $Typ[0];
+                }
 
-                if ($ValueLine != "")
+                if ($ValueLine != "") {
                     $Lines[] = '.*\\\"' . $Key . '\\\":' . $ValueLine . '.*';
-                else
+                } else {
                     $Lines[] = '.*\\\"' . $Key . '\\\":.*';
+                }
             }
-            switch ($this->ReadPropertyInteger("Condition"))
-            {
-                case 0: // and  
+            switch ($this->ReadPropertyInteger("Condition")) {
+                case 0: // and
                     $Line = implode(')(?=', $Lines);
                     $Line = '.*(?=' . $Line . ").*";
                     break;
@@ -94,9 +90,7 @@ class JSONFilter extends IPSModule
 
             $this->SetReceiveDataFilter($Line);
             $this->SendDebug('FILTER', $Line, 0);
-        }
-        else
-        {
+        } else {
             $this->SetReceiveDataFilter('');
             $this->SendDebug('FILTER', 'NOTHING', 0);
         }
@@ -115,19 +109,16 @@ class JSONFilter extends IPSModule
         $this->SendDebug('Receive', $AllData, 0);
         $FilterType = $this->ReadPropertyInteger("Type");
 
-        if ($FilterType == 2)
-        {
+        if ($FilterType == 2) {
             $this->SendDebug('ForwardToChild', $JSONString, 0);
             $this->SendDataToChildren($JSONString);
             return;
         }
 
 
-        if ($FilterType == 0)
-        {
+        if ($FilterType == 0) {
             $ReceiveItems = json_decode($AllData, true);
-            if ($ReceiveItems === NULL)
-            {
+            if ($ReceiveItems === null) {
                 trigger_error('Error receive Data', E_USER_NOTICE);
                 $this->SendDebug('Error', 'Error receive Data', 0);
                 return;
@@ -137,8 +128,7 @@ class JSONFilter extends IPSModule
             $this->SendDebug('ConfigItems', $ConfigItems, 0);
             $Items = array_intersect_key($ReceiveItems, $ConfigItems);
             $this->SendDebug('Items', $Items, 0);
-            foreach (array_keys($Items) as $Item)
-            {
+            foreach (array_keys($Items) as $Item) {
                 $ReceiveItems[$Item] = $this->EncodeUTF8($ReceiveItems[$Item]);
 
                 $SendData["DataID"] = "{018EF6B5-AB94-40C6-AA53-46943E824ACF}";
@@ -154,5 +144,4 @@ class JSONFilter extends IPSModule
     {
         $this->SendDataToChildren($JSONString);
     }
-
 }

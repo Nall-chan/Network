@@ -99,7 +99,6 @@ class Signer
      */
     public function verify(PublicKeyInterface $key, SignatureInterface $signature, \GMP $hash)
     {
-
         $generator = $key->getGenerator();
         $n = $generator->getOrder();
         $r = $signature->getR();

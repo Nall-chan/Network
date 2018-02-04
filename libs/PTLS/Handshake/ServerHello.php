@@ -14,7 +14,7 @@ class ServerHello extends HandshakeAbstract
      */
     private $requestedExtensions;
 
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         parent::__construct($core);
     }
@@ -26,50 +26,50 @@ class ServerHello extends HandshakeAbstract
 
         $data = $this->encodeHeader($data);
 
-        $vMajor = Core::_unpack('C', $data[0] );
-        $vMinor = Core::_unpack('C', $data[1] ); 
+        $vMajor = Core::_unpack('C', $data[0]);
+        $vMinor = Core::_unpack('C', $data[1]);
 
         // Server Random
-        $random = substr( $data, 2, 32 );
+        $random = substr($data, 2, 32);
 
-        $connIn->random = $random; 
+        $connIn->random = $random;
 
         // Session ID
-        $sessionLength = Core::_unpack( 'C', $data[34] );
+        $sessionLength = Core::_unpack('C', $data[34]);
 
         $data = substr($data, 35);
 
         // SessionID if > 0
-        if( $sessionLength > 0 )
-        {
-             $sessionID = substr( $data, 35, $sessionLength);
-             $core->setSessionID($sessionID);
-             $data = substr($data, $sessionLength);
+        if ($sessionLength > 0) {
+            $sessionID = substr($data, 35, $sessionLength);
+            $core->setSessionID($sessionID);
+            $data = substr($data, $sessionLength);
         }
 
-        $cipherID = [Core::_unpack('C', $data[0] ), Core::_unpack('C', $data[1] )];
+        $cipherID = [Core::_unpack('C', $data[0]), Core::_unpack('C', $data[1])];
 
         $cipherSuite = new CipherSuites($cipherID);
 
-        if( is_null($cipherSuite ) )
+        if (is_null($cipherSuite)) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "cipherSuite is null");
+        }
 
         $core->cipherSuite = $cipherSuite;
 
         // Cipher Suite
-        $core->setCompressionMethod(Core::_unpack( 'C', $data[2] ));
+        $core->setCompressionMethod(Core::_unpack('C', $data[2]));
 
         // Extensions
-        if( strlen($data) < 5 )
+        if (strlen($data) < 5) {
             return;
+        }
 
-        $extLength = Core::_unpack( 'n', $data[3] . $data[4] );
-        $data = substr( $data, 5, $extLength );
+        $extLength = Core::_unpack('n', $data[3] . $data[4]);
+        $data = substr($data, 5, $extLength);
 
         $this->requestedExtensions = $extensions = $this->encodeExtensions($data);
 
         $core->extensions->onEncodeServerHello($extensions);
-
     }
 
     public function decode()
@@ -90,26 +90,26 @@ class ServerHello extends HandshakeAbstract
         $data = Core::_pack('C', $vMajor)
               . Core::_pack('C', $vMinor)
               . $connOut->random
-              . Core::_pack('C', $sessionLength );
+              . Core::_pack('C', $sessionLength);
 
-        if( $sessionLength > 0 )
-        {
+        if ($sessionLength > 0) {
             $data .= $sessionID;
         }
 
         $cipherSuite = $core->cipherSuite;
-        list( $cipher1, $cipher2 ) = $cipherSuite->getID();
+        list($cipher1, $cipher2) = $cipherSuite->getID();
 
-        $data .= Core::_pack('C', $cipher1 ) 
-               . Core::_pack('C', $cipher2 ); 
+        $data .= Core::_pack('C', $cipher1)
+               . Core::_pack('C', $cipher2);
 
-        // Compression method length 
+        // Compression method length
         $data .= Core::_pack('C', 0x00);
 
         $extData = $extensions->onDecodeServerHello();
 
-        if( strlen($extData) > 0 )
-            $data .= Core::_pack('n', strlen($extData) ) . $extData;
+        if (strlen($extData) > 0) {
+            $data .= Core::_pack('n', strlen($extData)) . $extData;
+        }
 
         $this->msgType = 2;
         $this->length = strlen($data);
@@ -134,7 +134,7 @@ class ServerHello extends HandshakeAbstract
          *    };
          * } ServerHello;
          */
-        $core = $this->core;        
+        $core = $this->core;
         $connIn = $this->core->getInDuplex();
 
         $protoVersion = $core->getProtocolVersion();
@@ -144,23 +144,17 @@ class ServerHello extends HandshakeAbstract
         $extensions = [];
 
         // ['type' => $extType, 'data' => $extData]
-        foreach( $this->requestedExtensions as $value )
-        {
+        foreach ($this->requestedExtensions as $value) {
             $extensions[]= "Type: " . dechex($value['type'])
-                         . ' Data Length: ' . strlen($value['data'] );
+                         . ' Data Length: ' . strlen($value['data']);
         }
 
         return "[HandshakeType::ServerHello]\n"
              . "Lengh:            " . $this->length . "\n"
              . "Protocol Version: $protoVersion \n"
              . "Session ID:       $sessionID\n"
-             . "[Extensions]\n" 
+             . "[Extensions]\n"
              . implode("\n", $extensions) . "\n"
              . $cipherSuite;
     }
 }
-
-
-
-
-
