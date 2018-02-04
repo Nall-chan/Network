@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once(__DIR__ . "/../libs/NetworkTraits.php");
 
@@ -18,7 +18,7 @@ require_once(__DIR__ . "/../libs/NetworkTraits.php");
 /**
  * ClientSplitter Klasse implementiert einen Splitter auf Basis der IP-Adresse eines Client.
  * Erweitert IPSModule.
- * 
+ *
  * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2017 Michael Tröger
@@ -30,7 +30,6 @@ require_once(__DIR__ . "/../libs/NetworkTraits.php");
  */
 class ClientSplitter extends IPSModule
 {
-
     use BufferHelper;
 
     /**
@@ -47,7 +46,7 @@ class ClientSplitter extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function ApplyChanges()
@@ -56,11 +55,11 @@ class ClientSplitter extends IPSModule
         parent::ApplyChanges();
     }
 
-################## DATAPOINTS CHILDS
+    ################## DATAPOINTS CHILDS
 
     /**
      * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
-     * 
+     *
      * @access public
      * @param string $JSONString
      * @result bool true wenn Daten gesendet werden konnten, sonst false.
@@ -77,11 +76,11 @@ class ClientSplitter extends IPSModule
         $this->SendDataToParent($JSONStringNew);
     }
 
-################## DATAPOINTS PARENT    
+    ################## DATAPOINTS PARENT
 
     /**
      * Empfängt Daten vom Parent.
-     * 
+     *
      * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
 
@@ -96,7 +95,6 @@ class ClientSplitter extends IPSModule
         $JSONStringNew = json_encode($DataNew);
         $this->SendDataToChildren($JSONStringNew);
     }
-
 }
 
 /** @} */

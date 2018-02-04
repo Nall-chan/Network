@@ -38,4 +38,3 @@ class Buffer
         return strlen($this->buffer);
     }
 }
-

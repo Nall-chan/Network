@@ -1,4 +1,4 @@
-<?
+<?php
 
 /* @addtogroup network
  * @{
@@ -12,16 +12,14 @@
  */
 
 
-if (!defined("IPS_BASE"))
-{
-// --- BASE MESSAGE
+if (!defined("IPS_BASE")) {
+    // --- BASE MESSAGE
     define('IPS_BASE', 10000);                             //Base Message
     define('IPS_KERNELSTARTED', IPS_BASE + 1);             //Post Ready Message
     define('IPS_KERNELSHUTDOWN', IPS_BASE + 2);            //Pre Shutdown Message, Runlevel UNINIT Follows
 }
-if (!defined("IPS_KERNELMESSAGE"))
-{
-// --- KERNEL
+if (!defined("IPS_KERNELMESSAGE")) {
+    // --- KERNEL
     define('IPS_KERNELMESSAGE', IPS_BASE + 100);           //Kernel Message
     define('KR_CREATE', IPS_KERNELMESSAGE + 1);            //Kernel is beeing created
     define('KR_INIT', IPS_KERNELMESSAGE + 2);              //Kernel Components are beeing initialised, Modules loaded, Settings read
@@ -29,9 +27,8 @@ if (!defined("IPS_KERNELMESSAGE"))
     define('KR_UNINIT', IPS_KERNELMESSAGE + 4);            //Got Shutdown Message, unloading all stuff
     define('KR_SHUTDOWN', IPS_KERNELMESSAGE + 5);          //Uninit Complete, Destroying Kernel Inteface
 }
-if (!defined("IPS_LOGMESSAGE"))
-{
-// --- KERNEL LOGMESSAGE
+if (!defined("IPS_LOGMESSAGE")) {
+    // --- KERNEL LOGMESSAGE
     define('IPS_LOGMESSAGE', IPS_BASE + 200);              //Logmessage Message
     define('KL_MESSAGE', IPS_LOGMESSAGE + 1);              //Normal Message                      | FG: Black | BG: White  | STLYE : NONE
     define('KL_SUCCESS', IPS_LOGMESSAGE + 2);              //Success Message                     | FG: Black | BG: Green  | STYLE : NONE
@@ -41,16 +38,14 @@ if (!defined("IPS_LOGMESSAGE"))
     define('KL_DEBUG', IPS_LOGMESSAGE + 6);                //Debug Informations + Script Results | FG: Grey  | BG: White  | STLYE : NONE
     define('KL_CUSTOM', IPS_LOGMESSAGE + 7);               //User Message                        | FG: Black | BG: White  | STLYE : NONE
 }
-if (!defined("IPS_MODULEMESSAGE"))
-{
-// --- MODULE LOADER
+if (!defined("IPS_MODULEMESSAGE")) {
+    // --- MODULE LOADER
     define('IPS_MODULEMESSAGE', IPS_BASE + 300);           //ModuleLoader Message
     define('ML_LOAD', IPS_MODULEMESSAGE + 1);              //Module loaded
     define('ML_UNLOAD', IPS_MODULEMESSAGE + 2);            //Module unloaded
 }
-if (!defined("IPS_OBJECTMESSAGE"))
-{
-// --- OBJECT MANAGER
+if (!defined("IPS_OBJECTMESSAGE")) {
+    // --- OBJECT MANAGER
     define('IPS_OBJECTMESSAGE', IPS_BASE + 400);
     define('OM_REGISTER', IPS_OBJECTMESSAGE + 1);          //Object was registered
     define('OM_UNREGISTER', IPS_OBJECTMESSAGE + 2);        //Object was unregistered
@@ -67,9 +62,8 @@ if (!defined("IPS_OBJECTMESSAGE"))
     define('OM_CHILDREMOVED', IPS_OBJECTMESSAGE + 13);     //Child for Object was removed
     define('OM_CHANGEIDENT', IPS_OBJECTMESSAGE + 14);      //Ident was Changed
 }
-if (!defined("IPS_INSTANCEMESSAGE"))
-{
-// --- INSTANCE MANAGER
+if (!defined("IPS_INSTANCEMESSAGE")) {
+    // --- INSTANCE MANAGER
     define('IPS_INSTANCEMESSAGE', IPS_BASE + 500);         //Instance Manager Message
     define('IM_CREATE', IPS_INSTANCEMESSAGE + 1);          //Instance created
     define('IM_DELETE', IPS_INSTANCEMESSAGE + 2);          //Instance deleted
@@ -82,9 +76,8 @@ if (!defined("IPS_INSTANCEMESSAGE"))
     define('IM_SEARCHPROGRESS', IPS_INSTANCEMESSAGE + 9);  //Searching progress in %
     define('IM_SEARCHCOMPLETE', IPS_INSTANCEMESSAGE + 10); //Searching is complete
 }
-if (!defined("IPS_VARIABLEMESSAGE"))
-{
-// --- VARIABLE MANAGER
+if (!defined("IPS_VARIABLEMESSAGE")) {
+    // --- VARIABLE MANAGER
     define('IPS_VARIABLEMESSAGE', IPS_BASE + 600);              //Variable Manager Message
     define('VM_CREATE', IPS_VARIABLEMESSAGE + 1);               //Variable Created
     define('VM_DELETE', IPS_VARIABLEMESSAGE + 2);               //Variable Deleted
@@ -92,18 +85,16 @@ if (!defined("IPS_VARIABLEMESSAGE"))
     define('VM_CHANGEPROFILENAME', IPS_VARIABLEMESSAGE + 4);    //On Profile Name Change
     define('VM_CHANGEPROFILEACTION', IPS_VARIABLEMESSAGE + 5);  //On Profile Action Change
 }
-if (!defined("IPS_SCRIPTMESSAGE"))
-{
-// --- SCRIPT MANAGER
+if (!defined("IPS_SCRIPTMESSAGE")) {
+    // --- SCRIPT MANAGER
     define('IPS_SCRIPTMESSAGE', IPS_BASE + 700);           //Script Manager Message
     define('SM_CREATE', IPS_SCRIPTMESSAGE + 1);            //On Script Create
     define('SM_DELETE', IPS_SCRIPTMESSAGE + 2);            //On Script Delete
     define('SM_CHANGEFILE', IPS_SCRIPTMESSAGE + 3);        //On Script File changed
     define('SM_BROKEN', IPS_SCRIPTMESSAGE + 4);            //Script Broken Status changed
 }
-if (!defined("IPS_EVENTMESSAGE"))
-{
-// --- EVENT MANAGER
+if (!defined("IPS_EVENTMESSAGE")) {
+    // --- EVENT MANAGER
     define('IPS_EVENTMESSAGE', IPS_BASE + 800);             //Event Scripter Message
     define('EM_CREATE', IPS_EVENTMESSAGE + 1);             //On Event Create
     define('EM_DELETE', IPS_EVENTMESSAGE + 2);             //On Event Delete
@@ -120,9 +111,8 @@ if (!defined("IPS_EVENTMESSAGE"))
     define('EM_CHANGECYCLICTIMEFROM', IPS_EVENTMESSAGE + 13);
     define('EM_CHANGECYCLICTIMETO', IPS_EVENTMESSAGE + 14);
 }
-if (!defined("IPS_MEDIAMESSAGE"))
-{
-// --- MEDIA MANAGER
+if (!defined("IPS_MEDIAMESSAGE")) {
+    // --- MEDIA MANAGER
     define('IPS_MEDIAMESSAGE', IPS_BASE + 900);           //Media Manager Message
     define('MM_CREATE', IPS_MEDIAMESSAGE + 1);             //On Media Create
     define('MM_DELETE', IPS_MEDIAMESSAGE + 2);             //On Media Delete
@@ -130,32 +120,28 @@ if (!defined("IPS_MEDIAMESSAGE"))
     define('MM_AVAILABLE', IPS_MEDIAMESSAGE + 4);          //Media Available Status changed
     define('MM_UPDATE', IPS_MEDIAMESSAGE + 5);
 }
-if (!defined("IPS_LINKMESSAGE"))
-{
-// --- LINK MANAGER
+if (!defined("IPS_LINKMESSAGE")) {
+    // --- LINK MANAGER
     define('IPS_LINKMESSAGE', IPS_BASE + 1000);           //Link Manager Message
     define('LM_CREATE', IPS_LINKMESSAGE + 1);             //On Link Create
     define('LM_DELETE', IPS_LINKMESSAGE + 2);             //On Link Delete
     define('LM_CHANGETARGET', IPS_LINKMESSAGE + 3);       //On Link TargetID change
 }
-if (!defined("IPS_FLOWMESSAGE"))
-{
-// --- DATA HANDLER
+if (!defined("IPS_FLOWMESSAGE")) {
+    // --- DATA HANDLER
     define('IPS_FLOWMESSAGE', IPS_BASE + 1100);             //Data Handler Message
     define('FM_CONNECT', IPS_FLOWMESSAGE + 1);             //On Instance Connect
     define('FM_DISCONNECT', IPS_FLOWMESSAGE + 2);          //On Instance Disconnect
 }
-if (!defined("IPS_ENGINEMESSAGE"))
-{
-// --- SCRIPT ENGINE
+if (!defined("IPS_ENGINEMESSAGE")) {
+    // --- SCRIPT ENGINE
     define('IPS_ENGINEMESSAGE', IPS_BASE + 1200);           //Script Engine Message
     define('SE_UPDATE', IPS_ENGINEMESSAGE + 1);             //On Library Refresh
     define('SE_EXECUTE', IPS_ENGINEMESSAGE + 2);            //On Script Finished execution
     define('SE_RUNNING', IPS_ENGINEMESSAGE + 3);            //On Script Started execution
 }
-if (!defined("IPS_PROFILEMESSAGE"))
-{
-// --- PROFILE POOL
+if (!defined("IPS_PROFILEMESSAGE")) {
+    // --- PROFILE POOL
     define('IPS_PROFILEMESSAGE', IPS_BASE + 1300);
     define('PM_CREATE', IPS_PROFILEMESSAGE + 1);
     define('PM_DELETE', IPS_PROFILEMESSAGE + 2);
@@ -167,9 +153,8 @@ if (!defined("IPS_PROFILEMESSAGE"))
     define('PM_ASSOCIATIONREMOVED', IPS_PROFILEMESSAGE + 8);
     define('PM_ASSOCIATIONCHANGED', IPS_PROFILEMESSAGE + 9);
 }
-if (!defined("IPS_TIMERMESSAGE"))
-{
-// --- TIMER POOL
+if (!defined("IPS_TIMERMESSAGE")) {
+    // --- TIMER POOL
     define('IPS_TIMERMESSAGE', IPS_BASE + 1400);            //Timer Pool Message
     define('TM_REGISTER', IPS_TIMERMESSAGE + 1);
     define('TM_UNREGISTER', IPS_TIMERMESSAGE + 2);
@@ -178,8 +163,7 @@ if (!defined("IPS_TIMERMESSAGE"))
     define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
 }
 
-if (!defined("IS_ACTIVE")) //Nur wenn Konstanten noch nicht bekannt sind.
-{
+if (!defined("IS_ACTIVE")) { //Nur wenn Konstanten noch nicht bekannt sind.
 // --- STATUS CODES
     define('IS_SBASE', 100);
     define('IS_CREATING', IS_SBASE + 1); //module is being created
@@ -191,8 +175,7 @@ if (!defined("IS_ACTIVE")) //Nur wenn Konstanten noch nicht bekannt sind.
     define('IS_NOTCREATED', IS_EBASE + 1); //instance could not be created
 }
 
-if (!defined("vtBoolean")) //Nur wenn Konstanten noch nicht bekannt sind.
-{
+if (!defined("vtBoolean")) { //Nur wenn Konstanten noch nicht bekannt sind.
     define('vtBoolean', 0);
     define('vtInteger', 1);
     define('vtFloat', 2);
@@ -200,7 +183,7 @@ if (!defined("vtBoolean")) //Nur wenn Konstanten noch nicht bekannt sind.
 }
 /**
  * DebugHelper ergänzt SendDebug um die Möglichkeit Array und Objekte auszugeben.
- * 
+ *
  */
 trait DebugHelper
 {
@@ -215,43 +198,36 @@ trait DebugHelper
      */
     protected function SendDebug($Message, $Data, $Format)
     {
-        if (is_a($Data, 'WebSocketFrame'))
-        {
+        if (is_a($Data, 'WebSocketFrame')) {
             $this->SendDebug($Message . ' FIN', ($Data->Fin ? "true" : "false"), 0);
             $this->SendDebug($Message . ' OpCode', WebSocketOPCode::ToString($Data->OpCode), 0);
             $this->SendDebug($Message . ' Mask', ($Data->Mask ? "true" : "false"), 0);
-            if ($Data->MaskKey != "")
+            if ($Data->MaskKey != "") {
                 $this->SendDebug($Message . ' MaskKey', $Data->MaskKey, 1);
-            if ($Data->Payload != "")
+            }
+            if ($Data->Payload != "") {
                 $this->SendDebug($Message . ' Payload', $Data->Payload, ($Data->OpCode == WebSocketOPCode::text ? (int) $Data->Mask : ($Format)));
+            }
 
-            if ($Data->PayloadRAW != "")
+            if ($Data->PayloadRAW != "") {
                 $this->SendDebug($Message . ' PayloadRAW', $Data->PayloadRAW, ($Data->OpCode == WebSocketOPCode::text ? 0 : 1));
-        }
-        elseif (is_object($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
-
+            }
+        } elseif (is_object($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
-        }
-        else if (is_array($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
+        } elseif (is_array($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
-        }
-        else
-        {
-            if (is_bool($Data))
+        } else {
+            if (is_bool($Data)) {
                 parent::SendDebug($Message, ($Data ? 'true' : 'false'), 0);
-            else
+            } else {
                 parent::SendDebug($Message, (string) $Data, $Format);
+            }
         }
     }
-
 }
 
 /**
@@ -267,22 +243,23 @@ trait InstanceStatus
      */
     protected function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-        switch ($Message)
-        {
+        switch ($Message) {
             case FM_CONNECT:
                 $this->RegisterParent();
-                if ($this->HasActiveParent())
+                if ($this->HasActiveParent()) {
                     $this->IOChangeState(IS_ACTIVE);
-                else
+                } else {
                     $this->IOChangeState(IS_INACTIVE);
+                }
                 break;
             case FM_DISCONNECT:
                 $this->RegisterParent();
                 $this->IOChangeState(IS_INACTIVE);
                 break;
             case IM_CHANGESTATUS:
-                if ($SenderID == $this->ParentID)
+                if ($SenderID == $this->ParentID) {
                     $this->IOChangeState($Data[0]);
+                }
                 break;
         }
     }
@@ -290,7 +267,7 @@ trait InstanceStatus
     /**
      * Ermittelt den Parent und verwaltet die Einträge des Parent im MessageSink
      * Ermöglicht es das Statusänderungen des Parent empfangen werden können.
-     * 
+     *
      * @access protected
      * @return int ID des Parent.
      */
@@ -298,14 +275,15 @@ trait InstanceStatus
     {
         $OldParentId = $this->ParentID;
         $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        if ($ParentId <> $OldParentId)
-        {
-            if ($OldParentId > 0)
+        if ($ParentId <> $OldParentId) {
+            if ($OldParentId > 0) {
                 $this->UnregisterMessage($OldParentId, IM_CHANGESTATUS);
-            if ($ParentId > 0)
+            }
+            if ($ParentId > 0) {
                 $this->RegisterMessage($ParentId, IM_CHANGESTATUS);
-            else
+            } else {
                 $ParentId = 0;
+            }
             $this->ParentID = $ParentId;
         }
         return $ParentId;
@@ -313,22 +291,21 @@ trait InstanceStatus
 
     /**
      * Prüft den Parent auf vorhandensein und Status.
-     * 
+     *
      * @access protected
      * @return bool True wenn Parent vorhanden und in Status 102, sonst false.
      */
     protected function HasActiveParent()
     {
         $instance = @IPS_GetInstance($this->InstanceID);
-        if ($instance['ConnectionID'] > 0)
-        {
+        if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
-            if ($parent['InstanceStatus'] == 102)
+            if ($parent['InstanceStatus'] == 102) {
                 return true;
+            }
         }
         return false;
     }
-
 }
 
 /**
@@ -339,18 +316,16 @@ trait BufferHelper
 
     /**
      * Wert einer Eigenschaft aus den InstanceBuffer lesen.
-     * 
+     *
      * @access public
      * @param string $name Propertyname
      * @return mixed Value of Name
      */
     public function __get($name)
     {
-        if (strpos($name, 'Multi_') === 0)
-        {
+        if (strpos($name, 'Multi_') === 0) {
             $Lines = "";
-            foreach ($this->{"BufferListe_" . $name} as $BufferIndex)
-            {
+            foreach ($this->{"BufferListe_" . $name} as $BufferIndex) {
                 $Lines .= $this->{'Part_' . $name . $BufferIndex};
             }
             return unserialize($Lines);
@@ -360,7 +335,7 @@ trait BufferHelper
 
     /**
      * Wert einer Eigenschaft in den InstanceBuffer schreiben.
-     * 
+     *
      * @access public
      * @param string $name Propertyname
      * @param mixed Value of Name
@@ -368,28 +343,25 @@ trait BufferHelper
     public function __set($name, $value)
     {
         $Data = serialize($value);
-        if (strpos($name, 'Multi_') === 0)
-        {
+        if (strpos($name, 'Multi_') === 0) {
             $OldBuffers = $this->{"BufferListe_" . $name};
-            if ($OldBuffers == false)
+            if ($OldBuffers == false) {
                 $OldBuffers = array();
+            }
             $Lines = str_split($Data, 8000);
-            foreach ($Lines as $BufferIndex => $BufferLine)
-            {
+            foreach ($Lines as $BufferIndex => $BufferLine) {
                 $this->{'Part_' . $name . $BufferIndex} = $BufferLine;
             }
             $NewBuffers = array_keys($Lines);
             $this->{"BufferListe_" . $name} = $NewBuffers;
             $DelBuffers = array_diff_key($OldBuffers, $NewBuffers);
-            foreach ($DelBuffers as $DelBuffer)
-            {
+            foreach ($DelBuffers as $DelBuffer) {
                 $this->{'Part_' . $name . $DelBuffer} = "";
             }
             return;
         }
         $this->SetBuffer($name, $Data);
     }
-
 }
 
 trait UTF8Coder
@@ -397,19 +369,17 @@ trait UTF8Coder
 
     /**
      * Führt eine UTF8-Dekodierung für einen String oder ein Objekt durch (rekursiv)
-     * 
+     *
      * @access private
      * @param string|object $item Zu dekodierene Daten.
      * @return string|object Dekodierte Daten.
      */
     private function DecodeUTF8($item)
     {
-        if (is_string($item))
+        if (is_string($item)) {
             $item = utf8_decode($item);
-        else if (is_object($item))
-        {
-            foreach ($item as $property => $value)
-            {
+        } elseif (is_object($item)) {
+            foreach ($item as $property => $value) {
                 $item->{$property} = $this->DecodeUTF8($value);
             }
         }
@@ -418,25 +388,22 @@ trait UTF8Coder
 
     /**
      * Führt eine UTF8-Enkodierung für einen String oder ein Objekt durch (rekursiv)
-     * 
+     *
      * @access private
      * @param string|object $item Zu Enkodierene Daten.
      * @return string|object Enkodierte Daten.
      */
     private function EncodeUTF8($item)
     {
-        if (is_string($item))
+        if (is_string($item)) {
             $item = utf8_encode($item);
-        else if (is_object($item))
-        {
-            foreach ($item as $property => $value)
-            {
+        } elseif (is_object($item)) {
+            foreach ($item as $property => $value) {
                 $item->{$property} = $this->EncodeUTF8($value);
             }
         }
         return $item;
     }
-
 }
 
 /** @} */

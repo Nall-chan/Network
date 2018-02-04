@@ -14,8 +14,9 @@ abstract class ProtocolAbstract implements DataConverterInterface
      */
     public function get($property, $default = null)
     {
-        if( property_exists($this, $property) )
+        if (property_exists($this, $property)) {
             return $this->$property;
+        }
 
         return $default;
     }
@@ -29,4 +30,3 @@ abstract class ProtocolAbstract implements DataConverterInterface
         return $this;
     }
 }
-

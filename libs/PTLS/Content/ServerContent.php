@@ -10,7 +10,7 @@ use PTLS\Exceptions\TLSAlertException;
 
 class ServerContent extends ContentAbstract
 {
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         $this->core = $core;
         $this->expectedHandshakeType = HandshakeType::CLIENT_HELLO;
@@ -37,16 +37,16 @@ class ServerContent extends ContentAbstract
          *
          * Get Handshake Msg type
          */
-        $handshakeType = Core::_unpack('C', $payload[0] );
+        $handshakeType = Core::_unpack('C', $payload[0]);
 
-        if( $core->isHandshaked )
-        {
+        if ($core->isHandshaked) {
             throw new TLSAlertException(Alert::create(Alert::UNEXPECTED_MESSAGE),
                 "Handshake message received after handshake is complete: $handshakeType");
         }
 
-        if( $this->expectedHandshakeType != $handshakeType )
+        if ($this->expectedHandshakeType != $handshakeType) {
             throw new TLSAlertException(Alert::create(Alert::UNEXPECTED_MESSAGE), "Unexpected handshake message");
+        }
 
         $handshake = HandshakeFactory::getInstance($core, $handshakeType);
 
@@ -55,39 +55,37 @@ class ServerContent extends ContentAbstract
         $this->content = $handshake;
 
         // Set the response into bufferOut if any
-        switch($this->expectedHandshakeType)
-        {
+        switch ($this->expectedHandshakeType) {
             case HandshakeType::CLIENT_HELLO:
 
                 // ===========================================
                 // Send Server Hello
-                // =========================================== 
+                // ===========================================
                 $serverHello = HandshakeFactory::getInstance($core, HandshakeType::SERVER_HELLO);
     
-                $bufferOut->set( $this->decodeContent($serverHello->decode(), ContentType::HANDSHAKE) );    
+                $bufferOut->set($this->decodeContent($serverHello->decode(), ContentType::HANDSHAKE));
 
                 // ===========================================
                 // Send Certificate
-                // ===========================================  
+                // ===========================================
                 $certificate = HandshakeFactory::getInstance($core, HandshakeType::CERTIFICATE);
     
-                $bufferOut->append( $this->decodeContent($certificate->decode(), ContentType::HANDSHAKE) );    
+                $bufferOut->append($this->decodeContent($certificate->decode(), ContentType::HANDSHAKE));
 
                 // ===========================================
                 // Send Server Key Exchange
                 // ===========================================
-                if( $core->cipherSuite->isECDHEEnabled() )
-                {
+                if ($core->cipherSuite->isECDHEEnabled()) {
                     $curveOut = $extensions->call('Curve', 'decodeServerKeyExchange', null);
-                    $bufferOut->append( $this->decodeContent($curveOut, ContentType::HANDSHAKE) );
+                    $bufferOut->append($this->decodeContent($curveOut, ContentType::HANDSHAKE));
                 }
     
                 // ===========================================
                 // Send Server Hello Done
-                // =========================================== 
+                // ===========================================
                 $serverHelloDone = HandshakeFactory::getInstance($core, HandshakeType::SERVER_HELLO_DONE);
     
-                $bufferOut->append( $this->decodeContent($serverHelloDone->decode(), ContentType::HANDSHAKE) );
+                $bufferOut->append($this->decodeContent($serverHelloDone->decode(), ContentType::HANDSHAKE));
 
                 // Update state
                 $this->expectedHandshakeType = HandshakeType::CLIENT_KEY_EXCHANGE;
@@ -105,30 +103,26 @@ class ServerContent extends ContentAbstract
                 // ===========================================
                 $changeCipherSpec = new ChangeCipherSpec();
   
-                $bufferOut->set( $this->decodeContent( $changeCipherSpec->decode(), ContentType::CHANGE_CIPHER_SPEC) ); 
+                $bufferOut->set($this->decodeContent($changeCipherSpec->decode(), ContentType::CHANGE_CIPHER_SPEC));
 
                 // Enable encryption
                 $recordOut->cipherChanged();
     
                 // ===========================================
                 // Send Server finished
-                // =========================================== 
+                // ===========================================
                 $serverFinished = HandShakeFactory::getInstance($core, HandshakeType::FINISHED);
     
-                $bufferOut->append( $this->decodeContent(  $serverFinished->decode(), ContentType::HANDSHAKE) );    
+                $bufferOut->append($this->decodeContent($serverFinished->decode(), ContentType::HANDSHAKE));
 
                 $core->isHandshaked = true;
 
                 break;
         }
 
-        if( strlen($payload) > $handshake->get('length') )
-        {
+        if (strlen($payload) > $handshake->get('length')) {
             $payload = substr($payload, $handshake->get('length'));
             $this->encodeHandshake($payload);
         }
-
     }
-
 }
-

@@ -23,15 +23,15 @@ class TLSExtensions
     private $core;
     private $instances;
 
-    public function __construct( $core)
+    public function __construct($core)
     {
         $this->core = $core;
         $this->instances = [];
 
-        foreach(self::$supportedList as $type => $className)
-        {
-            if( isset( $this->instances[$className] ) )
+        foreach (self::$supportedList as $type => $className) {
+            if (isset($this->instances[$className])) {
                 continue;
+            }
 
             $this->instances[$className] = $this->getExtension($type);
         }
@@ -39,57 +39,55 @@ class TLSExtensions
 
     private function getExtension($type)
     {
-        switch($type)
-        {
+        switch ($type) {
             case self::TYPE_ELLIPTIC_CURVES:
             case self::TYPE_EC_POINT_FORMATS:
                 return new Curve($this->core);
             case self::TYPE_SIGNATURE_ALGORITHM:
                 return new SignatureAlgorithm($this->core);
-        } 
+        }
 
         return null;
     }
 
-    private function onEncode( $method,  $extensions)
+    private function onEncode($method, $extensions)
     {
         // $extensions[] = ['type' => $extType, 'data' => $extData];
-        foreach( $extensions as $extension )
-        {
-            if( !isset( $extension['type'] ) || !isset( $extension['data'] ) )
+        foreach ($extensions as $extension) {
+            if (!isset($extension['type']) || !isset($extension['data'])) {
                 throw new Exception("Invalid Extension Paramenter");
+            }
 
             $type = $extension['type'];
             $data = $extension['data'];
 
-            if( array_key_exists( $type, self::$supportedList ) )
-            {
+            if (array_key_exists($type, self::$supportedList)) {
                 $className = self::$supportedList[$type];
 
-                if( !isset( $this->instances[$className] ) )
+                if (!isset($this->instances[$className])) {
                     $this->instances[$className] = $this->getExtension($type);
+                }
 
                 $ins = $this->instances[$className];
 
-                if( !$ins instanceof ExtensionAbstract )
+                if (!$ins instanceof ExtensionAbstract) {
                     throw new Exception("Not ExtensionAbstract");
-                call_user_func(array($ins, $method) , $type, $data);// fix php 5.6
+                }
+                call_user_func(array($ins, $method), $type, $data);// fix php 5.6
                 //[$ins, $method]($type, $data);
             }
         }
     }
 
-    private function onDecode( $method)
+    private function onDecode($method)
     {
         $out = '';
 
-        if( !count( $this->instances ) )
-        {
+        if (!count($this->instances)) {
             return $out;
         }
 
-        foreach( $this->instances as $className => $ins )
-        {
+        foreach ($this->instances as $className => $ins) {
             //$out .= [$ins, $method]();
             $out .= call_user_func(array($ins, $method)); // fix php 5.6
         }
@@ -97,15 +95,13 @@ class TLSExtensions
         return $out;
     }
 
-    public function __call( $method,  $args)
+    public function __call($method, $args)
     {
-        if( false !== strpos($method, 'onEncode') )
-        {
+        if (false !== strpos($method, 'onEncode')) {
             return $this->onEncode($method, $args[0]);
         }
 
-        if( false !== strpos($method, 'onDecode') )
-        {
+        if (false !== strpos($method, 'onDecode')) {
             return $this->onDecode($method);
         }
     }
@@ -115,18 +111,12 @@ class TLSExtensions
      */
     public function call($className, $method, $default, ...$args)
     {
-        if( isset( $this->instances[$className] ) && 
-            is_callable( [$this->instances[$className], $method] ) )
-        {
-            return call_user_func(array($this->instances[$className], $method),...$args);
+        if (isset($this->instances[$className]) &&
+            is_callable([$this->instances[$className], $method])) {
+            return call_user_func(array($this->instances[$className], $method), ...$args);
 //            return [$this->instances[$className], $method](...$args);
         }
 
         return $default;
     }
 }
-
-
-
-
-

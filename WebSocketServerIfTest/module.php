@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
  * @addtogroup network
@@ -16,7 +16,7 @@
 /**
  * WebSocketInterfaceTest Klasse zeigt die Verwendung des Datenaustausches mit einem WebSocket-Server oder -Client.
  * Erweitert IPSModule.
- * 
+ *
  * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2017 Michael Tröger
@@ -39,7 +39,7 @@ class WebSocketInterfaceTest extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function ApplyChanges()
@@ -76,11 +76,11 @@ class WebSocketInterfaceTest extends IPSModule
         return $this->SendDataToParent(json_encode($SendData));
     }
 
-################## DATAPOINTS PARENT    
+    ################## DATAPOINTS PARENT
 
     /**
      * Empfängt Daten vom Parent.
-     * 
+     *
      * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
 
@@ -89,9 +89,8 @@ class WebSocketInterfaceTest extends IPSModule
     {
         $Data = json_decode($JSONString);
 
-        // Daten vom WebSocket-Server 
-        if ($Data->DataID == "{8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}")
-        {
+        // Daten vom WebSocket-Server
+        if ($Data->DataID == "{8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}") {
             $this->SendDebug("FrameTyp", $Data->FrameTyp, 0);
             $this->SendDebug("ClientIP", $Data->ClientIP, 0);
             $this->SendDebug("ClientPort", $Data->ClientPort, 0);
@@ -99,13 +98,11 @@ class WebSocketInterfaceTest extends IPSModule
         }
 
         // Daten vom WebSocket-Client
-        if ($Data->DataID == "{C51A4B94-8195-4673-B78D-04D91D52D2DD}")
-        {
+        if ($Data->DataID == "{C51A4B94-8195-4673-B78D-04D91D52D2DD}") {
             $this->SendDebug("FrameTyp", $Data->FrameTyp, 0);
             $this->SendDebug("Receive", utf8_decode($Data->Buffer), 0);
         }
     }
-
 }
 
 /** @} */

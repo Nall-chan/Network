@@ -9,17 +9,19 @@ class ApplicationData extends ProtocolAbstract
 {
     private $core;
 
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         $this->core = $core;
     }
 
     public function encode($data)
     {
-         $this->core->getBufferIn()->append($data);
+        $this->core->getBufferIn()->append($data);
     }
 
-    public function decode(){}
+    public function decode()
+    {
+    }
 
     public function debugInfo()
     {
@@ -27,4 +29,3 @@ class ApplicationData extends ProtocolAbstract
               . "Data Length: " . $this->core->getBufferIn()->length();
     }
 }
-

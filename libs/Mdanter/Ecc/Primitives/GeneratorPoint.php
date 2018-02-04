@@ -48,7 +48,6 @@ class GeneratorPoint extends Point
      */
     public function isValid(\GMP $x, \GMP $y)
     {
-       
         $math = $this->getAdapter();
 
         $n = $this->getOrder();

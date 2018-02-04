@@ -17,10 +17,10 @@ abstract class ContentAbstract
 
     abstract public function encodeHandshake($data);
 
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         $this->core = $core;
-        $this->content = 
+        $this->content =
         $this->appData = null;
     }
 
@@ -36,8 +36,7 @@ abstract class ContentAbstract
     {
         $core = $this->core;
 
-        switch($contentType)
-        {
+        switch ($contentType) {
             case ContentType::HANDSHAKE:
 
                 // Count handshake for later to create finished message
@@ -74,10 +73,10 @@ abstract class ContentAbstract
     {
         $core = $this->core;
 
-        $recordOut = $core->getOutDuplex()->getRecord(); 
+        $recordOut = $core->getOutDuplex()->getRecord();
 
         $out = $recordOut->set('contentType', $contentType)
-                         ->set('payload', $payload )
+                         ->set('payload', $payload)
                          ->decode();
 
         return $out;
@@ -87,8 +86,9 @@ abstract class ContentAbstract
     {
         $core = $this->core;
 
-        if( $this->expectedHandshakeType != HandshakeType::FINISHED || $core->isHandshaked )
+        if ($this->expectedHandshakeType != HandshakeType::FINISHED || $core->isHandshaked) {
             throw new TLSException("Invalid message");
+        }
 
         $changeCipherSpec = new ChangeCipherSpec();
         $changeCipherSpec->encode($data);
@@ -100,11 +100,13 @@ abstract class ContentAbstract
     {
         $core = $this->core;
 
-        if( !$core->isHandshaked )
+        if (!$core->isHandshaked) {
             throw new TLSException("Handshake Imcomplete");
+        }
 
-        if( is_null( $this->appData ) )
+        if (is_null($this->appData)) {
             $this->appData = new ApplicationData($this->core);
+        }
 
         $this->appData->encode($data);
     }
@@ -118,21 +120,18 @@ abstract class ContentAbstract
 
         $this->content = $alert;
 
-        $core->isClosed = true;        
+        $core->isClosed = true;
 
-        if( $alert->getDescCode() != Alert::CLOSE_NOTIFY )
+        if ($alert->getDescCode() != Alert::CLOSE_NOTIFY) {
             throw new TLSAlertException($alert, "Alert received from peer");
+        }
     }
 
     public function debugInfo()
     {
-        if( is_null( $this->content ) ) return;
+        if (is_null($this->content)) {
+            return;
+        }
         return $this->content->debugInfo();
     }
 }
-
-
-
-
-
-

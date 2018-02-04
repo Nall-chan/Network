@@ -10,8 +10,7 @@ abstract class HandshakeFactory
 {
     public static function getInstance(Core $core, $type)
     {
-        switch( $type )
-        {
+        switch ($type) {
             case HandshakeType::HELLO_REQUEST:
                 return new HelloRequest($core);
             case HandshakeType::CLIENT_HELLO:
@@ -33,4 +32,3 @@ abstract class HandshakeFactory
         throw new TLSAlertException(Alert::create(Alert::UNEXPECTED_MESSAGE), "Unknow Handshake Type: $type");
     }
 }
-

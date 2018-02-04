@@ -6,7 +6,7 @@ use PTLS\Core;
 
 class Certificate extends HandshakeAbstract
 {
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         parent::__construct($core);
     }
@@ -17,13 +17,14 @@ class Certificate extends HandshakeAbstract
 
         $data = $this->encodeHeader($data);
 
-        $crtsLength = Core::_unpack('N', $data[0] . $data[1] . $data[2] . 0x00 ) >> 8;
-        $crtsData   = substr( $data, 3, $crtsLength );
+        $crtsLength = Core::_unpack('N', $data[0] . $data[1] . $data[2] . 0x00) >> 8;
+        $crtsData   = substr($data, 3, $crtsLength);
 
-        for( $i = 0; $i < $crtsLength; )
-        {
-            $crtLength = Core::_unpack('n', $crtsData[$i+1] . $crtsData[$i+2] );
-            if( 0 >= (int)$crtLength ) break;
+        for ($i = 0; $i < $crtsLength;) {
+            $crtLength = Core::_unpack('n', $crtsData[$i+1] . $crtsData[$i+2]);
+            if (0 >= (int)$crtLength) {
+                break;
+            }
 
             $crtDers[] = substr($crtsData, $i+3, $crtLength);
 
@@ -40,17 +41,16 @@ class Certificate extends HandshakeAbstract
 
         $crtData = '';
 
-        foreach( $crtDers as $crtDer )
-        {
+        foreach ($crtDers as $crtDer) {
             $crtLength = strlen($crtDer);
     
             // Cert Length
-            $crtData .= Core::_pack('C', 0x00 )
-                      . Core::_pack('n', $crtLength )
+            $crtData .= Core::_pack('C', 0x00)
+                      . Core::_pack('n', $crtLength)
                       . $crtDer;
         }
 
-        $data = Core::_pack('C', 0x00 )
+        $data = Core::_pack('C', 0x00)
               . Core::_pack('n', strlen($crtData))
               . $crtData;
 
@@ -70,9 +70,3 @@ class Certificate extends HandshakeAbstract
              . "Number of Certificates:  " . count($crtDers) . "\n";
     }
 }
-
-
-
-
-
-

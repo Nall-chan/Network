@@ -1,10 +1,9 @@
-<?
+<?php
 
 require_once(__DIR__ . "/../libs/NetworkTraits.php");
 
 class JSONValues extends IPSModule
 {
-
     use DebugHelper,
         UTF8Coder;
 
@@ -36,14 +35,13 @@ class JSONValues extends IPSModule
 //        print_r($Items);
         $ConfigItems = array_column($Items, 'Type', 'Item');
 
-        foreach ($ConfigItems as $Item => $Typ)
-        {
-            if ($Item == "")
+        foreach ($ConfigItems as $Item => $Typ) {
+            if ($Item == "") {
                 continue;
+            }
             $Ident = $this->generateIdent($Item);
             $vid = @$this->GetIDForIdent($Ident);
-            if ($vid === false)
-            {
+            if ($vid === false) {
                 $this->MaintainVariable($Ident, $Item, $Typ, '', 0, true);
                 $vid = $this->GetIDForIdent($Ident);
             }
@@ -56,8 +54,7 @@ class JSONValues extends IPSModule
         $this->SendDebug('Receive', $Data, 0);
         $ReceiveItems = json_decode($Data, true);
 
-        if ($ReceiveItems === NULL)
-        {
+        if ($ReceiveItems === null) {
             trigger_error('Error receive Data', E_USER_NOTICE);
             return;
         }
@@ -68,12 +65,10 @@ class JSONValues extends IPSModule
         $Items = array_intersect_key($ReceiveItems, $ConfigItems);
         $this->SendDebug('ProcessItems', $Items, 0);
 
-        foreach ($Items as $Item => $Value)
-        {
+        foreach ($Items as $Item => $Value) {
             $Ident = $this->generateIdent($Item);
             $vid = @$this->GetIDForIdent($Ident);
-            if ($vid === false)
-            {
+            if ($vid === false) {
                 $this->MaintainVariable($Ident, $Item, $ConfigItems[$Item], '', 0, true);
                 $vid = $this->GetIDForIdent($Ident);
             }
@@ -83,9 +78,9 @@ class JSONValues extends IPSModule
 
     protected function generateIdent($Name)
     {
-        if (preg_match('/^[a-zA-Z0-9]+$/', $Name))
+        if (preg_match('/^[a-zA-Z0-9]+$/', $Name)) {
             return $Name;
+        }
         return preg_replace("/[^a-z0-9]+/i", "", $Name);
     }
-
 }

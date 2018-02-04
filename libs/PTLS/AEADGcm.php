@@ -20,7 +20,7 @@ class AEADGcm
      */
     private static function useOpenSSL()
     {
-        return (version_compare(PHP_VERSION, '7.1') >= 0 ) ? true : false;
+        return (version_compare(PHP_VERSION, '7.1') >= 0) ? true : false;
     }
 
     /**
@@ -39,8 +39,9 @@ class AEADGcm
         // 128(16), 192(24) or 256(32)
         $l = strlen($password);
 
-        if( $l != 16 && $l != 24 && $l != 32 )
+        if ($l != 16 && $l != 24 && $l != 32) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Invalid gcm key length: $l");
+        }
 
         return $l * 8;
     }
@@ -52,52 +53,48 @@ class AEADGcm
 
     public static function encrypt($data, $password, $IV, $AAD)
     {
-        if( self::useOpenSSL() )
-        {
+        if (self::useOpenSSL()) {
             $method = self::getMethod($password);
             $encrypt = openssl_encrypt($data, $method, $password, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $IV, $tag, $AAD);
-        }
-        else if( self::useSO() )
-        {
-            try{
+        } elseif (self::useSO()) {
+            try {
                 $cipher = \Crypto\Cipher::aes(\Crypto\Cipher::MODE_GCM, self::bitLen($password));
                 $cipher->setAAD($AAD);
                 $encrypt = $cipher->encrypt($data, $password, $IV);
                 $tag = $cipher->getTag();
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 //echo $e->getMessage();
                 return false;
             }
-        }
-        else
-        {
-            try{
+        } else {
+            try {
                 list($encrypt, $tag) = AESGCM::encrypt($password, $IV, $data, $AAD);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 //echo $e->getMessage();
                 return false;
             }
         }
 
         return $encrypt . $tag;
-     }
+    }
 
     public static function decrypt($encData, $password, $IV, $AAD)
     {
         /*
          * https://tools.ietf.org/html/rfc5116#section-5.1
-         * 
+         *
          * An authentication tag with a length of 16 octets (128
          * bits) is used.  The AEAD_AES_128_GCM ciphertext is formed by
          * appending the authentication tag provided as an output to the GCM
          * encryption operation to the ciphertext that is output by that
-         * operation. 
+         * operation.
          *
          * ciphertext is exactly 16 octets longer than its
          * corresponding plaintext.
          */
-        if( strlen($encData) < self::TAG_LEN )
+        if (strlen($encData) < self::TAG_LEN) {
             return false;
+        }
 
         // Get the tag appended to cipher text
         $tag = substr($encData, strlen($encData) - self::TAG_LEN, self::TAG_LEN);
@@ -105,34 +102,27 @@ class AEADGcm
         // Resize the cipher text
         $encData = substr($encData, 0, strlen($encData) - self::TAG_LEN);
 
-        if( self::useOpenSSL() )
-        {
+        if (self::useOpenSSL()) {
             $method = self::getMethod($password);
             $data = openssl_decrypt($encData, $method, $password, OPENSSL_RAW_DATA, $IV, $tag, $AAD);
-        }
-        else if( self::useSO() )
-        {
-            try{
+        } elseif (self::useSO()) {
+            try {
                 $cipher = \Crypto\Cipher::aes(\Crypto\Cipher::MODE_GCM, self::bitLen($password));
                 $cipher->setTag($tag);
                 $cipher->setAAD($AAD);
                 $data = $cipher->decrypt($encData, $password, $IV);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return false;
             }
-        }
-        else
-        {
-            try{
+        } else {
+            try {
                 $data = AESGCM::decrypt($password, $IV, $encData, $AAD, $tag);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 //echo $e->getMessage();
                 return false;
             }
         }
 
         return $data;
-     }
+    }
 }
-
-

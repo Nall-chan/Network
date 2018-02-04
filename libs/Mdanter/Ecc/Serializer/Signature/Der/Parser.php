@@ -27,7 +27,7 @@ class Parser
 
         /** @var \FG\ASN1\Universal\Integer $r  */
         /** @var \FG\ASN1\Universal\Integer $s  */
-        list ($r, $s) = $content;
+        list($r, $s) = $content;
         if ($r->getType() !== Identifier::INTEGER || $s->getType() !== Identifier::INTEGER) {
             throw new \RuntimeException('Failed to parse signature');
         }

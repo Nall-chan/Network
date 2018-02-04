@@ -22,7 +22,6 @@ use FG\ASN1\ExplicitlyTaggedObject;
  */
 class DerPrivateKeySerializer implements PrivateKeySerializerInterface
 {
-
     const VERSION = 1;
 
     /**

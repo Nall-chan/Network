@@ -1,8 +1,7 @@
-<?
+<?php
 
 class AutoloaderTLS
 {
-
     private $namespace;
 
     public function __construct($namespace = null)
@@ -18,8 +17,8 @@ class AutoloaderTLS
     public function loadClass($className)
     {
         $file = __DIR__ . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
-        if (file_exists($file))
+        if (file_exists($file)) {
             require_once $file;
+        }
     }
-
 }

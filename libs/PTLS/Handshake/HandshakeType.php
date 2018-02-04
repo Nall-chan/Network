@@ -11,8 +11,8 @@ namespace PTLS\Handshake;
  *          finished(20), (255)
  *      } HandshakeType;
  * struct {
- *          HandshakeType msg_type; 
- *          uint24 length;      
+ *          HandshakeType msg_type;
+ *          uint24 length;
  *          select (HandshakeType) {
  *              case hello_request:       HelloRequest;
  *              case client_hello:        ClientHello;
@@ -40,4 +40,3 @@ class HandshakeType
     const CLIENT_KEY_EXCHANGE = 16;
     const FINISHED            = 20;
 }
-

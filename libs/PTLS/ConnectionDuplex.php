@@ -12,7 +12,9 @@ use PTLS\Content\Alert;
 class ConnectionDuplex
 {
     public $random;
-    public $MAC, $IV, $Key;
+    public $MAC;
+    public $IV;
+    public $Key;
     public $isCipherChanged;
 
     private $core;
@@ -38,10 +40,11 @@ class ConnectionDuplex
     {
         $core = $this->core;
 
-        if( $core->cipherSuite->getCipherType() == CipherSuites::CIPHER_TYPE_AEAD )
+        if ($core->cipherSuite->getCipherType() == CipherSuites::CIPHER_TYPE_AEAD) {
             $this->cipherRecord = new AEADCipherRecord($this);
-        else  
+        } else {
             $this->cipherRecord = new BlockCipherRecord($this);
+        }
 
         $this->isCipherChanged = true;
         return $this->cipherRecord;
@@ -59,10 +62,11 @@ class ConnectionDuplex
 
     public function getRecord()
     {
-        if( $this->isCipherChanged )
+        if ($this->isCipherChanged) {
             $record = $this->cipherRecord;
-        else
+        } else {
             $record = $this->record;
+        }
 
         return $record;
     }
@@ -75,37 +79,36 @@ class ConnectionDuplex
 
     public function encodeRecord($data)
     {
-        while( !is_null($data) && strlen($data) > 0 )
-        {
-           $strlen = strlen($data);
+        while (!is_null($data) && strlen($data) > 0) {
+            $strlen = strlen($data);
 
-           $record = $this->getRecord();
-           $record->encode($data);
-           $data = $record->get('dataRest');
+            $record = $this->getRecord();
+            $record->encode($data);
+            $data = $record->get('dataRest');
 
-           if( $strlen == strlen($data) )
-               throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Failed on encodeRecord");           
-       }
+            if ($strlen == strlen($data)) {
+                throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Failed on encodeRecord");
+            }
+        }
     }
 
     public function decodeRecord($data)
     {
         $core = $this->core;
 
-        if(!$core->isHandshaked)
+        if (!$core->isHandshaked) {
             throw new TLSException("Handshake is not finished");
+        }
 
-        if( 0 >= strlen($data) )
+        if (0 >= strlen($data)) {
             throw new TLSException("Empty output");
+        }
 
         $record = $this->getRecord();
 
         $record->set('contentType', ContentType::APPLICATION_DATA)
-               ->set('payload', $data );
+               ->set('payload', $data);
 
         return $record->decode();
     }
 }
-
-
-

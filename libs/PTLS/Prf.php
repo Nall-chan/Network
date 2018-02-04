@@ -11,7 +11,7 @@ class Prf
 {
     private $core;
 
-    function __construct(Core $core)
+    public function __construct(Core $core)
     {
         $this->core = $core;
     }
@@ -21,12 +21,9 @@ class Prf
         $core = $this->core;
         $protoVersion = $core->getProtocolVersion();
 
-        if( $protoVersion == 31 )
-        {
+        if ($protoVersion == 31) {
             return $this->prf31($length, $secret, $label, $seed);
-        }
-        else
-        {
+        } else {
             return $this->prf32($length, $secret, $label, $seed);
         }
     }
@@ -52,9 +49,9 @@ class Prf
         $core = $this->core;
         $cipherSuite = $core->cipherSuite;
 
-        $macLen = $cipherSuite->getMACLen(); 
-        $keyLen = $cipherSuite->getKeyLen(); 
-        $ivLen  = $cipherSuite->getIVLen();  
+        $macLen = $cipherSuite->getMACLen();
+        $keyLen = $cipherSuite->getKeyLen();
+        $ivLen  = $cipherSuite->getIVLen();
 
         $seed = $serverRandom . $clientRandom;
 
@@ -109,8 +106,9 @@ class Prf
         $sha1 = $this->pHash($length, $LS2, $labelAndSeed, "sha1");
 
         $result = [];
-        for( $i = 0; $i < strlen($sha1); $i++)
-            $result[$i] = ( $md5[$i] ) ^ ( $sha1[$i] );
+        for ($i = 0; $i < strlen($sha1); $i++) {
+            $result[$i] = ($md5[$i]) ^ ($sha1[$i]);
+        }
 
         return implode("", $result);
     }
@@ -140,16 +138,16 @@ class Prf
         $A = hash_hmac($hashType, $seed, $secret, true);
 
         $result = null;
-        while( $j < $length )
-        {
+        while ($j < $length) {
             $b = hash_hmac($hashType, $A . $seed, $secret, true);
 
             $blen = strlen($b);
 
-            if( $j+$blen > $length )
+            if ($j+$blen > $length) {
                 $result .= substr($b, 0, $length - $j);
-            else
+            } else {
                 $result .= $b;
+            }
 
             $A = hash_hmac($hashType, $A, $secret, true);
 
@@ -159,6 +157,3 @@ class Prf
         return $result;
     }
 }
-
-
-

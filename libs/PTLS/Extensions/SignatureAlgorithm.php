@@ -11,7 +11,7 @@ use PTLS\X509;
  * The client uses the "signature_algorithms" extension to indicate to
  *   the server which signature/hash algorithm pairs may be used in
  *   digital signatures.  The "extension_data" field of this extension
- *   contains a "supported_signature_algorithms" value. 
+ *   contains a "supported_signature_algorithms" value.
  *
  *      enum {
  *          none(0), md5(1), sha1(2), sha224(3), sha256(4), sha384(5),
@@ -31,7 +31,6 @@ use PTLS\X509;
  */
 class SignatureAlgorithm extends ExtensionAbstract
 {
-
     const TYPE_DEFAULT_RSA = 0x0201; //sha1 rsa
     const TYPE_SHA512_RSA = 0x0601;
     const TYPE_SHA384_RSA = 0x0501;
@@ -55,8 +54,9 @@ class SignatureAlgorithm extends ExtensionAbstract
     {
         $core = $this->core;
 
-        if ($type != TLSExtensions::TYPE_SIGNATURE_ALGORITHM)
+        if ($type != TLSExtensions::TYPE_SIGNATURE_ALGORITHM) {
             return;
+        }
 
         $protoVersion = $core->getProtocolVersion();
 
@@ -66,21 +66,20 @@ class SignatureAlgorithm extends ExtensionAbstract
          * However, even if clients do offer it, the rules specified in [TLSEXT]
          * require servers to ignore extensions they do not understand.
          */
-        if ($protoVersion < 32)
+        if ($protoVersion < 32) {
             return;
+        }
 
         $length = Core::_unpack('n', $data[0] . $data[1]);
         $data = substr($data, 2);
 
-        for ($i = 0; $i < $length; $i += 2)
-        {
+        for ($i = 0; $i < $length; $i += 2) {
             $hash = Core::_unpack('C', $data[$i]);
             $sig = Core::_unpack('C', $data[$i + 1]);
 
             $algorithm = $hash << 8 | $sig;
 
-            if (in_array($algorithm, self::$supportedAlgorithmList))
-            {
+            if (in_array($algorithm, self::$supportedAlgorithmList)) {
                 $this->algorithm = $algorithm;
                 break;
             }
@@ -91,8 +90,7 @@ class SignatureAlgorithm extends ExtensionAbstract
     {
         $sigData = '';
 
-        foreach (self::$supportedAlgorithmList as $algorithm)
-        {
+        foreach (self::$supportedAlgorithmList as $algorithm) {
             $sigData .= Core::_pack('C', $algorithm >> 8) . Core::_pack('C', $algorithm & 0x00ff);
         }
 
@@ -108,7 +106,6 @@ class SignatureAlgorithm extends ExtensionAbstract
 
     public function onDecodeServerHello()
     {
-        
     }
 
     public function getAlgorithm()
@@ -152,8 +149,7 @@ class SignatureAlgorithm extends ExtensionAbstract
          *       };
          * } Signature;
          */
-        if ($protoVersion < 32)
-        {
+        if ($protoVersion < 32) {
             $this->getSignatureMD5Sha1($dataSign, $signature, $privateKey);
             return $signature;
         }
@@ -168,16 +164,15 @@ class SignatureAlgorithm extends ExtensionAbstract
          *    DH_RSA, RSA_PSK, ECDH_RSA, ECDHE_RSA), behave as if client had
          *    sent the value {sha1,rsa}.
          */
-        if (is_null($this->algorithm))
-        {
+        if (is_null($this->algorithm)) {
             $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA1);
-            if ($ret)
+            if ($ret) {
                 return $signature;
+            }
             throw new \PTLS\Exceptions\TLSException('Key invalid');
         }
 
-        switch ($this->algorithm)
-        {
+        switch ($this->algorithm) {
             case self::TYPE_SHA512_RSA:
                 $ret = @openssl_sign($dataSign, $signature, $privateKey, OPENSSL_ALGO_SHA512);
                 break;
@@ -190,10 +185,10 @@ class SignatureAlgorithm extends ExtensionAbstract
             default:
                 $ret = false;
         }
-        if ($ret)
+        if ($ret) {
             return $signature;
+        }
 
         throw new \PTLS\Exceptions\TLSException('Key invalid');
     }
-
 }

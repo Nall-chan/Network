@@ -11,7 +11,7 @@ class TLSAlertException extends \Exception
     private $alert;
     private $output;
 
-    function __construct(Alert $alert, $message)
+    public function __construct(Alert $alert, $message)
     {
         $this->output = null;
         $this->alert = $alert;
@@ -23,14 +23,16 @@ class TLSAlertException extends \Exception
     {
         $alert = $this->alert;
 
-        if( $alert->fromPeer() ) return;
+        if ($alert->fromPeer()) {
+            return;
+        }
 
         $recordOut = $core->getOutDuplex()->getRecord();
 
         $payload = $alert->decode();
 
         $this->output = $recordOut->set('contentType', ContentType::ALERT)
-                         ->set('payload', $payload )
+                         ->set('payload', $payload)
                          ->decode();
     }
 
@@ -39,5 +41,3 @@ class TLSAlertException extends \Exception
         return $this->output;
     }
 }
-
-
