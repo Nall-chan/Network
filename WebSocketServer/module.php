@@ -590,6 +590,13 @@ class WebsocketServer extends IPSModule
             case WebSocketOPCode::pong:
                 $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = $Frame->Payload;
                 $this->{'WaitForPong' . $Client->ClientIP . $Client->ClientPort} = true;
+                $JSON['DataID'] = '{8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}';
+                $JSON['Buffer'] = utf8_encode($Frame->Payload);
+                $JSON['ClientIP'] = $Client->ClientIP;
+                $JSON['ClientPort'] = $Client->ClientPort;
+                $JSON['FrameTyp'] = WebSocketOPCode::pong;
+                $Data = json_encode($JSON);
+                $this->SendDataToChildren($Data);
                 return;
         }
 
