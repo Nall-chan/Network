@@ -321,14 +321,10 @@ trait Semaphore
      */
     private function lock($ident)
     {
-        for ($i = 0; $i < 1000; $i++)
-        {
-            if (IPS_SemaphoreEnter(__CLASS__ . '.' . (string) $this->InstanceID . (string) $ident, 1))
-            {
+        for ($i = 0; $i < 1000; $i++) {
+            if (IPS_SemaphoreEnter(__CLASS__ . '.' . (string) $this->InstanceID . (string) $ident, 1)) {
                 return true;
-            }
-            else
-            {
+            } else {
                 IPS_Sleep(5);
             }
         }
@@ -343,7 +339,6 @@ trait Semaphore
     {
         IPS_SemaphoreLeave(__CLASS__ . '.' . (string) $this->InstanceID . (string) $ident);
     }
-
 }
 /**
  * Trait welcher Objekt-Eigenschaften in den Instance-Buffer schreiben und lesen kann.
