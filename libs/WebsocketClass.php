@@ -42,7 +42,6 @@ class SocketType
                 return 'Disconnected';
         }
     }
-
 }
 
 /**
@@ -86,7 +85,6 @@ class WebSocketState
                 return 'TLSisReceived';
         }
     }
-
 }
 
 class HTTP_ERROR_CODES
@@ -118,7 +116,6 @@ class HTTP_ERROR_CODES
             default: return $Code . ' Handshake error';
         }
     }
-
 }
 
 /**
@@ -158,7 +155,6 @@ class WebSocketOPCode
                 return bin2hex(chr($Code));
         }
     }
-
 }
 
 /**
@@ -167,7 +163,6 @@ class WebSocketOPCode
 class WebSocketMask
 {
     const mask = 0x80;
-
 }
 
 /**
@@ -239,7 +234,7 @@ class WebSocketFrame extends stdClass
         //Prüfen ob genug daten da sind !
         if (strlen($Frame) >= $start + $len) {
             $this->Payload = substr($Frame, $start, $len);
-            if ($this->Mask and ( $len > 0)) {
+            if ($this->Mask and ($len > 0)) {
                 for ($i = 0; $i < strlen($this->Payload); $i++) {
                     $this->Payload[$i] = $this->Payload[$i] ^ $this->MaskKey[$i % 4];
                 }
@@ -266,7 +261,7 @@ class WebSocketFrame extends stdClass
             $len = 126;
         }
         $this->Mask = $Masked;
-        if ($this->Mask and ( $len > 0)) {
+        if ($this->Mask and ($len > 0)) {
             $this->PayloadRAW = $this->Payload;
             $len = $len | WebSocketMask::mask;
             $this->MaskKey = openssl_random_pseudo_bytes(4);
@@ -280,7 +275,6 @@ class WebSocketFrame extends stdClass
         $Frame .= $this->Payload;
         return $Frame;
     }
-
 }
 
 /**
@@ -349,7 +343,6 @@ class Websocket_Client
         $this->Timestamp = 0;
         $this->UseTLS = $UseTLS;
     }
-
 }
 
 /**
@@ -447,7 +440,6 @@ class WebSocket_ClientList
         }
         return $FoundClient;
     }
-
 }
 
 /** @} */
