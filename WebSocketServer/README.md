@@ -128,15 +128,14 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
   Vom WebSocket-Server zur untergeordneten Instanz (ReceiveData im fremden Modul).  
   Die Datensätze werden erst nach dem Empfang eines Fin als ein Block weitergeleitet.  
   Der WebSocket-Server buffert die Daten eigenständig bis zum nächten Paket mit gesetzten Fin-Flag.  
-  Ping/Pong Funktionalität sowie das manuelle schließen der Verbindung sind aktuell nicht vorgesehen.  
-
+  
 | Parameter    | Typ     | Beschreibung                                              |
 | :----------: | :-----: | :-------------------------------------------------------: |
 | DataID       | string  | {8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}                    |
 | ClientIP     | string  | Die IP-Adresse des Client von welchem die Daten kommen    |
 | ClientPort   | string  | Die Port des Client von welchem die Daten kommen          |
-| FrameTyp     | integer | 1 = text, 2 = binär                                       |
-| Buffer       | string  | Payload                                                   |
+| FrameTyp     | integer | 0 = neu verbunden, 1 = text, 2 = binär, 8 = getrennt      |
+| Buffer       | string  | Payload, nur bei FrameTyp 1 und 2                         |
 
   ![](imgs/IfWSS.png)  
 
@@ -150,7 +149,7 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 | ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
 | FrameTyp     | integer | 0 = continuation, 1 = text, 2 = binär, 8 = close, 9 = ping      |
 | Fin          | bool    | true wenn Paket komplett, false wenn weitere Daten folgen       | 
-| Buffer       | string  | Payload                                                         |
+| Buffer       | string  | Payload, außer bei FrameTyp 8, dann leer                        |
 
   ![](imgs/IfWSS2.png)  
 

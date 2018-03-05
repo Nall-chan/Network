@@ -44,10 +44,11 @@ use PTLS\Exceptions\TLSAlertException;
  */
 class WebsocketClient extends IPSModule
 {
+
     use DebugHelper,
         InstanceStatus,
-        BufferHelper;
-
+        BufferHelper,
+        Semaphore;
     /**
      * Interne Funktion des SDK.
      *
@@ -190,7 +191,7 @@ class WebsocketClient extends IPSModule
         $OldState = $this->State;
 
 
-        if ((($OldState != WebSocketState::unknow) and ($OldState != WebSocketState::Connected)) or ($OldState == WebSocketState::init)) {
+        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
             return;
         }
 
@@ -220,7 +221,7 @@ class WebsocketClient extends IPSModule
                 $Open = false;
                 trigger_error('Invalid URL', E_USER_NOTICE);
             } else {
-                if (($this->ReadPropertyInteger('PingInterval') != 0) and ($this->ReadPropertyInteger('PingInterval') < 5)) {
+                if (($this->ReadPropertyInteger('PingInterval') != 0) and ( $this->ReadPropertyInteger('PingInterval') < 5)) {
                     $NewState = IS_EBASE + 4;
                     $Open = false;
                     trigger_error('Ping interval to small', E_USER_NOTICE);
@@ -295,7 +296,6 @@ class WebsocketClient extends IPSModule
     }
 
     ################## PRIVATE
-
     /**
      * Baut eine TLS Verbindung auf.
      *
@@ -585,11 +585,11 @@ class WebsocketClient extends IPSModule
             }
             IPS_Sleep(5);
         }
+
         return false;
     }
 
     ################## DATAPOINTS CHILDS
-
     /**
      * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
      *
@@ -634,7 +634,6 @@ class WebsocketClient extends IPSModule
     }
 
     ################## DATAPOINTS PARENT
-
     /**
      * Empfängt Daten vom Parent.
      *
@@ -648,7 +647,7 @@ class WebsocketClient extends IPSModule
         if ($this->UseTLS) {
             $Data = $this->TLSBuffer . utf8_decode($data->Buffer);
 
-            if (($this->State == WebSocketState::TLSisSend) or ($this->State == WebSocketState::TLSisReceived)) {
+            if (($this->State == WebSocketState::TLSisSend) or ( $this->State == WebSocketState::TLSisReceived)) {
                 $this->WaitForResponse(WebSocketState::TLSisSend);
                 $this->TLSBuffer = "";
                 $this->SendDebug('Receive TLS Handshake', $Data, 0);
@@ -746,7 +745,6 @@ class WebsocketClient extends IPSModule
     }
 
     ################## PUBLIC
-
     /**
      * Versendet RawData mit OpCode an den IO.
      *
@@ -824,7 +822,6 @@ class WebsocketClient extends IPSModule
     }
 
     ################## PARENT
-
     /**
      * Erzeugt einen neuen Parent, wenn keiner vorhanden ist.
      *
@@ -840,6 +837,7 @@ class WebsocketClient extends IPSModule
             IPS_ConnectInstance($this->InstanceID, $parentID);
         }
     }
+
 }
 
 /** @} */

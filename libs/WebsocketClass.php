@@ -17,6 +17,35 @@ $autoloader = new AutoloaderTLS('PTLS');
 $autoloader->register();
 
 /**
+ * Der Typ des Paketes
+ */
+class SocketType
+{
+    const Data = 0;
+    const Connected = 1;
+    const Disconnected = 2;
+
+    /**
+     *  Liefert den Klartext zu einem Pakettyp.
+     *
+     * @param int $Type
+     * @return string
+     */
+    public static function ToString(int $Type)
+    {
+        switch ($Type) {
+            case self::Data:
+                return 'Data';
+            case self::Connected:
+                return 'Connected';
+            case self::Disconnected:
+                return 'Disconnected';
+        }
+    }
+
+}
+
+/**
  * Der Status der Verbindung.
  */
 class WebSocketState
@@ -57,6 +86,7 @@ class WebSocketState
                 return 'TLSisReceived';
         }
     }
+
 }
 
 class HTTP_ERROR_CODES
@@ -88,6 +118,7 @@ class HTTP_ERROR_CODES
             default: return $Code . ' Handshake error';
         }
     }
+
 }
 
 /**
@@ -127,6 +158,7 @@ class WebSocketOPCode
                 return bin2hex(chr($Code));
         }
     }
+
 }
 
 /**
@@ -135,6 +167,7 @@ class WebSocketOPCode
 class WebSocketMask
 {
     const mask = 0x80;
+
 }
 
 /**
@@ -206,7 +239,7 @@ class WebSocketFrame extends stdClass
         //Prüfen ob genug daten da sind !
         if (strlen($Frame) >= $start + $len) {
             $this->Payload = substr($Frame, $start, $len);
-            if ($this->Mask and ($len > 0)) {
+            if ($this->Mask and ( $len > 0)) {
                 for ($i = 0; $i < strlen($this->Payload); $i++) {
                     $this->Payload[$i] = $this->Payload[$i] ^ $this->MaskKey[$i % 4];
                 }
@@ -233,7 +266,7 @@ class WebSocketFrame extends stdClass
             $len = 126;
         }
         $this->Mask = $Masked;
-        if ($this->Mask and ($len > 0)) {
+        if ($this->Mask and ( $len > 0)) {
             $this->PayloadRAW = $this->Payload;
             $len = $len | WebSocketMask::mask;
             $this->MaskKey = openssl_random_pseudo_bytes(4);
@@ -247,6 +280,7 @@ class WebSocketFrame extends stdClass
         $Frame .= $this->Payload;
         return $Frame;
     }
+
 }
 
 /**
@@ -254,7 +288,6 @@ class WebSocketFrame extends stdClass
  */
 class Websocket_Client
 {
-
     /**
      * IP-Adresse des Node.
      * @var string
@@ -316,6 +349,7 @@ class Websocket_Client
         $this->Timestamp = 0;
         $this->UseTLS = $UseTLS;
     }
+
 }
 
 /**
@@ -324,7 +358,6 @@ class Websocket_Client
  */
 class WebSocket_ClientList
 {
-
     /**
      * Array mit allen Items.
      * @var array
@@ -374,8 +407,7 @@ class WebSocket_ClientList
         if (!isset($this->Items[$Client->ClientIP . $Client->ClientPort])) {
             return false;
         }
-        $Client = $this->Items[$Client->ClientIP . $Client->ClientPort];
-        return $Client;
+        return $this->Items[$Client->ClientIP . $Client->ClientPort];
     }
 
     /**
@@ -405,6 +437,9 @@ class WebSocket_ClientList
             if ($Client->Timestamp == 0) {
                 continue;
             }
+            if ($Client->State != WebSocketState::Connected) {
+                continue;
+            }
             if ($Client->Timestamp < $Timestamp) {
                 $Timestamp = $Client->Timestamp;
                 $FoundClient = $Client;
@@ -412,6 +447,7 @@ class WebSocket_ClientList
         }
         return $FoundClient;
     }
+
 }
 
 /** @} */
