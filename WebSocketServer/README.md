@@ -189,9 +189,9 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 
 Version 1.4:  
  - Broadcast möglich  
- - ServerSocker Interface ermöglich jetzt das trennen von Clients  
+ - ServerSocket Interface ermöglich jetzt das trennen von Clients  
 
-Version 1.4:  
+Version 1.3:  
  - Bessere Client Verwaltung und weiterleitung der Connect/Disconnect Events durch den neuen IPS ServerSocket  
 
 Version 1.2:  
