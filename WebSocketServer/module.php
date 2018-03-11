@@ -14,9 +14,9 @@ use PTLS\Exceptions\TLSAlertException;
  * @package       Network
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>get
- * @copyright     2017 Michael Tröger
+ * @copyright     2018 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.2
+ * @version       1.4
  */
 
 /**
@@ -25,9 +25,9 @@ use PTLS\Exceptions\TLSAlertException;
  *
  * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
+ * @copyright     2018 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.2
+ * @version       1.4
  * @example <b>Ohne</b>
  * @property WebSocket_ClientList $Multi_Clients
  * @property bool $UseTLS
@@ -47,6 +47,7 @@ use PTLS\Exceptions\TLSAlertException;
  */
 class WebsocketServer extends IPSModule
 {
+
     use DebugHelper,
         InstanceStatus,
         BufferHelper,
@@ -173,7 +174,7 @@ class WebsocketServer extends IPSModule
         $this->SetTimerInterval('KeepAlivePing', 0);
 
         $OldParentID = $this->ParentID;
-        if ($this->HasActiveParent() and ($OldParentID > 0)) {
+        if ($this->HasActiveParent() and ( $OldParentID > 0)) {
             $this->DisconnectAllClients();
         }
 
@@ -189,7 +190,7 @@ class WebsocketServer extends IPSModule
             if (!file_exists($basedir)) {
                 mkdir($basedir);
             }
-            if (($this->ReadPropertyString("CertFile") == "") and ($this->ReadPropertyString("KeyFile") == "")) {
+            if (($this->ReadPropertyString("CertFile") == "") and ( $this->ReadPropertyString("KeyFile") == "")) {
                 return $this->CreateNewCert($basedir);
             }
 
@@ -246,12 +247,12 @@ class WebsocketServer extends IPSModule
         if (!$Open) {
             $NewState = IS_INACTIVE;
         } else {
-            if (($Port < 1) or ($Port > 65535)) {
+            if (($Port < 1) or ( $Port > 65535)) {
                 $NewState = IS_EBASE + 2;
                 $Open = false;
                 trigger_error($this->Translate('Port invalid'), E_USER_NOTICE);
             } else {
-                if (($this->PingInterval != 0) and ($this->PingInterval < 5)) {
+                if (($this->PingInterval != 0) and ( $this->PingInterval < 5)) {
                     $this->PingInterval = 0;
                     $NewState = IS_EBASE + 4;
                     $Open = false;
@@ -801,6 +802,17 @@ class WebsocketServer extends IPSModule
     public function ForwardData($JSONString)
     {
         $Data = json_decode($JSONString);
+        if ($Data->DataID == "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}") {
+            $this->SendDebug("Forward Broadcast", utf8_decode($Data->Buffer), 0);
+            $Clients = $this->Multi_Clients;
+            foreach ($Clients as $Client) {
+                $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
+                $Data->Fin = true;
+                $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Client, $Data->Fin);
+            }
+            return true;
+        }
+
         $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($Data->ClientIP, $Data->ClientPort));
         if ($Client === false) {
             trigger_error($this->Translate('Unknow client') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
@@ -823,7 +835,13 @@ class WebsocketServer extends IPSModule
                 trigger_error($this->Translate('FrameTyp invalid') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
                 return false;
             }
-        } else {
+        } else { //{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}
+            if (property_exists($Data, 'Type')) {
+                if ($Data->Type == 2) {
+                    return $this->SendDisconnect($Client);
+                }
+            }
+            //Type fehlt
             $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
             $Data->Fin = true;
         }
@@ -886,7 +904,7 @@ class WebsocketServer extends IPSModule
     {
         $this->SendDebug('Receive ' . $Client->ClientIP . ':' . $Client->ClientPort, $Payload, 0);
         if ($Client->State == WebSocketState::init) { //new
-            if ($this->UseTLS and ((ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03))) { //valid header wenn TLS is active
+            if ($this->UseTLS and ( (ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03))) { //valid header wenn TLS is active
                 $Client->State = WebSocketState::TLSisReceived;
                 $Client->UseTLS = true;
                 $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = "";
@@ -902,7 +920,7 @@ class WebsocketServer extends IPSModule
                 //$this->lock($Client->ClientIP . $Client->ClientPort);
                 $TLS = TLSContext::createTLS($TLSconfig);
             }
-            if ($this->UsePlain and (preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Payload, $match))) { //valid header wenn Plain is active
+            if ($this->UsePlain and ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Payload, $match))) { //valid header wenn Plain is active
                 $Client->State = WebSocketState::HandshakeReceived;
                 $Client->UseTLS = false;
                 $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = "";
@@ -981,7 +999,7 @@ class WebsocketServer extends IPSModule
                     }
                 }
                 $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = $TLS;
-            //$this->unlock($Client->ClientIP . $Client->ClientPort);
+                //$this->unlock($Client->ClientIP . $Client->ClientPort);
             } else { // Anfang (inkl. Buffer) paßt nicht
                 $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = "";
                 $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
@@ -1155,6 +1173,7 @@ class WebsocketServer extends IPSModule
         }
         return true;
     }
+
 }
 
 /** @} */

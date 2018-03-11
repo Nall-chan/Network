@@ -24,7 +24,7 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 
 ## 2. Voraussetzungen
 
- - IPS ab Version 4.3  
+ - IPS ab Version 5.0
  
 ## 3. Installation
 
@@ -139,6 +139,16 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 
   ![](imgs/IfWSS.png)  
 
+  Folgende GUID ist komplatible mit dem ServerSocket und kann ebenfalls zum empfang genutzt werden.  
+
+| Parameter    | Typ     | Beschreibung                                                    |
+| :----------: | :-----: | :-------------------------------------------------------------: |
+| DataID       | string  | {7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}                          |
+| ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort   | string  | Die Port des Client zu welchem die Daten versendet werden       |
+| Type         | integer | 0 = Daten, 1 = neu verbunden, 2 = getrennt                      |
+| Buffer       | string  | Payload, nur wenn Type = 0 ist                                  |
+
 **Datenversand:**  
   Von der untergeordneten Instanz zum WebSocket-Server (SendDataToParent im fremden Modul).  
   Es wird true zurückgeliefert wenn die Funktion gemäß FrameTyp erfolgreich ausgeführt wurde.  
@@ -147,15 +157,42 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 | :----------: | :-----: | :-------------------------------------------------------------: |
 | DataID       | string  | {714B71FB-3D11-41D1-AFAC-E06F1E983E09}                          |
 | ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort   | string  | Die Port des Client von welchem die Daten kommen                |
 | FrameTyp     | integer | 0 = continuation, 1 = text, 2 = binär, 8 = close, 9 = ping      |
 | Fin          | bool    | true wenn Paket komplett, false wenn weitere Daten folgen       | 
 | Buffer       | string  | Payload, außer bei FrameTyp 8, dann leer                        |
 
   ![](imgs/IfWSS2.png)  
 
+  Folgende GUID ist komplatible mit dem ServerSocket und kann ebenfalls zum senden genutzt werden.  
+
+| Parameter    | Typ     | Beschreibung                                                    |
+| :----------: | :-----: | :-------------------------------------------------------------: |
+| DataID       | string  | {C8792760-65CF-4C53-B5C7-A30FCC84FEFE}                          |
+| ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort   | string  | Die Port des Client zu welchem die Daten versendet werden       |
+| Type         | integer | 0 = Daten, 2 = Verbindung soll getrennt werden                  |
+| Buffer       | string  | Payload, außer bei Type 2, dann leer                            |
+
+  Mit folgender GUID (Virtual-IO) wird der Payload immer an alle verbundenen Clients versenden.  
+
+| Parameter    | Typ     | Beschreibung                                                    |
+| :----------: | :-----: | :-------------------------------------------------------------: |
+| DataID       | string  | {79827379-F36E-4ADA-8A95-5F8D1DC92FA9}                          |
+| Buffer       | string  | Payload                                                         |
+
+
 ## 9. Anhang
 
 **Changlog:**  
+
+
+Version 1.4:  
+ - Broadcast möglich  
+ - ServerSocker Interface ermöglich jetzt das trennen von Clients  
+
+Version 1.4:  
+ - Bessere Client Verwaltung und weiterleitung der Connect/Disconnect Events durch den neuen IPS ServerSocket  
 
 Version 1.2:  
  - Mehrfache Verbindungen von einer IP sind nun möglich
