@@ -1,0 +1,13 @@
+{
+    "translations": {
+        "de": {
+            "Hooks": "Hooks",
+            "IPS Hook": "IPS Hook",
+            "Source": "Quelle",
+            "URL or File": "URL oder Datei",
+            "force download": "Erzwinge Download",
+            "allow get query": "Erlaube Get Anfragen",
+            "no SSL checks": "Keine SSL Überprüfung"
+        }
+    }
+}

@@ -1,5 +1,5 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.01-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-2.20-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 [![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/104255893/shield?style=flat)](https://styleci.io/repos/104255893)  
@@ -22,6 +22,9 @@ Diese Library enthält verschiedene Module für Netzwerkanwendungen.
 6. [Lizenz](#6-lizenz)
 
 ## 1. Funktionsumfang
+
+- __Webhook Reverse Proxy__ ([Dokumentation](HookReverseProxy))  
+	Bereitstellung fremder Dateien als IPS-Webhook.    
 
 - __DHCP-Sniffer__ ([Dokumentation](DHCPSniffer))  
 	Überwacht ob ein bestimmtest Netzwerkgerät einen DHCP-Request sendet. (z.B. Handy betritt WLAN, Dashbutton wurde betätigt usw.)  
@@ -58,15 +61,19 @@ Details sind in der Dokumentation der jeweiligen Module beschrieben.
 
 ###  1. GUID der Module
 
-| Modul                  | Typ      | Prefix | GUID                                   |
-| :--------------------: | :------: | :----: | :------------------------------------: |
-| Client Splitter        | Splitter | WSC    | {7A107D38-75ED-47CB-83F9-F41228CAEEFA} |
-| DHCP Sniffer           | Device   | DHCP   | {E93BCE5E-BA95-424E-8C3A-BF6AEE6CB976} |
-| WebsocketClient        | Splitter | WSC    | {3AB77A94-3467-4E66-8A73-840B4AD89582} |
-| WebsocketServer        | Splitter | WSS    | {7869923C-6E1D-4E66-A0BD-627FAD1679C2} |
-| WebSocketInterfaceTest | Splitter | WSTest | {FC11DB7C-4999-4EA7-B57A-82A878ADD273} |
+| Modul                  | Typ      | Prefix    | GUID                                   |
+| :--------------------: | :------: | :-------: | :------------------------------------: |
+| Client Splitter        | Splitter | WSC       | {7A107D38-75ED-47CB-83F9-F41228CAEEFA} |
+| DHCP Sniffer           | Device   | DHCP      | {E93BCE5E-BA95-424E-8C3A-BF6AEE6CB976} |
+| Webhook Reverse Proxy  | Core     | HOOKPROXY | {26E5D8BC-8117-4DFB-9E85-66BB30F1CF95} |
+| WebsocketClient        | Splitter | WSC       | {3AB77A94-3467-4E66-8A73-840B4AD89582} |
+| WebsocketServer        | Splitter | WSS       | {7869923C-6E1D-4E66-A0BD-627FAD1679C2} |
+| WebSocketInterfaceTest | Splitter | WSTest    | {FC11DB7C-4999-4EA7-B57A-82A878ADD273} |
 
 ### 2. Changlog
+
+Version 2.20:
+ - Neu: Webhook Reverse Proxy
 
 Version 2.01:  
  - Doku ergänzt  
