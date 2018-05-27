@@ -63,5 +63,4 @@ trait WebhookHelper
             }
         }
     }
-
 }
