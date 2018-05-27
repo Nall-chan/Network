@@ -34,13 +34,12 @@ require_once __DIR__ . '/../libs/WebhookHelper.php';
  */
 class HookReverseProxy extends IPSModule
 {
-
     use BufferHelper,
         DebugHelper,
         WebhookHelper;
     /**
      * Interne Funktion des SDK.
-     * 
+     *
      * @access public
      */
     public function Create()
@@ -91,7 +90,7 @@ class HookReverseProxy extends IPSModule
     private function GetURL($RequestURI)
     {
         $Hooks = $this->Hooks;
-        $HookColumns = array_column($Hooks, NULL, 'Hook');
+        $HookColumns = array_column($Hooks, null, 'Hook');
         if (array_key_exists($RequestURI, $HookColumns)) {
             return $HookColumns[$RequestURI];
         }
@@ -142,7 +141,7 @@ class HookReverseProxy extends IPSModule
     {
         $ConfigQuery = parse_url($HookData['Url'], PHP_URL_QUERY);
         $ConfigGet = [];
-        if ($ConfigQuery !== NULL) {
+        if ($ConfigQuery !== null) {
             parse_str($ConfigQuery, $ConfigGet);
         }
         $this->SendDebug('config Get', $ConfigGet, 0);
@@ -284,7 +283,6 @@ class HookReverseProxy extends IPSModule
         }
         return "text/plain";
     }
-
 }
 
 /* @} */
