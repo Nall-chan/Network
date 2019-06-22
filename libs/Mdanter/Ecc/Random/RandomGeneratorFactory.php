@@ -3,13 +3,13 @@
 namespace Mdanter\Ecc\Random;
 
 use Mdanter\Ecc\Crypto\Key\PrivateKeyInterface;
-
 use Mdanter\Ecc\Math\MathAdapterFactory;
 
 class RandomGeneratorFactory
 {
     /**
      * @param bool $debug
+     *
      * @return DebugDecorator|RandomNumberGeneratorInterface|null
      */
     public static function getRandomGenerator($debug = false)
@@ -28,6 +28,7 @@ class RandomGeneratorFactory
      * @param \GMP                $messageHash
      * @param string              $algo
      * @param bool                $debug
+     *
      * @return DebugDecorator|RandomNumberGeneratorInterface
      */
     public static function getHmacRandomGenerator(PrivateKeyInterface $privateKey, \GMP $messageHash, $algo, $debug = false)
@@ -47,7 +48,8 @@ class RandomGeneratorFactory
     /**
      * @param RandomNumberGeneratorInterface $generator
      * @param $name
-     * @param bool                           $debug
+     * @param bool $debug
+     *
      * @return DebugDecorator|RandomNumberGeneratorInterface
      */
     private static function wrapAdapter(RandomNumberGeneratorInterface $generator, $name, $debug = false)

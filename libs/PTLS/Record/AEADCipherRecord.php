@@ -2,14 +2,14 @@
 
 namespace PTLS\Record;
 
-use PTLS\Core;
-use PTLS\ContentType;
 use PTLS\ConnectionDuplex;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\ContentType;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
 
 /**
- * https://tools.ietf.org/html/rfc5246#section-6.2.3.3
+ * https://tools.ietf.org/html/rfc5246#section-6.2.3.3.
  *
  *    struct {
  *       opaque nonce_explicit[SecurityParameters.record_iv_length];
@@ -37,7 +37,7 @@ class AEADCipherRecord extends CipherRecordAbstract
         $payload = $this->payload;
 
         $conn = $this->conn;
-        $core  = $conn->getCore();
+        $core = $conn->getCore();
 
         $cipherSuite = $core->cipherSuite;
         $sharedKey = $conn->Key;
@@ -45,11 +45,11 @@ class AEADCipherRecord extends CipherRecordAbstract
         $nonceImplicit = $conn->IV;
 
         // 16 => tag length
-        $gcmHeaderLen  = self::nonceExplicitLen + 16;
+        $gcmHeaderLen = self::nonceExplicitLen + 16;
         $rawPayloadLen = strlen($this->payload);
 
         if ($rawPayloadLen < $gcmHeaderLen) {
-            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), "GCM payload too short");
+            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), 'GCM payload too short');
         }
 
         $nonceExplicit = substr($this->payload, 0, self::nonceExplicitLen);
@@ -58,16 +58,16 @@ class AEADCipherRecord extends CipherRecordAbstract
 
         // Copy payload over to encPayload
         $this->encPayload = $this->payload;
-        $this->encLength  = $this->length;
+        $this->encLength = $this->length;
 
-        $nonce   = $nonceImplicit . $nonceExplicit;
+        $nonce = $nonceImplicit . $nonceExplicit;
         $encData = substr($this->encPayload, self::nonceExplicitLen);
 
         $data = $cipherSuite->gcmDecrypt($encData, $sharedKey, $nonce, $aad);
 
         // If the decryption fails, a fatal bad_record_mac alert MUST be generated
         if (false === $data) {
-            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), "Cipher gcm decryption failed");
+            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), 'Cipher gcm decryption failed');
         }
 
         // Re-set the length
@@ -89,7 +89,7 @@ class AEADCipherRecord extends CipherRecordAbstract
     public function decode()
     {
         $conn = $this->conn;
-        $core  = $conn->getCore();
+        $core = $conn->getCore();
 
         $cipherSuite = $core->cipherSuite;
 
@@ -113,7 +113,7 @@ class AEADCipherRecord extends CipherRecordAbstract
         $encData = $cipherSuite->gcmEncrypt($this->payload, $sharedKey, $nonce, $aad);
 
         if (false === $encData) {
-            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), "Cipher gcm encryption failed");
+            throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC), 'Cipher gcm encryption failed');
         }
 
         $this->incrementSeq();
@@ -130,12 +130,12 @@ class AEADCipherRecord extends CipherRecordAbstract
     }
 
     /**
-     * Additional Authentication Data
+     * Additional Authentication Data.
      */
     public function getAAD($length)
     {
         $conn = $this->conn;
-        $core  = $conn->getCore();
+        $core = $conn->getCore();
         $cipherSuite = $core->cipherSuite;
 
         list($vMajor, $vMinor) = $core->getVersion();

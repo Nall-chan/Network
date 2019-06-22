@@ -2,11 +2,11 @@
 
 namespace PTLS\Content;
 
-use PTLS\Core;
 use PTLS\ContentType;
-use PTLS\Handshake\HandshakeType;
-use PTLS\Handshake\HandshakeFactory;
+use PTLS\Core;
 use PTLS\Exceptions\TLSAlertException;
+use PTLS\Handshake\HandshakeFactory;
+use PTLS\Handshake\HandshakeType;
 
 class ClientContent extends ContentAbstract
 {
@@ -33,7 +33,7 @@ class ClientContent extends ContentAbstract
         $core = $this->core;
 
         // Incomming Record
-        $recordIn  = $core->getInDuplex()->getRecord();
+        $recordIn = $core->getInDuplex()->getRecord();
 
         // Outgoing Record
         $recordOut = $core->getOutDuplex()->getRecord();
@@ -46,7 +46,7 @@ class ClientContent extends ContentAbstract
 
         if ($core->isHandshaked) {
             throw new TLSAlertException(Alert::create(Alert::UNEXPECTED_MESSAGE),
-                "Handshake message received after handshake is complete");
+                'Handshake message received after handshake is complete');
         }
         /*
          * https://tools.ietf.org/html/rfc5246#section-7.4
@@ -96,19 +96,19 @@ class ClientContent extends ContentAbstract
                 // Send Change Cipher Spec
                 // ===========================================
                 $changeCipherSpec = new ChangeCipherSpec();
-    
+
                 $bufferOut->append($this->decodeContent($changeCipherSpec->decode(), ContentType::CHANGE_CIPHER_SPEC));
-    
+
                 // Enable encryption
                 $recordOut->cipherChanged();
-    
+
                 // ===========================================
                 // Send Client finished
                 // ===========================================
                 $clientFinished = HandShakeFactory::getInstance($core, HandshakeType::FINISHED);
-    
+
                 $bufferOut->append($this->decodeContent($clientFinished->decode(), ContentType::HANDSHAKE));
-    
+
                 $this->expectedHandshakeType = HandshakeType::FINISHED;
                 break;
 

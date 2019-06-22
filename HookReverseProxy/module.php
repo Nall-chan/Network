@@ -37,10 +37,9 @@ class HookReverseProxy extends IPSModule
     use BufferHelper,
         DebugHelper,
         WebhookHelper;
+
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Create()
     {
@@ -51,8 +50,6 @@ class HookReverseProxy extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Destroy()
     {
@@ -108,13 +105,13 @@ class HookReverseProxy extends IPSModule
         $fp = @fopen($File, 'rb');
         if ($fp === false) {
             http_response_code(404);
-            header("Content-Type: text/plain");
+            header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
             header('X-Powered-By: Hook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
-            die("File not found!");
+            die('File not found!');
         }
         http_response_code(200);
         header('Connection: close');
@@ -128,7 +125,7 @@ class HookReverseProxy extends IPSModule
             header('Content-Disposition: attachment; filename="' . basename($File) . '"');
             header('Pragma: public');
         } else {
-            $ContentType = "Content-Type: " . $this->GetMimeType($Extension);
+            $ContentType = 'Content-Type: ' . $this->GetMimeType($Extension);
         }
         header($ContentType);
         $Result = @fpassthru($fp);
@@ -147,7 +144,7 @@ class HookReverseProxy extends IPSModule
         $this->SendDebug('config Get', $ConfigGet, 0);
         $this->SendDebug('add Get', $Get, 0);
         $NewGet = array_merge($ConfigGet, $Get);
-        if (sizeof($NewGet) > 0) {
+        if (count($NewGet) > 0) {
             $NewURL = parse_url($HookData['Url']);
             $NewURL['query'] = http_build_query($NewGet);
             $HookData['Url'] = $this->unparse_url($NewURL);
@@ -181,14 +178,14 @@ class HookReverseProxy extends IPSModule
         $fp = @fopen($HookData['Url'], 'rb', false, $context);
         if ($fp === false) {
             http_response_code(404);
-            header("Content-Type: text/plain");
+            header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
             header('X-Powered-By: Hook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
-            header("Content-Type: text/plain");
-            die("File not found!");
+            header('Content-Type: text/plain');
+            die('File not found!');
         }
         header($http_response_header[0]);
         header('Connection: close');
@@ -215,14 +212,14 @@ class HookReverseProxy extends IPSModule
         if ($Result === false) {
             header_remove();
             http_response_code(500);
-            header("Content-Type: text/plain");
+            header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
             header('X-Powered-By: Hook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
-            header("Content-Type: text/plain");
-            die("Server error!");
+            header('Content-Type: text/plain');
+            die('Server error!');
         }
     }
 
@@ -242,14 +239,14 @@ class HookReverseProxy extends IPSModule
             return $this->DeliveryLocalFile($HookData['Url'], $HookData['forceDL']);
         } else {
             http_response_code(404);
-            header("Content-Type: text/plain");
+            header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
             header('X-Powered-By: Hook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
-            header("Content-Type: text/plain");
-            die("File not found!");
+            header('Content-Type: text/plain');
+            die('File not found!');
         }
     }
 
@@ -269,11 +266,11 @@ class HookReverseProxy extends IPSModule
 
     private function GetMimeType($extension)
     {
-        $lines = file(IPS_GetKernelDirEx() . "mime.types");
+        $lines = file(IPS_GetKernelDirEx() . 'mime.types');
         foreach ($lines as $line) {
             $type = explode("\t", $line, 2);
-            if (sizeof($type) == 2) {
-                $types = explode(" ", trim($type[1]));
+            if (count($type) == 2) {
+                $types = explode(' ', trim($type[1]));
                 foreach ($types as $ext) {
                     if ($ext == $extension) {
                         return $type[0];
@@ -281,7 +278,7 @@ class HookReverseProxy extends IPSModule
                 }
             }
         }
-        return "text/plain";
+        return 'text/plain';
     }
 }
 

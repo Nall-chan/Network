@@ -2,16 +2,16 @@
 
 namespace PTLS\Record;
 
-use PTLS\Core;
-use PTLS\ContentType;
-use PTLS\ProtocolAbstract;
-use PTLS\ConnectionDuplex;
 use PTLS\Buffer;
-use PTLS\Exceptions\TLSAlertException;
+use PTLS\ConnectionDuplex;
 use PTLS\Content\Alert;
+use PTLS\ContentType;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
+use PTLS\ProtocolAbstract;
 
 /**
- * https://tools.ietf.org/html/rfc5246#section-6.2.1
+ * https://tools.ietf.org/html/rfc5246#section-6.2.1.
  */
 class Record extends ProtocolAbstract
 {
@@ -19,7 +19,7 @@ class Record extends ProtocolAbstract
     const MAX_BUFFER_LENGTH = 34816; // 17408 * 2
 
     public $contentType;
-    
+
     protected $conn;
     protected $dataRest;
     protected $maxLength;
@@ -44,7 +44,7 @@ class Record extends ProtocolAbstract
     }
 
     /**
-     * Delegation to ConnectionDuplex::cipherChanged()
+     * Delegation to ConnectionDuplex::cipherChanged().
      */
     public function cipherChanged()
     {
@@ -68,7 +68,7 @@ class Record extends ProtocolAbstract
              * 2^14+2048 bytes, or a record decrypted to a TLSCompressed record
              * with more than 2^14+1024 bytes.
              */
-            throw new TLSAlertException(Alert::create(Alert::RECORD_OVERFLOW), "Exceed max length of payload: " . strlen($data));
+            throw new TLSAlertException(Alert::create(Alert::RECORD_OVERFLOW), 'Exceed max length of payload: ' . strlen($data));
         }
 
         if ($this->length > strlen($data)) {
@@ -76,7 +76,7 @@ class Record extends ProtocolAbstract
             return false;
         }
 
-        $this->payload  = substr($data, 5, $this->length);
+        $this->payload = substr($data, 5, $this->length);
         $this->dataRest = substr($data, 5 + $this->length);
 
         return true;
@@ -163,13 +163,13 @@ class Record extends ProtocolAbstract
     {
         $core = $this->getCore();
 
-        $outputs[] = "ContentType:      " . ContentType::getString($this->contentType);
-        $outputs[] = "Length:           " . $this->length;
-        $outputs[] = "Received Payload: " . strlen($this->payload);
+        $outputs[] = 'ContentType:      ' . ContentType::getString($this->contentType);
+        $outputs[] = 'Length:           ' . $this->length;
+        $outputs[] = 'Received Payload: ' . strlen($this->payload);
 
         $r = "[Record Protocol]\n" . implode("\n", $outputs) . "\n"
            . "[Content]\n" . $core->content->debugInfo();
-     
+
         return $r;
     }
 }

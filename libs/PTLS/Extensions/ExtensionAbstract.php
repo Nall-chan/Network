@@ -27,6 +27,8 @@ abstract class ExtensionAbstract
     }
 
     abstract public function onEncodeClientHello($type, $data);
+
     abstract public function onDecodeClientHello();
+
     abstract public function onDecodeServerHello();
 }

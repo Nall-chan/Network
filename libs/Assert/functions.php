@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *

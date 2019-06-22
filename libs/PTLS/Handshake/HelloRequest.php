@@ -2,9 +2,9 @@
 
 namespace PTLS\Handshake;
 
+use PTLS\Content\Alert;
 use PTLS\Core;
 use PTLS\Exceptions\TLSAlertException;
-use PTLS\Content\Alert;
 
 class HelloRequest extends HandshakeAbstract
 {
@@ -21,10 +21,10 @@ class HelloRequest extends HandshakeAbstract
 
         if ($core->isServer) {
             throw new TLSAlertException(Alert::create(Alert::UNEXPECTED_MESSAGE),
-                "Server received Hello Request");
+                'Server received Hello Request');
         } else {
             // We don't re-negotiate
-            throw new TLSAlertException(Alert::create(Alert::NO_RENEGOTIATION), "No renegotiation");
+            throw new TLSAlertException(Alert::create(Alert::NO_RENEGOTIATION), 'No renegotiation');
         }
     }
 

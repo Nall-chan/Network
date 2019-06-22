@@ -2,7 +2,7 @@
 
 namespace Mdanter\Ecc\Crypto\EcDH;
 
-/**
+/*
  * *********************************************************************
  * Copyright (C) 2012 Matyas Danter
  *
@@ -25,15 +25,14 @@ namespace Mdanter\Ecc\Crypto\EcDH;
  * OTHER DEALINGS IN THE SOFTWARE.
  * ***********************************************************************
  */
-use Mdanter\Ecc\Crypto\Key\PublicKeyInterface;
 use Mdanter\Ecc\Crypto\Key\PrivateKeyInterface;
+use Mdanter\Ecc\Crypto\Key\PublicKeyInterface;
 
 /**
  * This is the contract for implementing EcDH (EC Diffie Hellman).
  */
 interface EcDHInterface
 {
-
     /**
      * Calculates and returns the shared key for the exchange.
      *
@@ -56,7 +55,8 @@ interface EcDHInterface
     /**
      * Sets the recipient key.
      *
-     * @param  PublicKeyInterface $key
+     * @param PublicKeyInterface $key
+     *
      * @return void
      */
     public function setRecipientKey(PublicKeyInterface $key);

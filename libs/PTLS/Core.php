@@ -2,49 +2,45 @@
 
 namespace PTLS;
 
-use PTLS\Buffer;
+use PTLS\Content\Alert;
 use PTLS\Content\ClientContent;
 use PTLS\Content\ServerContent;
-use PTLS\ConnectionDuplex;
-use PTLS\Extensions\TLSExtensions;
-use PTLS\X509;
 use PTLS\Exceptions\TLSAlertException;
-use PTLS\Content\Alert;
+use PTLS\Extensions\TLSExtensions;
 
 class Core
 {
     public $isServer;
 
     /**
-     * True when handshake is done and connection is established
+     * True when handshake is done and connection is established.
      */
     public $isHandshaked;
 
-
     /**
-     * True when alert message is received
+     * True when alert message is received.
      */
     public $isClosed;
 
     /**
      *  https://tools.ietf.org/html/rfc5246#appendix-A.5
-     *  The Cipher Suite
+     *  The Cipher Suite.
      */
     public $cipherSuite;
 
     /**
      * https://tools.ietf.org/html/rfc5246#section-5
-     *  HMAC and the Pseudorandom Function
+     *  HMAC and the Pseudorandom Function.
      */
     public $prf;
 
     /**
-     * https://tools.ietf.org/html/rfc5246#section-7.4.1.4
+     * https://tools.ietf.org/html/rfc5246#section-7.4.1.4.
      */
     public $extensions;
 
     /**
-     * https://tools.ietf.org/html/rfc5246#section-6.2.1
+     * https://tools.ietf.org/html/rfc5246#section-6.2.1.
      *
      * Content Encoder
      */
@@ -53,7 +49,7 @@ class Core
     private $config;
 
     /**
-     * https://tools.ietf.org/html/rfc5246#appendix-A.1
+     * https://tools.ietf.org/html/rfc5246#appendix-A.1.
      *
      * TLS Protocol Version
      */
@@ -61,14 +57,14 @@ class Core
     private $vMinor = null;
 
     /**
-     *  Set default TLS version as 1.2
+     *  Set default TLS version as 1.2.
      */
     private $vMajorDefault = 3;
     private $vMinorDefault = 3;
     private $protocolVersion;
 
     /**
-     * https://tools.ietf.org/html/rfc5246#section-7.4.7
+     * https://tools.ietf.org/html/rfc5246#section-7.4.7.
      *
      * Client Key Exchange Message
      */
@@ -96,12 +92,12 @@ class Core
     private $sessionID;
 
     /**
-     * No compression method for this library(null)
+     * No compression method for this library(null).
      */
     private $compressionMethod;
 
     /**
-     * Certificates used by a server
+     * Certificates used by a server.
      */
     private $crtDers;
 
@@ -125,7 +121,7 @@ class Core
 
         $this->handshakeMessages = '';
 
-        $this->bufferIn  = new Buffer();
+        $this->bufferIn = new Buffer();
         $this->bufferOut = new Buffer();
 
         $this->extensions = new TLSExtensions($this);
@@ -148,7 +144,7 @@ class Core
     }
 
     /**
-     * Getter and Setter
+     * Getter and Setter.
      */
     public function __call($name, $args)
     {
@@ -232,7 +228,7 @@ class Core
     }
 
     /**
-     * All Handshake messages must be recorded
+     * All Handshake messages must be recorded.
      */
     public function countHandshakeMessages($msg)
     {
@@ -260,14 +256,14 @@ class Core
     }
 
     /**
-     *  Generate client/server random, IV, PreMaster for RSA Key Exchange
+     *  Generate client/server random, IV, PreMaster for RSA Key Exchange.
      */
     public static function getRandom($length)
     {
         $random = openssl_random_pseudo_bytes($length, $strong);
 
         if (true !== $strong) {
-            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Random byte not strong");
+            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), 'Random byte not strong');
         }
 
         return $random;

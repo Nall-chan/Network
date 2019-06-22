@@ -2,7 +2,7 @@
 
 namespace Mdanter\Ecc\Crypto\Key;
 
-/**
+/*
  * *********************************************************************
  * Copyright (C) 2012 Matyas Danter
  *
@@ -32,30 +32,26 @@ use Mdanter\Ecc\Primitives\GeneratorPoint;
 use Mdanter\Ecc\Primitives\PointInterface;
 
 /**
- * This class serves as public- private key exchange for signature verification
+ * This class serves as public- private key exchange for signature verification.
  */
 class PublicKey implements PublicKeyInterface
 {
     /**
-     *
      * @var CurveFpInterface
      */
     protected $curve;
 
     /**
-     *
      * @var GeneratorPoint
      */
     protected $generator;
 
     /**
-     *
      * @var PointInterface
      */
     protected $point;
 
     /**
-     *
      * @var GmpMathInterface
      */
     protected $adapter;
@@ -63,9 +59,10 @@ class PublicKey implements PublicKeyInterface
     /**
      * Initialize a new instance.
      *
-     * @param  GmpMathInterface  $adapter
-     * @param  GeneratorPoint    $generator
-     * @param  PointInterface    $point
+     * @param GmpMathInterface $adapter
+     * @param GeneratorPoint   $generator
+     * @param PointInterface   $point
+     *
      * @throws \LogicException
      * @throws \RuntimeException
      */
@@ -81,12 +78,13 @@ class PublicKey implements PublicKeyInterface
         if ($adapter->cmp($point->getX(), gmp_init(0, 10)) < 0 || $adapter->cmp($n, $point->getX()) <= 0
             || $adapter->cmp($point->getY(), gmp_init(0, 10)) < 0 || $adapter->cmp($n, $point->getY()) <= 0
         ) {
-            throw new \RuntimeException("Generator point has x and y out of range.");
+            throw new \RuntimeException('Generator point has x and y out of range.');
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PublicKeyInterface::getCurve()
      */
     public function getCurve()
@@ -95,7 +93,8 @@ class PublicKey implements PublicKeyInterface
     }
 
     /**
-     * {$inheritDoc}
+     * {$inheritDoc}.
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PublicKeyInterface::getGenerator()
      */
     public function getGenerator()
@@ -104,7 +103,8 @@ class PublicKey implements PublicKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PublicKeyInterface::getPoint()
      */
     public function getPoint()

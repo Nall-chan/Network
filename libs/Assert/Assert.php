@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *
@@ -50,8 +50,7 @@ abstract class Assert
         $assertionChain = new AssertionChain($value, $defaultMessage, $defaultPropertyPath);
 
         return $assertionChain
-            ->setAssertionClassName(static::$assertionClass)
-        ;
+            ->setAssertionClassName(static::$assertionClass);
     }
 
     /**
@@ -92,7 +91,6 @@ abstract class Assert
         $lazyAssertion = new LazyAssertion();
 
         return $lazyAssertion
-            ->setExceptionClass(static::$lazyAssertionExceptionClass)
-        ;
+            ->setExceptionClass(static::$lazyAssertionExceptionClass);
     }
 }

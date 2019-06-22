@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *
@@ -176,7 +176,7 @@ class AssertionChain
             $methodName = 'all' . $methodName;
         }
 
-        \call_user_func_array(array($this->assertionClassName, $methodName), $args);
+        \call_user_func_array([$this->assertionClassName, $methodName], $args);
 
         return $this;
     }

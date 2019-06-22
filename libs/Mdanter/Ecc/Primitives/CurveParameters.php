@@ -12,26 +12,24 @@ class CurveParameters
     protected $a;
 
     /**
-     *
      * @var \GMP
      */
     protected $b;
 
     /**
-     *
      * @var \GMP
      */
     protected $prime;
 
     /**
-     * Binary length of keys associated with these curve parameters
+     * Binary length of keys associated with these curve parameters.
      *
      * @var int
      */
     protected $size;
 
     /**
-     * @param int $size
+     * @param int  $size
      * @param \GMP $prime
      * @param \GMP $a
      * @param \GMP $b

@@ -8,7 +8,7 @@ use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
 
 /**
  * *********************************************************************
- * Copyright (C) 2012 Matyas Danter
+ * Copyright (C) 2012 Matyas Danter.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -28,10 +28,6 @@ use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  * ***********************************************************************
- */
-
-/**
- *
  */
 class SecgCurve
 {
@@ -69,6 +65,7 @@ class SecgCurve
 
     /**
      * @param RandomNumberGeneratorInterface $randomGenerator
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public function generator112r1(RandomNumberGeneratorInterface $randomGenerator = null)
@@ -98,6 +95,7 @@ class SecgCurve
 
     /**
      * @param RandomNumberGeneratorInterface $randomGenerator
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public function generator256k1(RandomNumberGeneratorInterface $randomGenerator = null)
@@ -127,6 +125,7 @@ class SecgCurve
 
     /**
      * @param RandomNumberGeneratorInterface $randomGenerator
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public function generator256r1(RandomNumberGeneratorInterface $randomGenerator = null)
@@ -156,6 +155,7 @@ class SecgCurve
 
     /**
      * @param RandomNumberGeneratorInterface $randomGenerator
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public function generator384r1(RandomNumberGeneratorInterface $randomGenerator = null)
