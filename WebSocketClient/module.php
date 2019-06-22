@@ -183,8 +183,9 @@ class WebsocketClient extends IPSModule
         $this->SetTimerInterval('KeepAlive', 0);
 
         $OldState = $this->State;
+        $this->SendDebug(__FUNCTION__, 'OldState:' . $OldState, 0);
+        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
 
-        if ($OldState == WebSocketState::init) {
             return;
         }
 
