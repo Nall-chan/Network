@@ -3,7 +3,7 @@
 namespace PTLS;
 
 /**
- * Simple buffering
+ * Simple buffering.
  */
 class Buffer
 {

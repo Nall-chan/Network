@@ -16,6 +16,7 @@ class MathAdapterFactory
 
     /**
      * @param bool $debug
+     *
      * @return DebugDecorator|GmpMathInterface|null
      */
     public static function getAdapter($debug = false)
@@ -31,7 +32,8 @@ class MathAdapterFactory
 
     /**
      * @param GmpMathInterface $adapter
-     * @param bool $debug
+     * @param bool             $debug
+     *
      * @return DebugDecorator|GmpMathInterface
      */
     private static function wrapAdapter(GmpMathInterface $adapter, $debug)

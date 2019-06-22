@@ -2,11 +2,8 @@
 
 namespace PTLS\Record;
 
-use PTLS\Core;
-use PTLS\ContentType;
 use PTLS\ConnectionDuplex;
-use PTLS\Exceptions\TLSAlertException;
-use PTLS\Content\Alert;
+use PTLS\Core;
 
 abstract class CipherRecordAbstract extends Record
 {
@@ -53,7 +50,7 @@ abstract class CipherRecordAbstract extends Record
             $num = Core::_unpack('C', $this->seq[$i]) + 1;
             $this->seq[$i] = Core::_pack('C', $num);
 
-            if ($num%256 > 0) {
+            if ($num % 256 > 0) {
                 break;
             }
         }

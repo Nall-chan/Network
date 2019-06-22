@@ -10,6 +10,7 @@ class Formatter
 {
     /**
      * @param SignatureInterface $signature
+     *
      * @return Sequence
      */
     public function toAsn(SignatureInterface $signature)
@@ -22,6 +23,7 @@ class Formatter
 
     /**
      * @param SignatureInterface $signature
+     *
      * @return string
      */
     public function serialize(SignatureInterface $signature)

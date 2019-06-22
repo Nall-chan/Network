@@ -2,9 +2,9 @@
 
 namespace PTLS\Handshake;
 
+use PTLS\Content\Alert;
 use PTLS\Core;
 use PTLS\Exceptions\TLSAlertException;
-use PTLS\Content\Alert;
 
 class Finished extends HandshakeAbstract
 {
@@ -15,13 +15,13 @@ class Finished extends HandshakeAbstract
         parent::__construct($core);
     }
 
-    private function getVerifyData($isServer = false, $handshakeMessages)
+    private function getVerifyData($isServer, $handshakeMessages)
     {
         $core = $this->core;
 
         $protoVersion = $core->getProtocolVersion();
 
-        $finishedLabel = ($isServer) ? "server finished" : "client finished";
+        $finishedLabel = ($isServer) ? 'server finished' : 'client finished';
         $prf = $core->prf;
 
         /*
@@ -58,7 +58,7 @@ class Finished extends HandshakeAbstract
         $core = $this->core;
 
         $data = $this->encodeHeader($data);
-       
+
         /*
          * https://tools.ietf.org/html/rfc5246#section-7.4.9
          *
@@ -77,7 +77,7 @@ class Finished extends HandshakeAbstract
 
         if ($this->verifyData != $verifyData) {
             throw new TLSAlertException(Alert::create(Alert::BAD_RECORD_MAC),
-                "Handshake Finished: verifyData mismatched:" . base64_encode($this->verifyData) . "<=>" . base64_encode($verifyData));
+                'Handshake Finished: verifyData mismatched:' . base64_encode($this->verifyData) . '<=>' . base64_encode($verifyData));
         }
     }
 
@@ -102,6 +102,6 @@ class Finished extends HandshakeAbstract
          *  } Finished;
          */
         return "[HandshakeType::Finished]\n"
-              . "Verify Data: " . base64_encode($this->verifyData) . "\n";
+              . 'Verify Data: ' . base64_encode($this->verifyData) . "\n";
     }
 }

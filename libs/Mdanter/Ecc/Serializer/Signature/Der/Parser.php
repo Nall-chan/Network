@@ -10,8 +10,10 @@ class Parser
 {
     /**
      * @param string $binary
-     * @return Signature
+     *
      * @throws \FG\ASN1\Exception\ParserException
+     *
+     * @return Signature
      */
     public function parse($binary)
     {
@@ -25,8 +27,8 @@ class Parser
             throw new \RuntimeException('Failed to parse signature');
         }
 
-        /** @var \FG\ASN1\Universal\Integer $r  */
-        /** @var \FG\ASN1\Universal\Integer $s  */
+        /** @var \FG\ASN1\Universal\Integer $r */
+        /** @var \FG\ASN1\Universal\Integer $s */
         list($r, $s) = $content;
         if ($r->getType() !== Identifier::INTEGER || $s->getType() !== Identifier::INTEGER) {
             throw new \RuntimeException('Failed to parse signature');

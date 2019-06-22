@@ -6,7 +6,7 @@ use PTLS\Core;
 use PTLS\X509;
 
 /**
- * https://tools.ietf.org/html/rfc5246#section-7.4.1.4.1
+ * https://tools.ietf.org/html/rfc5246#section-7.4.1.4.1.
  *
  * The client uses the "signature_algorithms" extension to indicate to
  *   the server which signature/hash algorithm pairs may be used in
@@ -115,7 +115,7 @@ class SignatureAlgorithm extends ExtensionAbstract
     }
 
     /**
-     * Our version of md5sha1 signature as openssl doesn't support it
+     * Our version of md5sha1 signature as openssl doesn't support it.
      */
     public function getSignatureMD5Sha1($dataSign, &$signature, $privateKey)
     {
@@ -169,6 +169,7 @@ class SignatureAlgorithm extends ExtensionAbstract
             if ($ret) {
                 return $signature;
             }
+
             throw new \PTLS\Exceptions\TLSException('Key invalid');
         }
 

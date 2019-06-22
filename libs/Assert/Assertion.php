@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *
@@ -278,7 +278,7 @@ class Assertion
      *
      * @return mixed
      */
-    protected static function createException($value, $message, $code, $propertyPath = null, array $constraints = array())
+    protected static function createException($value, $message, $code, $propertyPath = null, array $constraints = [])
     {
         $exceptionClass = static::$exceptionClass;
 
@@ -293,9 +293,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function eq($value, $value2, $message = null, $propertyPath = null)
     {
@@ -306,7 +306,7 @@ class Assertion
                 static::stringify($value2)
             );
 
-            throw static::createException($value, $message, static::INVALID_EQ, $propertyPath, array('expected' => $value2));
+            throw static::createException($value, $message, static::INVALID_EQ, $propertyPath, ['expected' => $value2]);
         }
 
         return true;
@@ -320,9 +320,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function same($value, $value2, $message = null, $propertyPath = null)
     {
@@ -333,7 +333,7 @@ class Assertion
                 static::stringify($value2)
             );
 
-            throw static::createException($value, $message, static::INVALID_SAME, $propertyPath, array('expected' => $value2));
+            throw static::createException($value, $message, static::INVALID_SAME, $propertyPath, ['expected' => $value2]);
         }
 
         return true;
@@ -347,9 +347,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notEq($value1, $value2, $message = null, $propertyPath = null)
     {
@@ -359,7 +359,8 @@ class Assertion
                 static::stringify($value1),
                 static::stringify($value2)
             );
-            throw static::createException($value1, $message, static::INVALID_NOT_EQ, $propertyPath, array('expected' => $value2));
+
+            throw static::createException($value1, $message, static::INVALID_NOT_EQ, $propertyPath, ['expected' => $value2]);
         }
 
         return true;
@@ -373,9 +374,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notSame($value1, $value2, $message = null, $propertyPath = null)
     {
@@ -385,7 +386,8 @@ class Assertion
                 static::stringify($value1),
                 static::stringify($value2)
             );
-            throw static::createException($value1, $message, static::INVALID_NOT_SAME, $propertyPath, array('expected' => $value2));
+
+            throw static::createException($value1, $message, static::INVALID_NOT_SAME, $propertyPath, ['expected' => $value2]);
         }
 
         return true;
@@ -399,9 +401,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notInArray($value, array $choices, $message = null, $propertyPath = null)
     {
@@ -411,6 +413,7 @@ class Assertion
                 static::stringify($value),
                 static::stringify($choices)
             );
+
             throw static::createException($value, $message, static::INVALID_VALUE_IN_ARRAY, $propertyPath);
         }
 
@@ -424,9 +427,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function integer($value, $message = null, $propertyPath = null)
     {
@@ -449,9 +452,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function float($value, $message = null, $propertyPath = null)
     {
@@ -474,9 +477,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function digit($value, $message = null, $propertyPath = null)
     {
@@ -499,9 +502,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function integerish($value, $message = null, $propertyPath = null)
     {
@@ -524,9 +527,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function boolean($value, $message = null, $propertyPath = null)
     {
@@ -549,9 +552,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function scalar($value, $message = null, $propertyPath = null)
     {
@@ -574,9 +577,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notEmpty($value, $message = null, $propertyPath = null)
     {
@@ -599,9 +602,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function noContent($value, $message = null, $propertyPath = null)
     {
@@ -624,9 +627,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function null($value, $message = null, $propertyPath = null)
     {
@@ -649,9 +652,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notNull($value, $message = null, $propertyPath = null)
     {
@@ -674,9 +677,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function string($value, $message = null, $propertyPath = null)
     {
@@ -701,9 +704,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function regex($value, $pattern, $message = null, $propertyPath = null)
     {
@@ -715,7 +718,7 @@ class Assertion
                 static::stringify($value)
             );
 
-            throw static::createException($value, $message, static::INVALID_REGEX, $propertyPath, array('pattern' => $pattern));
+            throw static::createException($value, $message, static::INVALID_REGEX, $propertyPath, ['pattern' => $pattern]);
         }
 
         return true;
@@ -730,9 +733,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function length($value, $length, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -746,7 +749,8 @@ class Assertion
                 \mb_strlen($value, $encoding)
             );
 
-            $constraints = array('length' => $length, 'encoding' => $encoding);
+            $constraints = ['length' => $length, 'encoding' => $encoding];
+
             throw static::createException($value, $message, static::INVALID_LENGTH, $propertyPath, $constraints);
         }
 
@@ -762,9 +766,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function minLength($value, $minLength, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -778,7 +782,8 @@ class Assertion
                 \mb_strlen($value, $encoding)
             );
 
-            $constraints = array('min_length' => $minLength, 'encoding' => $encoding);
+            $constraints = ['min_length' => $minLength, 'encoding' => $encoding];
+
             throw static::createException($value, $message, static::INVALID_MIN_LENGTH, $propertyPath, $constraints);
         }
 
@@ -794,9 +799,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function maxLength($value, $maxLength, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -810,7 +815,8 @@ class Assertion
                 \mb_strlen($value, $encoding)
             );
 
-            $constraints = array('max_length' => $maxLength, 'encoding' => $encoding);
+            $constraints = ['max_length' => $maxLength, 'encoding' => $encoding];
+
             throw static::createException($value, $message, static::INVALID_MAX_LENGTH, $propertyPath, $constraints);
         }
 
@@ -827,9 +833,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function betweenLength($value, $minLength, $maxLength, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -849,9 +855,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function startsWith($string, $needle, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -864,7 +870,8 @@ class Assertion
                 static::stringify($needle)
             );
 
-            $constraints = array('needle' => $needle, 'encoding' => $encoding);
+            $constraints = ['needle' => $needle, 'encoding' => $encoding];
+
             throw static::createException($string, $message, static::INVALID_STRING_START, $propertyPath, $constraints);
         }
 
@@ -880,9 +887,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function endsWith($string, $needle, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -897,7 +904,8 @@ class Assertion
                 static::stringify($needle)
             );
 
-            $constraints = array('needle' => $needle, 'encoding' => $encoding);
+            $constraints = ['needle' => $needle, 'encoding' => $encoding];
+
             throw static::createException($string, $message, static::INVALID_STRING_END, $propertyPath, $constraints);
         }
 
@@ -913,9 +921,9 @@ class Assertion
      * @param string|null          $propertyPath
      * @param string               $encoding
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function contains($string, $needle, $message = null, $propertyPath = null, $encoding = 'utf8')
     {
@@ -928,7 +936,8 @@ class Assertion
                 static::stringify($needle)
             );
 
-            $constraints = array('needle' => $needle, 'encoding' => $encoding);
+            $constraints = ['needle' => $needle, 'encoding' => $encoding];
+
             throw static::createException($string, $message, static::INVALID_STRING_CONTAINS, $propertyPath, $constraints);
         }
 
@@ -943,9 +952,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function choice($value, array $choices, $message = null, $propertyPath = null)
     {
@@ -953,10 +962,10 @@ class Assertion
             $message = \sprintf(
                 static::generateMessage($message) ?: 'Value "%s" is not an element of the valid values: %s',
                 static::stringify($value),
-                \implode(', ', \array_map(array(\get_called_class(), 'stringify'), $choices))
+                \implode(', ', \array_map([\get_called_class(), 'stringify'], $choices))
             );
 
-            throw static::createException($value, $message, static::INVALID_CHOICE, $propertyPath, array('choices' => $choices));
+            throw static::createException($value, $message, static::INVALID_CHOICE, $propertyPath, ['choices' => $choices]);
         }
 
         return true;
@@ -988,9 +997,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function numeric($value, $message = null, $propertyPath = null)
     {
@@ -1013,9 +1022,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isResource($value, $message = null, $propertyPath = null)
     {
@@ -1038,9 +1047,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isArray($value, $message = null, $propertyPath = null)
     {
@@ -1063,9 +1072,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isTraversable($value, $message = null, $propertyPath = null)
     {
@@ -1088,9 +1097,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isArrayAccessible($value, $message = null, $propertyPath = null)
     {
@@ -1114,9 +1123,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function keyExists($value, $key, $message = null, $propertyPath = null)
     {
@@ -1128,7 +1137,7 @@ class Assertion
                 static::stringify($key)
             );
 
-            throw static::createException($value, $message, static::INVALID_KEY_EXISTS, $propertyPath, array('key' => $key));
+            throw static::createException($value, $message, static::INVALID_KEY_EXISTS, $propertyPath, ['key' => $key]);
         }
 
         return true;
@@ -1142,9 +1151,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function keyNotExists($value, $key, $message = null, $propertyPath = null)
     {
@@ -1156,7 +1165,7 @@ class Assertion
                 static::stringify($key)
             );
 
-            throw static::createException($value, $message, static::INVALID_KEY_NOT_EXISTS, $propertyPath, array('key' => $key));
+            throw static::createException($value, $message, static::INVALID_KEY_NOT_EXISTS, $propertyPath, ['key' => $key]);
         }
 
         return true;
@@ -1170,9 +1179,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function keyIsset($value, $key, $message = null, $propertyPath = null)
     {
@@ -1184,7 +1193,7 @@ class Assertion
                 static::stringify($key)
             );
 
-            throw static::createException($value, $message, static::INVALID_KEY_ISSET, $propertyPath, array('key' => $key));
+            throw static::createException($value, $message, static::INVALID_KEY_ISSET, $propertyPath, ['key' => $key]);
         }
 
         return true;
@@ -1198,9 +1207,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notEmptyKey($value, $key, $message = null, $propertyPath = null)
     {
@@ -1217,9 +1226,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notBlank($value, $message = null, $propertyPath = null)
     {
@@ -1243,9 +1252,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isInstanceOf($value, $className, $message = null, $propertyPath = null)
     {
@@ -1256,7 +1265,7 @@ class Assertion
                 $className
             );
 
-            throw static::createException($value, $message, static::INVALID_INSTANCE_OF, $propertyPath, array('class' => $className));
+            throw static::createException($value, $message, static::INVALID_INSTANCE_OF, $propertyPath, ['class' => $className]);
         }
 
         return true;
@@ -1270,9 +1279,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function notIsInstanceOf($value, $className, $message = null, $propertyPath = null)
     {
@@ -1283,7 +1292,7 @@ class Assertion
                 $className
             );
 
-            throw static::createException($value, $message, static::INVALID_NOT_INSTANCE_OF, $propertyPath, array('class' => $className));
+            throw static::createException($value, $message, static::INVALID_NOT_INSTANCE_OF, $propertyPath, ['class' => $className]);
         }
 
         return true;
@@ -1297,9 +1306,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function subclassOf($value, $className, $message = null, $propertyPath = null)
     {
@@ -1310,7 +1319,7 @@ class Assertion
                 $className
             );
 
-            throw static::createException($value, $message, static::INVALID_SUBCLASS_OF, $propertyPath, array('class' => $className));
+            throw static::createException($value, $message, static::INVALID_SUBCLASS_OF, $propertyPath, ['class' => $className]);
         }
 
         return true;
@@ -1325,9 +1334,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function range($value, $minValue, $maxValue, $message = null, $propertyPath = null)
     {
@@ -1341,7 +1350,7 @@ class Assertion
                 static::stringify($maxValue)
             );
 
-            throw static::createException($value, $message, static::INVALID_RANGE, $propertyPath, array('min' => $minValue, 'max' => $maxValue));
+            throw static::createException($value, $message, static::INVALID_RANGE, $propertyPath, ['min' => $minValue, 'max' => $maxValue]);
         }
 
         return true;
@@ -1355,9 +1364,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function min($value, $minValue, $message = null, $propertyPath = null)
     {
@@ -1370,7 +1379,7 @@ class Assertion
                 static::stringify($minValue)
             );
 
-            throw static::createException($value, $message, static::INVALID_MIN, $propertyPath, array('min' => $minValue));
+            throw static::createException($value, $message, static::INVALID_MIN, $propertyPath, ['min' => $minValue]);
         }
 
         return true;
@@ -1384,9 +1393,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function max($value, $maxValue, $message = null, $propertyPath = null)
     {
@@ -1399,7 +1408,7 @@ class Assertion
                 static::stringify($maxValue)
             );
 
-            throw static::createException($value, $message, static::INVALID_MAX, $propertyPath, array('max' => $maxValue));
+            throw static::createException($value, $message, static::INVALID_MAX, $propertyPath, ['max' => $maxValue]);
         }
 
         return true;
@@ -1412,9 +1421,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function file($value, $message = null, $propertyPath = null)
     {
@@ -1440,9 +1449,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function directory($value, $message = null, $propertyPath = null)
     {
@@ -1467,9 +1476,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function readable($value, $message = null, $propertyPath = null)
     {
@@ -1494,9 +1503,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function writeable($value, $message = null, $propertyPath = null)
     {
@@ -1521,9 +1530,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function email($value, $message = null, $propertyPath = null)
     {
@@ -1562,9 +1571,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      *
      * @see https://github.com/symfony/Validator/blob/master/Constraints/UrlValidator.php
      * @see https://github.com/symfony/Validator/blob/master/Constraints/Url.php
@@ -1573,7 +1582,7 @@ class Assertion
     {
         static::string($value, $message, $propertyPath);
 
-        $protocols = array('http', 'https');
+        $protocols = ['http', 'https'];
 
         $pattern = '~^
             (%s)://                                 # protocol
@@ -1612,9 +1621,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function alnum($value, $message = null, $propertyPath = null)
     {
@@ -1639,9 +1648,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function true($value, $message = null, $propertyPath = null)
     {
@@ -1664,9 +1673,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function false($value, $message = null, $propertyPath = null)
     {
@@ -1689,9 +1698,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function classExists($value, $message = null, $propertyPath = null)
     {
@@ -1714,9 +1723,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function interfaceExists($value, $message = null, $propertyPath = null)
     {
@@ -1740,9 +1749,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function implementsInterface($class, $interfaceName, $message = null, $propertyPath = null)
     {
@@ -1754,7 +1763,7 @@ class Assertion
                 static::stringify($interfaceName)
             );
 
-            throw static::createException($class, $message, static::INTERFACE_NOT_IMPLEMENTED, $propertyPath, array('interface' => $interfaceName));
+            throw static::createException($class, $message, static::INTERFACE_NOT_IMPLEMENTED, $propertyPath, ['interface' => $interfaceName]);
         }
 
         return true;
@@ -1773,9 +1782,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function isJsonString($value, $message = null, $propertyPath = null)
     {
@@ -1800,13 +1809,13 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function uuid($value, $message = null, $propertyPath = null)
     {
-        $value = \str_replace(array('urn:', 'uuid:', '{', '}'), '', $value);
+        $value = \str_replace(['urn:', 'uuid:', '{', '}'], '', $value);
 
         if ($value === '00000000-0000-0000-0000-000000000000') {
             return true;
@@ -1833,9 +1842,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function e164($value, $message = null, $propertyPath = null)
     {
@@ -1859,9 +1868,9 @@ class Assertion
      * @param string|null      $message
      * @param string|null      $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function count($countable, $count, $message = null, $propertyPath = null)
     {
@@ -1871,7 +1880,7 @@ class Assertion
                 static::stringify($count)
             );
 
-            throw static::createException($countable, $message, static::INVALID_COUNT, $propertyPath, array('count' => $count));
+            throw static::createException($countable, $message, static::INVALID_COUNT, $propertyPath, ['count' => $count]);
         }
 
         return true;
@@ -1900,7 +1909,7 @@ class Assertion
 
             $method = \substr($method, 6);
 
-            return \call_user_func_array(array(\get_called_class(), $method), $args);
+            return \call_user_func_array([\get_called_class(), $method], $args);
         }
 
         if (\strpos($method, 'all') === 0) {
@@ -1915,7 +1924,7 @@ class Assertion
             $calledClass = \get_called_class();
 
             foreach ($values as $value) {
-                \call_user_func_array(array($calledClass, $method), \array_merge(array($value), $args));
+                \call_user_func_array([$calledClass, $method], \array_merge([$value], $args));
             }
 
             return true;
@@ -1953,9 +1962,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws
+     *
+     * @return bool
      */
     public static function methodExists($value, $object, $message = null, $propertyPath = null)
     {
@@ -2157,9 +2166,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function extensionLoaded($value, $message = null, $propertyPath = null)
     {
@@ -2202,7 +2211,7 @@ class Assertion
                 static::stringify($format)
             );
 
-            throw static::createException($value, $message, static::INVALID_DATE, $propertyPath, array('format' => $format));
+            throw static::createException($value, $message, static::INVALID_DATE, $propertyPath, ['format' => $format]);
         }
 
         return true;
@@ -2215,9 +2224,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function objectOrClass($value, $message = null, $propertyPath = null)
     {
@@ -2236,9 +2245,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function propertyExists($value, $property, $message = null, $propertyPath = null)
     {
@@ -2265,16 +2274,16 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function propertiesExist($value, array $properties, $message = null, $propertyPath = null)
     {
         static::objectOrClass($value);
         static::allString($properties, $message, $propertyPath);
 
-        $invalidProperties = array();
+        $invalidProperties = [];
         foreach ($properties as $property) {
             if (!\property_exists($value, $property)) {
                 $invalidProperties[] = $property;
@@ -2303,9 +2312,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function version($version1, $operator, $version2, $message = null, $propertyPath = null)
     {
@@ -2333,9 +2342,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function phpVersion($operator, $version, $message = null, $propertyPath = null)
     {
@@ -2353,9 +2362,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function extensionVersion($extension, $operator, $version, $message = null, $propertyPath = null)
     {
@@ -2436,6 +2445,7 @@ class Assertion
                 static::generateMessage($message) ?: 'Value "%s" was expected to be a valid IP address.',
                 static::stringify($value)
             );
+
             throw static::createException($value, $message, static::INVALID_IP, $propertyPath);
         }
 
@@ -2533,9 +2543,9 @@ class Assertion
      * @param string|callable|null $message
      * @param string|null          $propertyPath
      *
-     * @return bool
-     *
      * @throws \Assert\AssertionFailedException
+     *
+     * @return bool
      */
     public static function defined($constant, $message = null, $propertyPath = null)
     {
@@ -2560,7 +2570,7 @@ class Assertion
         if (\is_callable($message)) {
             $traces = \debug_backtrace(0);
 
-            $parameters = array();
+            $parameters = [];
 
             $reflection = new \ReflectionClass($traces[1]['class']);
             $method = $reflection->getMethod($traces[1]['function']);
@@ -2574,7 +2584,7 @@ class Assertion
 
             $parameters['::assertion'] = \sprintf('%s%s%s', $traces[1]['class'], $traces[1]['type'], $traces[1]['function']);
 
-            $message = \call_user_func_array($message, array($parameters));
+            $message = \call_user_func_array($message, [$parameters]);
         }
 
         return \is_null($message) ? null : (string) $message;

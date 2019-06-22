@@ -2,24 +2,21 @@
 
 namespace Mdanter\Ecc\Crypto\Signature;
 
-use Mdanter\Ecc\Math\GmpMathInterface;
 use Mdanter\Ecc\Crypto\Key\PrivateKeyInterface;
 use Mdanter\Ecc\Crypto\Key\PublicKeyInterface;
+use Mdanter\Ecc\Math\GmpMathInterface;
 use Mdanter\Ecc\Primitives\GeneratorPoint;
-use Mdanter\Ecc\Util\NumberSize;
 use Mdanter\Ecc\Util\BinaryString;
+use Mdanter\Ecc\Util\NumberSize;
 
 class Signer
 {
-
     /**
-     *
      * @var GmpMathInterface
      */
     private $adapter;
 
     /**
-     *
      * @param GmpMathInterface $adapter
      */
     public function __construct(GmpMathInterface $adapter)
@@ -29,7 +26,8 @@ class Signer
 
     /**
      * @param GeneratorPoint $G
-     * @param \GMP $hash
+     * @param \GMP           $hash
+     *
      * @return \GMP
      */
     public function truncateHash(GeneratorPoint $G, \GMP $hash)
@@ -47,8 +45,9 @@ class Signer
 
     /**
      * @param GeneratorPoint $G
-     * @param string $algorithm
-     * @param string $data
+     * @param string         $algorithm
+     * @param string         $data
+     *
      * @return \GMP
      */
     public function hashData(GeneratorPoint $G, $algorithm, $data)
@@ -63,8 +62,9 @@ class Signer
 
     /**
      * @param PrivateKeyInterface $key
-     * @param \GMP $hash
-     * @param \GMP $randomK
+     * @param \GMP                $hash
+     * @param \GMP                $randomK
+     *
      * @return Signature
      */
     public function sign(PrivateKeyInterface $key, \GMP $hash, \GMP $randomK)
@@ -79,13 +79,13 @@ class Signer
         $r = $p1->getX();
         $zero = gmp_init(0, 10);
         if ($math->equals($r, $zero)) {
-            throw new \RuntimeException("Error: random number R = 0");
+            throw new \RuntimeException('Error: random number R = 0');
         }
 
         $hash = $this->truncateHash($generator, $hash);
         $s = $modMath->div($modMath->add($hash, $math->mul($key->getSecret(), $r)), $k);
         if ($math->equals($s, $zero)) {
-            throw new \RuntimeException("Error: random number S = 0");
+            throw new \RuntimeException('Error: random number S = 0');
         }
 
         return new Signature($r, $s);
@@ -94,7 +94,8 @@ class Signer
     /**
      * @param PublicKeyInterface $key
      * @param SignatureInterface $signature
-     * @param \GMP $hash
+     * @param \GMP               $hash
+     *
      * @return bool
      */
     public function verify(PublicKeyInterface $key, SignatureInterface $signature, \GMP $hash)

@@ -2,7 +2,7 @@
 
 namespace Mdanter\Ecc\Crypto\Key;
 
-/**
+/*
  * *********************************************************************
  * Copyright (C) 2012 Matyas Danter
  *
@@ -52,8 +52,8 @@ class PrivateKey implements PrivateKeyInterface
 
     /**
      * @param GmpMathInterface $adapter
-     * @param GeneratorPoint $generator
-     * @param \GMP $secretMultiplier
+     * @param GeneratorPoint   $generator
+     * @param \GMP             $secretMultiplier
      */
     public function __construct(GmpMathInterface $adapter, GeneratorPoint $generator, \GMP $secretMultiplier)
     {
@@ -63,7 +63,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface::getPublicKey()
      */
     public function getPublicKey()
@@ -72,7 +73,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface::getPoint()
      */
     public function getPoint()
@@ -81,7 +83,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface::getCurve()
      */
     public function getCurve()
@@ -90,7 +93,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface::getSecret()
      */
     public function getSecret()
@@ -99,7 +103,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface::createExchange()
      */
     public function createExchange(PublicKeyInterface $recipient = null)

@@ -1,11 +1,11 @@
 <?php
 
 // TODO KeepAlive defekt
-require_once(__DIR__ . "/../libs/NetworkTraits.php");
-require_once(__DIR__ . "/../libs/WebsocketClass.php");  // diverse Klassen
+require_once __DIR__ . '/../libs/NetworkTraits.php';
+require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
 
-use PTLS\TLSContext;
 use PTLS\Exceptions\TLSAlertException;
+use PTLS\TLSContext;
 
 /*
  * @addtogroup network
@@ -23,12 +23,14 @@ use PTLS\Exceptions\TLSAlertException;
  * WebsocketServer Klasse implementiert das Websocket-Protokoll für einen ServerSocket.
  * Erweitert IPSModule.
  *
- * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2018 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ *
  * @version       1.4
+ *
  * @example <b>Ohne</b>
+ *
  * @property WebSocket_ClientList $Multi_Clients
  * @property bool $UseTLS
  * @property bool $UsePlain
@@ -43,7 +45,6 @@ use PTLS\Exceptions\TLSAlertException;
  * @property int $ParentID
  * @property int $PingInterval
  * @property bool $NoNewClients
- *
  */
 class WebsocketServer extends IPSModule
 {
@@ -51,36 +52,33 @@ class WebsocketServer extends IPSModule
         InstanceStatus,
         BufferHelper,
         Semaphore;
+
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Create()
     {
         parent::Create();
-        $this->RequireParent("{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}");
+        $this->RequireParent('{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}');
         $this->Multi_Clients = new WebSocket_ClientList();
         $this->NoNewClients = true;
-        $this->RegisterPropertyBoolean("Open", false);
-        $this->RegisterPropertyInteger("Port", 8080);
-        $this->RegisterPropertyInteger("Interval", 0);
-        $this->RegisterPropertyString("URI", "/");
-        $this->RegisterPropertyBoolean("BasisAuth", false);
-        $this->RegisterPropertyString("Username", "");
-        $this->RegisterPropertyString("Password", "");
-        $this->RegisterPropertyBoolean("TLS", false);
-        $this->RegisterPropertyBoolean("Plain", true);
-        $this->RegisterPropertyString("CertFile", "");
-        $this->RegisterPropertyString("KeyFile", "");
-        $this->RegisterPropertyString("KeyPassword", "");
+        $this->RegisterPropertyBoolean('Open', false);
+        $this->RegisterPropertyInteger('Port', 8080);
+        $this->RegisterPropertyInteger('Interval', 0);
+        $this->RegisterPropertyString('URI', '/');
+        $this->RegisterPropertyBoolean('BasisAuth', false);
+        $this->RegisterPropertyString('Username', '');
+        $this->RegisterPropertyString('Password', '');
+        $this->RegisterPropertyBoolean('TLS', false);
+        $this->RegisterPropertyBoolean('Plain', true);
+        $this->RegisterPropertyString('CertFile', '');
+        $this->RegisterPropertyString('KeyFile', '');
+        $this->RegisterPropertyString('KeyPassword', '');
         $this->RegisterTimer('KeepAlivePing', 0, 'WSS_KeepAlive($_IPS[\'TARGET\']);');
     }
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
@@ -118,18 +116,16 @@ class WebsocketServer extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function GetConfigurationForm()
     {
-        $data = json_decode(file_get_contents(__DIR__ . "/form.json"));
+        $data = json_decode(file_get_contents(__DIR__ . '/form.json'));
         if ((float) IPS_GetKernelVersion() < 4.2) {
-            $data->elements[8]->type = "ValidationTextBox";
-            $data->elements[8]->caption = "Path to certificate";
+            $data->elements[8]->type = 'ValidationTextBox';
+            $data->elements[8]->caption = 'Path to certificate';
             unset($data->elements[8]->extensions);
-            $data->elements[9]->type = "ValidationTextBox";
-            $data->elements[9]->caption = "Path to private key";
+            $data->elements[9]->type = 'ValidationTextBox';
+            $data->elements[9]->caption = 'Path to private key';
             unset($data->elements[9]->extensions);
         }
         return json_encode($data);
@@ -137,8 +133,6 @@ class WebsocketServer extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function GetConfigurationForParent()
     {
@@ -149,8 +143,6 @@ class WebsocketServer extends IPSModule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function ApplyChanges()
     {
@@ -166,7 +158,7 @@ class WebsocketServer extends IPSModule
         $this->RegisterMessage($this->InstanceID, FM_CONNECT);
         $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
-        if (IPS_GetKernelRunlevel() <> KR_READY) {
+        if (IPS_GetKernelRunlevel() != KR_READY) {
             return;
         }
 
@@ -185,27 +177,27 @@ class WebsocketServer extends IPSModule
         //$this->SendDebug('UsePlain', ($this->UsePlain ? "true" : "false"), 0);
         //$this->SendDebug('UseTLS', ($this->UseTLS ? "true" : "false"), 0);
         if ($this->UseTLS) {
-            $basedir = IPS_GetKernelDir() . "cert";
+            $basedir = IPS_GetKernelDir() . 'cert';
             if (!file_exists($basedir)) {
                 mkdir($basedir);
             }
-            if (($this->ReadPropertyString("CertFile") == "") and ($this->ReadPropertyString("KeyFile") == "")) {
+            if (($this->ReadPropertyString('CertFile') == '') and ($this->ReadPropertyString('KeyFile') == '')) {
                 return $this->CreateNewCert($basedir);
             }
 
             try {
                 if ((float) IPS_GetKernelVersion() < 4.2) {
-                    $CertFile = @file_get_contents($this->ReadPropertyString("CertFile"));
-                    $KeyFile = @file_get_contents($this->ReadPropertyString("KeyFile"));
+                    $CertFile = @file_get_contents($this->ReadPropertyString('CertFile'));
+                    $KeyFile = @file_get_contents($this->ReadPropertyString('KeyFile'));
                 } else {
                     //Convert old settings
-                    $CertFile = $this->ReadPropertyString("CertFile");
-                    $KeyFile = $this->ReadPropertyString("KeyFile");
+                    $CertFile = $this->ReadPropertyString('CertFile');
+                    $KeyFile = $this->ReadPropertyString('KeyFile');
                     if (is_file($CertFile)) {
-                        IPS_SetProperty($this->InstanceID, "CertFile", @file_get_contents($this->ReadPropertyString("CertFile")));
+                        IPS_SetProperty($this->InstanceID, 'CertFile', @file_get_contents($this->ReadPropertyString('CertFile')));
                     }
                     if (is_file($KeyFile)) {
-                        IPS_SetProperty($this->InstanceID, "KeyFile", @file_get_contents($this->ReadPropertyString("KeyFile")));
+                        IPS_SetProperty($this->InstanceID, 'KeyFile', @file_get_contents($this->ReadPropertyString('KeyFile')));
                     }
                     if (IPS_HasChanges($this->InstanceID)) {
                         IPS_ApplyChanges($this->InstanceID);
@@ -232,7 +224,7 @@ class WebsocketServer extends IPSModule
 //                if (strlen($this->ReadPropertyString("KeyPassword")) == 0)
 //                    throw new Exception('Password for private key missing');
 
-                $this->KeyPassword = $this->ReadPropertyString("KeyPassword");
+                $this->KeyPassword = $this->ReadPropertyString('KeyPassword');
             } catch (Exception $exc) {
                 echo $this->Translate($exc->getMessage());
                 $this->UseTLS = false;
@@ -263,10 +255,10 @@ class WebsocketServer extends IPSModule
 
         // Zwangskonfiguration des ServerSocket
         if ($ParentID > 0) {
-            if (IPS_GetProperty($ParentID, 'Port') <> $Port) {
+            if (IPS_GetProperty($ParentID, 'Port') != $Port) {
                 IPS_SetProperty($ParentID, 'Port', $Port);
             }
-            if (IPS_GetProperty($ParentID, 'Open') <> $Open) {
+            if (IPS_GetProperty($ParentID, 'Open') != $Open) {
                 IPS_SetProperty($ParentID, 'Open', $Open);
             }
             if (IPS_HasChanges($ParentID)) {
@@ -287,22 +279,23 @@ class WebsocketServer extends IPSModule
         $this->NoNewClients = false;
     }
 
-    ################## PRIVATE
+    //################# PRIVATE
+
     /**
      * Erzeugt ein selbst-signiertes Zertifikat.
      *
-     * @access private
      * @param string $basedir Der Speicherort der Zertifikate.
-     * @return boolean True bei Erflog, sonst false
+     *
+     * @return bool True bei Erflog, sonst false
      */
     private function CreateNewCert(string $basedir)
     {
         $CN = 'IPSymcon';
         $EMAIL = IPS_GetLicensee();
         $basedir .= DIRECTORY_SEPARATOR . $this->InstanceID;
-        $configfile = $basedir . ".cnf";
-        $certfile = $basedir . ".cer";
-        $keyfile = $basedir . ".key";
+        $configfile = $basedir . '.cnf';
+        $certfile = $basedir . '.cer';
+        $keyfile = $basedir . '.key';
         $newLine = "\r\n";
 
         $strCONFIG = 'default_md = sha256' . $newLine;
@@ -348,38 +341,37 @@ class WebsocketServer extends IPSModule
         fwrite($fp, $strCONFIG);
         fclose($fp);
 
-        $dn = array(
-            "countryName"            => "DE",
-            "stateOrProvinceName"    => "none",
-            "localityName"           => "none",
-            "organizationName"       => "Home",
-            "organizationalUnitName" => "IPS",
-            "commonName"             => "$CN",
-            "emailAddress"           => "$EMAIL"
-        );
+        $dn = [
+            'countryName'            => 'DE',
+            'stateOrProvinceName'    => 'none',
+            'localityName'           => 'none',
+            'organizationName'       => 'Home',
+            'organizationalUnitName' => 'IPS',
+            'commonName'             => "$CN",
+            'emailAddress'           => "$EMAIL"
+        ];
 
-        $config = array(
-            "config"      => "$configfile",
-            "encrypt_key" => true);
+        $config = [
+            'config'      => "$configfile",
+            'encrypt_key' => true];
 
-        $configKey = array(
-            "config"           => "$configfile",
-            "encrypt_key"      => true,
-            "digest_alg"       => "sha512",
-            "private_key_bits" => 2048,
-            "private_key_type" => OPENSSL_KEYTYPE_RSA,
-        );
+        $configKey = [
+            'config'           => "$configfile",
+            'encrypt_key'      => true,
+            'digest_alg'       => 'sha512',
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ];
         $pk = openssl_pkey_new($configKey);
         openssl_pkey_export($pk, $pkexport, 'Symcon', $config);
         if ((float) IPS_GetKernelVersion() < 4.2) {
             $fp = fopen($keyfile, 'w');
             fwrite($fp, $pkexport);
             fclose($fp);
-            IPS_SetProperty($this->InstanceID, "KeyFile", $basedir . ".key");
+            IPS_SetProperty($this->InstanceID, 'KeyFile', $basedir . '.key');
         } else {
-            IPS_SetProperty($this->InstanceID, "KeyFile", base64_encode($pkexport));
+            IPS_SetProperty($this->InstanceID, 'KeyFile', base64_encode($pkexport));
         }
-
 
         $csr = openssl_csr_new($dn, $pk, $config);
         if ($csr) {
@@ -390,9 +382,9 @@ class WebsocketServer extends IPSModule
                     $fp = fopen($certfile, 'w');
                     fwrite($fp, $certout);
                     fclose($fp);
-                    IPS_SetProperty($this->InstanceID, "CertFile", $basedir . ".cer");
+                    IPS_SetProperty($this->InstanceID, 'CertFile', $basedir . '.cer');
                 } else {
-                    IPS_SetProperty($this->InstanceID, "CertFile", base64_encode($certout));
+                    IPS_SetProperty($this->InstanceID, 'CertFile', base64_encode($certout));
                 }
             } else {
                 unlink($configfile);
@@ -403,7 +395,7 @@ class WebsocketServer extends IPSModule
             return false;
         }
         unlink($configfile);
-        IPS_SetProperty($this->InstanceID, "KeyPassword", "Symcon");
+        IPS_SetProperty($this->InstanceID, 'KeyPassword', 'Symcon');
         IPS_ApplyChanges($this->InstanceID);
         return true;
     }
@@ -411,9 +403,9 @@ class WebsocketServer extends IPSModule
     /**
      * Wertet den Handshake des Clients aus.
      *
-     * @access private
      * @param string $Data Die Daten des Clients.
-     * @return boolean|HTTP_ERROR_CODES True bei Erfolg, HTTP_ERROR_CODES bei Fehler, false wenn nicht genug Daten.
+     *
+     * @return bool|HTTP_ERROR_CODES True bei Erfolg, HTTP_ERROR_CODES bei Fehler, false wenn nicht genug Daten.
      */
     private function ReceiveHandshake(string $Data)
     {
@@ -429,8 +421,8 @@ class WebsocketServer extends IPSModule
                 return HTTP_ERROR_CODES::Not_Found;
             }
 
-            if ($this->ReadPropertyBoolean("BasisAuth")) {
-                $realm = base64_encode($this->ReadPropertyString("Username") . ':' . $this->ReadPropertyString("Password"));
+            if ($this->ReadPropertyBoolean('BasisAuth')) {
+                $realm = base64_encode($this->ReadPropertyString('Username') . ':' . $this->ReadPropertyString('Password'));
                 if (preg_match("/Authorization: Basic (.*)\r\n/", $Data, $match)) {
                     if ($match[1] != $realm) {
                         $this->SendDebug('Unauthorized Connection:', base64_decode($match[1]), 0);
@@ -461,7 +453,6 @@ class WebsocketServer extends IPSModule
                 return HTTP_ERROR_CODES::Bad_Request;
             }
 
-
             if (preg_match("/Sec-WebSocket-Version: (.*)\r\n/", $Data, $match)) {
                 if (strpos($match[1], '13') === false) {
                     $this->SendDebug('WRONG Version:', $match[1], 0);
@@ -487,15 +478,14 @@ class WebsocketServer extends IPSModule
     /**
      * Sendet den HTTP-Response an den Client.
      *
-     * @access private
-     * @param HTTP_ERROR_CODES $Code Der HTTP Code welcher versendet werden soll.
-     * @param string $Data Die empfangenen Daten des Clients.
+     * @param HTTP_ERROR_CODES $Code   Der HTTP Code welcher versendet werden soll.
+     * @param string           $Data   Die empfangenen Daten des Clients.
      * @param Websocket_Client $Client Der Client vom welchen die Daten empfangen wurden.
      */
     private function SendHandshake(int $Code, string $Data, Websocket_Client $Client)
     {
         preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $Data, $match);
-        $SendKey = base64_encode(sha1($match[1] . "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
+        $SendKey = base64_encode(sha1($match[1] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true));
 
         $Header[] = 'HTTP/1.1 ' . HTTP_ERROR_CODES::ToString($Code);
         if ($Code == HTTP_ERROR_CODES::Unauthorized) {
@@ -510,12 +500,12 @@ class WebsocketServer extends IPSModule
             $Header[] = "\r\n";
             $SendHeader = implode("\r\n", $Header);
         } else {
-            $Header[] = "Content-Length:" . strlen(HTTP_ERROR_CODES::ToString($Code));
+            $Header[] = 'Content-Length:' . strlen(HTTP_ERROR_CODES::ToString($Code));
             $Header[] = "\r\n";
             $SendHeader = implode("\r\n", $Header) . HTTP_ERROR_CODES::ToString($Code);
         }
 
-        $this->SendDebug("SendHandshake " . $Client->ClientIP . ':' . $Client->ClientPort, $SendHeader, 0);
+        $this->SendDebug('SendHandshake ' . $Client->ClientIP . ':' . $Client->ClientPort, $SendHeader, 0);
         $SendData = $this->MakeJSON($Client, $SendHeader);
         if ($SendData) {
             $this->SendDataToParent($SendData);
@@ -526,20 +516,22 @@ class WebsocketServer extends IPSModule
      * Erzeugt aus einen Datenframe ein JSON für den Datenaustausch mit dem IO.
      *
      * @param Websocket_Client $Client Der Client an welchen die Daten gesendet werden.
-     * @param string $Data Die Nutzdaten
-     * @param type $UseTLS Bei false wird TLS nicht benutzt, auch wenn der Client dies erwartet.
-     * @return boolean|string Der JSON-String zum versand an den IO, im Fehlerfall false.
+     * @param string           $Data   Die Nutzdaten
+     * @param type             $UseTLS Bei false wird TLS nicht benutzt, auch wenn der Client dies erwartet.
+     *
+     * @return bool|string Der JSON-String zum versand an den IO, im Fehlerfall false.
      */
     private function MakeJSON(Websocket_Client $Client, string $Data, $UseTLS = true, int $Type = SocketType::Data)
     {
         if ($Type == SocketType::Data) {
             if ($UseTLS and $Client->UseTLS) {
                 $this->SendDebug('Send TLS', $Data, 0);
+
                 try {
                     //$this->lock($Client->ClientIP . $Client->ClientPort);
-                    $TLS = $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort};
+                    $TLS = $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort};
                     $Send = $TLS->output($Data)->decode();
-                    $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = $TLS;
+                    $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = $TLS;
                     //$this->unlock($Client->ClientIP . $Client->ClientPort);
                 } catch (Exception $exc) {
                     return false;
@@ -550,7 +542,7 @@ class WebsocketServer extends IPSModule
         } else {
             $this->SendDebug('Send', SocketType::ToString($Type), 0);
         }
-        $SendData['DataID'] = "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}";
+        $SendData['DataID'] = '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}';
         $SendData['Buffer'] = utf8_encode($Data);
         $SendData['ClientIP'] = $Client->ClientIP;
         $SendData['ClientPort'] = $Client->ClientPort;
@@ -561,8 +553,7 @@ class WebsocketServer extends IPSModule
     /**
      * Dekodiert die empfangenen Daten und sendet sie an die Childs.
      *
-     * @access private
-     * @param WebSocketFrame $Frame Ein Objekt welches einen kompletten Frame enthält.
+     * @param WebSocketFrame   $Frame  Ein Objekt welches einen kompletten Frame enthält.
      * @param Websocket_Client $Client Der Client von welchem die Daten empfangen wurden.
      */
     private function DecodeFrame(WebSocketFrame $Frame, Websocket_Client $Client)
@@ -608,8 +599,6 @@ class WebsocketServer extends IPSModule
 
     /**
      * Setzt den Intervall des Timer auf den nächsten Timeout eines Client.
-     *
-     * @access private
      */
     private function SetNextTimer()
     {
@@ -635,9 +624,8 @@ class WebsocketServer extends IPSModule
     /**
      * Sendet einen Pong an einen Client.
      *
-     * @access private
-     * @param Websocket_Client $Client Der Client an welchen das Pong versendet wird.
-     * @param string $Payload Der Payloaf des Pong.
+     * @param Websocket_Client $Client  Der Client an welchen das Pong versendet wird.
+     * @param string           $Payload Der Payloaf des Pong.
      */
     private function SendPong(Websocket_Client $Client, string $Payload = null)
     {
@@ -646,8 +634,6 @@ class WebsocketServer extends IPSModule
 
     /**
      * Sendet ein Connection Close an alle Clients.
-     *
-     * @access private
      */
     private function DisconnectAllClients()
     {
@@ -662,8 +648,8 @@ class WebsocketServer extends IPSModule
     /**
      * Sendet einen Close an einen Client und löscht alle Buffer dieses Clients.
      *
-     * @access private
      * @param Websocket_Client $Client Der Client an welchen das Close gesendet wird.
+     *
      * @return bool True bei Erfolg, sonst false.
      */
     private function SendDisconnect(Websocket_Client $Client)
@@ -672,7 +658,7 @@ class WebsocketServer extends IPSModule
         if ($Client->State == WebSocketState::CloseReceived) {
             $ret = true;
             $this->SendDebug('Send', 'Answer Client stream close !', 0);
-            $this->Send("", WebSocketOPCode::close, $Client);
+            $this->Send('', WebSocketOPCode::close, $Client);
         }
         if ($Client->State == WebSocketState::Connected) {
             $this->SendDebug('Send', 'Server send stream close !', 0);
@@ -680,7 +666,7 @@ class WebsocketServer extends IPSModule
             $Client->State = WebSocketState::CloseSend;
             $Clients->Update($Client);
             $this->Multi_Clients = $Clients;
-            $this->Send("", WebSocketOPCode::close, $Client);
+            $this->Send('', WebSocketOPCode::close, $Client);
             $ret = $this->WaitForClose($Client);
             $this->CloseConnection($Client);
         }
@@ -700,8 +686,6 @@ class WebsocketServer extends IPSModule
 
     /**
      * Leert die ClientListe und alle entsprechenden Buffer der Clients.
-     *
-     * @access private
      */
     private function RemoveAllClients()
     {
@@ -715,25 +699,24 @@ class WebsocketServer extends IPSModule
     /**
      * Leert die entsprechenden Buffer eines Clients.
      *
-     * @access private
      * @param Websocket_Client $Client Der zu löschende Client.
      */
     private function ClearClientBuffer(Websocket_Client $Client)
     {
-        $this->SetBuffer('OpCode' . $Client->ClientIP . $Client->ClientPort, "");
-        $this->SetBuffer('Buffer' . $Client->ClientIP . $Client->ClientPort, "");
-        $this->SetBuffer('Pong' . $Client->ClientIP . $Client->ClientPort, "");
-        $this->SetBuffer('WaitForPong' . $Client->ClientIP . $Client->ClientPort, "");
-        $this->SetBuffer('WaitForClose' . $Client->ClientIP . $Client->ClientPort, "");
-        $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
-        $this->SetBuffer("BufferListe_Multi_TLS_" . $Client->ClientIP . $Client->ClientPort, "");
+        $this->SetBuffer('OpCode' . $Client->ClientIP . $Client->ClientPort, '');
+        $this->SetBuffer('Buffer' . $Client->ClientIP . $Client->ClientPort, '');
+        $this->SetBuffer('Pong' . $Client->ClientIP . $Client->ClientPort, '');
+        $this->SetBuffer('WaitForPong' . $Client->ClientIP . $Client->ClientPort, '');
+        $this->SetBuffer('WaitForClose' . $Client->ClientIP . $Client->ClientPort, '');
+        $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = '';
+        $this->SetBuffer('BufferListe_Multi_TLS_' . $Client->ClientIP . $Client->ClientPort, '');
     }
 
     /**
      * Wartet auf eine Handshake-Antwort.
      *
-     * @access private
      * @param Websocket_Client $Client
+     *
      * @return string|bool Der Payload des Pong, oder im Fehlerfall false.
      */
     private function WaitForPong(Websocket_Client $Client)
@@ -741,7 +724,7 @@ class WebsocketServer extends IPSModule
         for ($i = 0; $i < 500; $i++) {
             if ($this->{'WaitForPong' . $Client->ClientIP . $Client->ClientPort} === true) {
                 $Payload = $this->{'Pong' . $Client->ClientIP . $Client->ClientPort};
-                $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = "";
+                $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = '';
                 $this->{'WaitForPong' . $Client->ClientIP . $Client->ClientPort} = false;
                 return $Payload;
             }
@@ -753,8 +736,8 @@ class WebsocketServer extends IPSModule
     /**
      * Wartet auf eine Close-Antwort eines Clients.
      *
-     * @access private
      * @param Websocket_Client $Client
+     *
      * @return bool True bei Erfolg, sonst false.
      */
     private function WaitForClose(Websocket_Client $Client)
@@ -772,11 +755,10 @@ class WebsocketServer extends IPSModule
     /**
      * Versendet RawData mit OpCode an den IO.
      *
-     * @access private
-     * @param string $RawData Das zu sende Payload
-     * @param WebSocketOPCode $OPCode Der zu benutzende OPCode
-     * @param Websocket_Client $Client Der Client an welchen die Daten gesendet werden sollen.
-     * @param bool $Fin True wenn Ende von Payload erreicht.
+     * @param string           $RawData Das zu sende Payload
+     * @param WebSocketOPCode  $OPCode  Der zu benutzende OPCode
+     * @param Websocket_Client $Client  Der Client an welchen die Daten gesendet werden sollen.
+     * @param bool             $Fin     True wenn Ende von Payload erreicht.
      */
     private function Send(string $RawData, int $OPCode, Websocket_Client $Client, $Fin = true)
     {
@@ -790,19 +772,19 @@ class WebsocketServer extends IPSModule
         }
     }
 
-    ################## DATAPOINTS CHILDS
+    //################# DATAPOINTS CHILDS
+
     /**
      * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
      *
-     * @access public
      * @param string $JSONString
      * @result bool true wenn Daten gesendet werden konnten, sonst false.
      */
     public function ForwardData($JSONString)
     {
         $Data = json_decode($JSONString);
-        if ($Data->DataID == "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}") {
-            $this->SendDebug("Forward Broadcast", utf8_decode($Data->Buffer), 0);
+        if ($Data->DataID == '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}') {
+            $this->SendDebug('Forward Broadcast', utf8_decode($Data->Buffer), 0);
             $Clients = $this->Multi_Clients;
             foreach ($Clients as $Client) {
                 $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
@@ -821,9 +803,9 @@ class WebsocketServer extends IPSModule
             trigger_error($this->Translate('Client not connected') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
             return false;
         }
-        $this->SendDebug("Forward", utf8_decode($Data->Buffer), 0);
+        $this->SendDebug('Forward', utf8_decode($Data->Buffer), 0);
 
-        if ($Data->DataID == "{714B71FB-3D11-41D1-AFAC-E06F1E983E09}") {
+        if ($Data->DataID == '{714B71FB-3D11-41D1-AFAC-E06F1E983E09}') {
             if ($Data->FrameTyp == WebSocketOPCode::close) {
                 return $this->SendDisconnect($Client);
             }
@@ -852,9 +834,8 @@ class WebsocketServer extends IPSModule
     /**
      * Sendet die Rohdaten an die Childs.
      *
-     * @access private
-     * @param string $RawData Die Nutzdaten.
-     * @param Websocket_Client $Client Der Client von welchem die Daten empfangen wurden.
+     * @param string           $RawData Die Nutzdaten.
+     * @param Websocket_Client $Client  Der Client von welchem die Daten empfangen wurden.
      */
     private function SendDataToChilds(string $RawData, Websocket_Client $Client)
     {
@@ -887,7 +868,7 @@ class WebsocketServer extends IPSModule
     {
         $Frames = [];
         while (strlen($Payload) > 0) {
-            $len = unpack("n", substr($Payload, 3, 2))[1] + 5;
+            $len = unpack('n', substr($Payload, 3, 2))[1] + 5;
             if (strlen($Payload) >= $len) {
                 $this->SendDebug('Receive TLS Frame', substr($Payload, 0, $len), 0);
                 $Frames[] = substr($Payload, 0, $len);
@@ -906,8 +887,8 @@ class WebsocketServer extends IPSModule
             if ($this->UseTLS and ((ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03))) { //valid header wenn TLS is active
                 $Client->State = WebSocketState::TLSisReceived;
                 $Client->UseTLS = true;
-                $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = "";
-                $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = "";
+                $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = '';
+                $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = '';
                 // TLS Config
                 $TLSconfig = TLSContext::getServerConfig([
                             'key_pair_files' => [
@@ -922,13 +903,13 @@ class WebsocketServer extends IPSModule
             if ($this->UsePlain and (preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Payload, $match))) { //valid header wenn Plain is active
                 $Client->State = WebSocketState::HandshakeReceived;
                 $Client->UseTLS = false;
-                $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = "";
+                $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = '';
             }
         } else {
             if ($Client->UseTLS) {
                 $this->SendDebug('OLD TLSContex', '', 0);
                 //$this->lock($Client->ClientIP . $Client->ClientPort);
-                $TLS = $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort};
+                $TLS = $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort};
             }
         }
         if ($Client->UseTLS) {
@@ -936,7 +917,7 @@ class WebsocketServer extends IPSModule
             if ((ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03)) {
                 $TLSFrames = $this->SplitTLSFrames($Payload);
                 $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = $Payload;
-                $Payload = "";
+                $Payload = '';
 
                 foreach ($TLSFrames as $TLSFrame) {
                     $this->SendDebug('TLS Frame', $TLSFrame, 0);
@@ -958,23 +939,24 @@ class WebsocketServer extends IPSModule
                             }
                             $this->SendDebug('Send TLS Handshake error', $e->getMessage(), 0);
                             trigger_error($e->getMessage(), E_USER_NOTICE);
-                            $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
+                            $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = '';
                             $this->CloseConnection($Client);
                             //$this->unlock($Client->ClientIP . $Client->ClientPort);
                             return;
                         } catch (\PTLS\Exceptions\TLSException $e) {
                             $this->SendDebug('Send TLS Handshake error', $e->getMessage(), 0);
                             trigger_error($e->getMessage(), E_USER_NOTICE);
-                            $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
+                            $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = '';
                             $this->CloseConnection($Client);
                             //$this->unlock($Client->ClientIP . $Client->ClientPort);
                             return;
                         }
+
                         try {
                             $out = $TLS->decode();
                         } catch (\PTLS\Exceptions\TLSException $e) {
                             trigger_error($e->getMessage(), E_USER_NOTICE);
-                            $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
+                            $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = '';
                             $this->CloseConnection($Client);
                             //$this->unlock($Client->ClientIP . $Client->ClientPort);
                             return;
@@ -997,11 +979,11 @@ class WebsocketServer extends IPSModule
                         }
                     }
                 }
-                $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = $TLS;
+                $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = $TLS;
             //$this->unlock($Client->ClientIP . $Client->ClientPort);
             } else { // Anfang (inkl. Buffer) paßt nicht
-                $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = "";
-                $this->{"Multi_TLS_" . $Client->ClientIP . $Client->ClientPort} = "";
+                $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = '';
+                $this->{'Multi_TLS_' . $Client->ClientIP . $Client->ClientPort} = '';
                 $this->CloseConnection($Client);
                 //$this->unlock($Client->ClientIP . $Client->ClientPort);
                 return; // nix sichern
@@ -1020,7 +1002,7 @@ class WebsocketServer extends IPSModule
                 $this->SendDebug('SUCCESSFULLY CONNECT', $Client, 0);
                 $this->SendDataToChilds('', $Client);
                 $Client->State = WebSocketState::Connected; // jetzt verbunden
-                $Client->Timestamp = time() + $this->ReadPropertyInteger("Interval");
+                $Client->Timestamp = time() + $this->ReadPropertyInteger('Interval');
             } elseif ($CheckData === false) { // Daten nicht komplett, buffern.
                 $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = $CheckData;
             } else { // Daten komplett, aber defekt.
@@ -1041,7 +1023,7 @@ class WebsocketServer extends IPSModule
                 $NewData = $Frame->Tail;
                 $Frame->Tail = null;
                 $this->DecodeFrame($Frame, $Client);
-                $Client->Timestamp = time() + $this->ReadPropertyInteger("Interval");
+                $Client->Timestamp = time() + $this->ReadPropertyInteger('Interval');
             }
             $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = $NewData;
         } elseif ($Client->State == WebSocketState::CloseSend) {
@@ -1056,11 +1038,11 @@ class WebsocketServer extends IPSModule
         $this->SendDataToParent($SendSocketClose);
     }
 
-    ################## DATAPOINTS PARENT
+    //################# DATAPOINTS PARENT
+
     /**
      * Empfängt Daten vom Parent.
      *
-     * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
      */
     public function ReceiveData($JSONString)
@@ -1072,7 +1054,7 @@ class WebsocketServer extends IPSModule
         $Clients = $this->Multi_Clients;
         $IncomingClient = new Websocket_Client($data->ClientIP, $data->ClientPort, WebSocketState::init);
         $Client = $Clients->GetByIpPort($IncomingClient);
-        $this->SendDebug(($Client ? "OLD" : "NEW") . ' CLIENT', SocketType::ToString($data->Type), 0);
+        $this->SendDebug(($Client ? 'OLD' : 'NEW') . ' CLIENT', SocketType::ToString($data->Type), 0);
         switch ($data->Type) {
             case 0: /* Data */
                 if ($Client === false) {
@@ -1103,12 +1085,11 @@ class WebsocketServer extends IPSModule
         $this->SetNextTimer();
     }
 
-    ################## PUBLIC
+    //################# PUBLIC
+
     /**
      * Wird vom Timer aufgerufen.
      * Sendet einen Ping an den Client welcher als nächstes das Timeout erreicht.
-     *
-     * @access public
      */
     public function KeepAlive()
     {
@@ -1122,8 +1103,8 @@ class WebsocketServer extends IPSModule
             if ($Client === false) {
                 break;
             }
-            if (@$this->SendPing($Client->ClientIP, $Client->ClientPort, "") === false) {
-                $this->SendDebug('TIMEOUT ' . $Client->ClientIP . ':' . $Client->ClientPort, "Ping timeout", 0);
+            if (@$this->SendPing($Client->ClientIP, $Client->ClientPort, '') === false) {
+                $this->SendDebug('TIMEOUT ' . $Client->ClientIP . ':' . $Client->ClientPort, 'Ping timeout', 0);
                 $this->RemoveOneClient($Client);
                 $this->CloseConnection($Client);
             }
@@ -1134,10 +1115,10 @@ class WebsocketServer extends IPSModule
     /**
      * Versendet einen Ping an einen Client.
      *
-     * @access public
-     * @param string $ClientIP Die IP-Adresse des Client.
+     * @param string $ClientIP   Die IP-Adresse des Client.
      * @param string $ClientPort Der Port des Client.
-     * @param string $Text Der Payload des Ping.
+     * @param string $Text       Der Payload des Ping.
+     *
      * @return bool True bei Erfolg, im Fehlerfall wird eine Warnung und false ausgegeben.
      */
     public function SendPing(string $ClientIP, string $ClientPort, string $Text)
@@ -1156,9 +1137,9 @@ class WebsocketServer extends IPSModule
         $this->SendDebug('Send Ping' . $Client->ClientIP . ':' . $Client->ClientPort, $Text, 0);
         $this->Send($Text, WebSocketOPCode::ping, $Client);
         $Result = $this->WaitForPong($Client);
-        $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = "";
+        $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = '';
         if ($Result === false) {
-            $this->SendDebug('Timeout ' . $Client->ClientIP . ':' . $Client->ClientPort, "", 0);
+            $this->SendDebug('Timeout ' . $Client->ClientIP . ':' . $Client->ClientPort, '', 0);
             trigger_error($this->Translate('Timeout'), E_USER_NOTICE);
             $this->RemoveOneClient($Client);
             $this->CloseConnection($Client);
@@ -1174,4 +1155,4 @@ class WebsocketServer extends IPSModule
     }
 }
 
-/** @} */
+/* @} */

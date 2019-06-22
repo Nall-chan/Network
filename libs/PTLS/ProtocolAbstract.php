@@ -10,7 +10,7 @@ abstract class ProtocolAbstract implements DataConverterInterface
     abstract public function debugInfo();
 
     /**
-     * Get properties
+     * Get properties.
      */
     public function get($property, $default = null)
     {
@@ -22,7 +22,7 @@ abstract class ProtocolAbstract implements DataConverterInterface
     }
 
     /**
-     * Set properties
+     * Set properties.
      */
     public function set($property, $value)
     {
