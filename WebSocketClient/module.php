@@ -191,7 +191,7 @@ class WebsocketClient extends IPSModule
         $OldState = $this->State;
 
 
-        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
+        if ( $OldState == WebSocketState::init) {
             return;
         }
 
