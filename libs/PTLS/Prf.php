@@ -2,10 +2,8 @@
 
 namespace PTLS;
 
-use PTLS\TLS;
-
 /**
- * Pseudorandom Function
+ * Pseudorandom Function.
  */
 class Prf
 {
@@ -29,20 +27,19 @@ class Prf
     }
 
     /**
-     * Generate master secret from premaster
+     * Generate master secret from premaster.
      */
     public function getMaster($preMaster, $clientRandom, $serverRandom)
     {
         $masterSecretLength = 48;
         $seed = $clientRandom . $serverRandom;
 
-        $masterSecret = $this->prf($masterSecretLength, $preMaster, "master secret", $seed);
+        $masterSecret = $this->prf($masterSecretLength, $preMaster, 'master secret', $seed);
         return $masterSecret;
     }
 
-
     /**
-     * Generate secret keys
+     * Generate secret keys.
      */
     public function getKeys($masterSecret, $clientRandom, $serverRandom)
     {
@@ -51,7 +48,7 @@ class Prf
 
         $macLen = $cipherSuite->getMACLen();
         $keyLen = $cipherSuite->getKeyLen();
-        $ivLen  = $cipherSuite->getIVLen();
+        $ivLen = $cipherSuite->getIVLen();
 
         $seed = $serverRandom . $clientRandom;
 
@@ -66,9 +63,9 @@ class Prf
          * server_write_IV[SecurityParameters.fixed_iv_length]
          */
         $offset = 0;
-        $length = 2*$macLen + 2*$keyLen + 2*$ivLen;
-        $keys   = $this->prf($length, $masterSecret, "key expansion", $seed);
-      
+        $length = 2 * $macLen + 2 * $keyLen + 2 * $ivLen;
+        $keys = $this->prf($length, $masterSecret, 'key expansion', $seed);
+
         $clientMAC = substr($keys, $offset, $macLen);
         $offset += $macLen;
 
@@ -93,28 +90,28 @@ class Prf
     }
 
     /**
-     * For TLS1.1
+     * For TLS1.1.
      */
     public function prf31($length, $secret, $label, $seed)
     {
         $labelAndSeed = $label . $seed;
 
-        $LS1 = substr($secret, 0, ceil(strlen($secret))/2);
-        $LS2 = substr($secret, ceil(strlen($secret)/2));
+        $LS1 = substr($secret, 0, ceil(strlen($secret)) / 2);
+        $LS2 = substr($secret, ceil(strlen($secret) / 2));
 
-        $md5  = $this->pHash($length, $LS1, $labelAndSeed, "md5");
-        $sha1 = $this->pHash($length, $LS2, $labelAndSeed, "sha1");
+        $md5 = $this->pHash($length, $LS1, $labelAndSeed, 'md5');
+        $sha1 = $this->pHash($length, $LS2, $labelAndSeed, 'sha1');
 
         $result = [];
         for ($i = 0; $i < strlen($sha1); $i++) {
             $result[$i] = ($md5[$i]) ^ ($sha1[$i]);
         }
 
-        return implode("", $result);
+        return implode('', $result);
     }
 
     /**
-     * For TLS1.2
+     * For TLS1.2.
      */
     public function prf32($length, $secret, $label, $seed)
     {
@@ -127,7 +124,7 @@ class Prf
     }
 
     /**
-     * https://tools.ietf.org/html/rfc5246#section-5
+     * https://tools.ietf.org/html/rfc5246#section-5.
      *
      * HMAC and the Pseudorandom Function
      */
@@ -143,7 +140,7 @@ class Prf
 
             $blen = strlen($b);
 
-            if ($j+$blen > $length) {
+            if ($j + $blen > $length) {
                 $result .= substr($b, 0, $length - $j);
             } else {
                 $result .= $b;

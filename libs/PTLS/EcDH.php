@@ -3,15 +3,11 @@
 namespace PTLS;
 
 use Mdanter\Ecc\Crypto\EcDH\EcDH as MdanterEcDH;
-
-;
-use Mdanter\Ecc\EccFactory;
-use Mdanter\Ecc\Serializer\Point\UncompressedPointSerializer;
-use Mdanter\Ecc\Primitives\GeneratorPoint;
 use Mdanter\Ecc\Crypto\Key\PublicKey;
+use Mdanter\Ecc\EccFactory;
 
 /**
- * https://tools.ietf.org/html/rfc4492#section-5.1.1
+ * https://tools.ietf.org/html/rfc4492#section-5.1.1.
  *
  * enum {
  *    sect163k1 (1), sect163r1 (2), sect163r2 (3),
@@ -34,7 +30,6 @@ use Mdanter\Ecc\Crypto\Key\PublicKey;
  * ------------------------------------------
  * self::TYPE_SECP256R1 => secp256r1
  * self::TYPE_SECP384R1 => secp384r1
- *
  */
 class EcDH
 {
@@ -52,7 +47,7 @@ class EcDH
     private $privateKey;
     private $publicKey;
     private $adapter;
- 
+
     public static function isSupported($type)
     {
         switch ($type) {
@@ -68,11 +63,11 @@ class EcDH
     {
         $this->type = $type;
 
-        $this->ecdh  =
+        $this->ecdh =
         $this->curve =
-        $this->gen   =
+        $this->gen =
         $this->privateKey =
-        $this->publicKey  =
+        $this->publicKey =
         $this->adapter = null;
     }
 
@@ -147,7 +142,6 @@ class EcDH
         }
 
         $gen = $this->getGenerator();
-        ;
 
         $this->privateKey = $gen->createPrivateKey();
 
@@ -184,23 +178,23 @@ class EcDH
             return;
         }
 
-        $half = $length/2;
+        $half = $length / 2;
 
         $x = substr($publicKeyBin, 1, $half);
         $gmpX = gmp_import($x, 1);
 
-        $y = substr($publicKeyBin, $half+1);
+        $y = substr($publicKeyBin, $half + 1);
         $gmpY = gmp_import($y, 1);
 
-        $curve   = $this->getCurve();
+        $curve = $this->getCurve();
         $adapter = $this->getAdapter();
-        $gen     = $this->getGenerator();
-        $ecdh    = $this->getEcdh();
+        $gen = $this->getGenerator();
+        $ecdh = $this->getEcdh();
 
         $point = $curve->getPoint($gmpX, $gmpY);
 
         $privateKey = $this->getPrivateKey();
-        $publicKey  = new PublicKey($adapter, $gen, $point);
+        $publicKey = new PublicKey($adapter, $gen, $point);
 
         $ecdh->setSenderKey($privateKey);
         $ecdh->setRecipientKey($publicKey);

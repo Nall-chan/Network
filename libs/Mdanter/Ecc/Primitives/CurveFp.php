@@ -21,6 +21,7 @@ OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
  *************************************************************************/
+
 namespace Mdanter\Ecc\Primitives;
 
 use Mdanter\Ecc\Math\GmpMathInterface;
@@ -28,7 +29,7 @@ use Mdanter\Ecc\Math\ModularArithmetic;
 use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
 
 /**
- * This class is a representation of an EC over a field modulo a prime number
+ * This class is a representation of an EC over a field modulo a prime number.
  *
  * Important objectives for this class are:
  * - Does the curve contain a point?
@@ -36,20 +37,17 @@ use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
  */
 class CurveFp implements CurveFpInterface
 {
-
     /**
      * @var CurveParameters
      */
     protected $parameters;
 
     /**
-     *
      * @var GmpMathInterface
      */
     protected $adapter = null;
 
     /**
-     *
      * @var ModularArithmetic
      */
     protected $modAdapter = null;
@@ -57,7 +55,7 @@ class CurveFp implements CurveFpInterface
     /**
      * Constructor that sets up the instance variables.
      *
-     * @param CurveParameters $parameters
+     * @param CurveParameters  $parameters
      * @param GmpMathInterface $adapter
      */
     public function __construct(CurveParameters $parameters, GmpMathInterface $adapter)
@@ -68,7 +66,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getModAdapter()
      */
     public function getModAdapter()
@@ -77,16 +76,18 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getPoint()
      */
     public function getPoint(\GMP $x, \GMP $y, \GMP $order = null)
     {
         return new Point($this->adapter, $this, $x, $y, $order);
     }
-    
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getInfinity()
      */
     public function getInfinity()
@@ -95,7 +96,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getGenerator()
      */
     public function getGenerator(\GMP $x, \GMP $y, \GMP $order, RandomNumberGeneratorInterface $randomGenerator = null)
@@ -106,6 +108,7 @@ class CurveFp implements CurveFpInterface
     /**
      * @param bool $wasOdd
      * @param \GMP $xCoord
+     *
      * @return \GMP
      */
     public function recoverYfromX($wasOdd, \GMP $xCoord)
@@ -130,8 +133,10 @@ class CurveFp implements CurveFpInterface
             return $math->sub($prime, $root);
         }
     }
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::contains()
      */
     public function contains(\GMP $x, \GMP $y)
@@ -156,7 +161,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getA()
      */
     public function getA()
@@ -165,7 +171,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getB()
      */
     public function getB()
@@ -174,7 +181,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::getPrime()
      */
     public function getPrime()
@@ -191,14 +199,15 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::cmp()
      */
     public function cmp(CurveFpInterface $other)
     {
         $math = $this->adapter;
 
-        $equal  = $math->equals($this->getA(), $other->getA());
+        $equal = $math->equals($this->getA(), $other->getA());
         $equal &= $math->equals($this->getB(), $other->getB());
         $equal &= $math->equals($this->getPrime(), $other->getPrime());
 
@@ -206,7 +215,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::equals()
      */
     public function equals(CurveFpInterface $other)
@@ -215,7 +225,8 @@ class CurveFp implements CurveFpInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\CurveFpInterface::__toString()
      */
     public function __toString()
@@ -229,8 +240,8 @@ class CurveFp implements CurveFpInterface
     public function __debugInfo()
     {
         return [
-            'a' => $this->adapter->toString($this->getA()),
-            'b' => $this->adapter->toString($this->getB()),
+            'a'     => $this->adapter->toString($this->getA()),
+            'b'     => $this->adapter->toString($this->getB()),
             'prime' => $this->adapter->toString($this->getPrime())
         ];
     }

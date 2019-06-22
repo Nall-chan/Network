@@ -4,7 +4,7 @@ namespace Mdanter\Ecc\Crypto\Signature;
 
 /**
  * *********************************************************************
- * Copyright (C) 2012 Matyas Danter
+ * Copyright (C) 2012 Matyas Danter.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -27,7 +27,7 @@ namespace Mdanter\Ecc\Crypto\Signature;
  */
 
 /**
- * Plain Old PHP Object that stores the signature r,s for ECDSA
+ * Plain Old PHP Object that stores the signature r,s for ECDSA.
  */
 class Signature implements SignatureInterface
 {
@@ -37,13 +37,12 @@ class Signature implements SignatureInterface
     protected $r;
 
     /**
-     *
      * @var \GMP
      */
     protected $s;
 
     /**
-     * Initialize a new instance with values
+     * Initialize a new instance with values.
      *
      * @param \GMP $r
      * @param \GMP $s
@@ -55,7 +54,8 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Signature\SignatureInterface::getR()
      */
     public function getR()
@@ -64,7 +64,8 @@ class Signature implements SignatureInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\Signature\SignatureInterface::getS()
      */
     public function getS()

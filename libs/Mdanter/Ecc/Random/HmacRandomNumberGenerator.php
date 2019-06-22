@@ -32,20 +32,21 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
     /**
      * @var array
      */
-    private $algSize = array(
-        'sha1' => 160,
+    private $algSize = [
+        'sha1'   => 160,
         'sha224' => 224,
         'sha256' => 256,
         'sha384' => 385,
         'sha512' => 512
-    );
+    ];
 
     /**
      * Hmac constructor.
-     * @param GmpMathInterface $math
+     *
+     * @param GmpMathInterface    $math
      * @param PrivateKeyInterface $privateKey
-     * @param \GMP $messageHash - decimal hash of the message (*may* be truncated)
-     * @param string $algorithm - hashing algorithm
+     * @param \GMP                $messageHash - decimal hash of the message (*may* be truncated)
+     * @param string              $algorithm   - hashing algorithm
      */
     public function __construct(GmpMathInterface $math, PrivateKeyInterface $privateKey, \GMP $messageHash, $algorithm)
     {
@@ -61,7 +62,8 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
 
     /**
      * @param string $bits - binary string of bits
-     * @param \GMP $qlen - length of q in bits
+     * @param \GMP   $qlen - length of q in bits
+     *
      * @return \GMP
      */
     public function bits2int($bits, $qlen)
@@ -80,11 +82,12 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
     /**
      * @param \GMP $int
      * @param \GMP $rlen - rounded octet length
+     *
      * @return string
      */
     public function int2octets(\GMP $int, \GMP $rlen)
     {
-        $out = pack("H*", $this->math->decHex(gmp_strval($int, 10)));
+        $out = pack('H*', $this->math->decHex(gmp_strval($int, 10)));
         $length = gmp_init(BinaryString::length($out), 10);
         if ($this->math->cmp($length, $rlen) < 0) {
             return str_pad('', $this->math->toString($this->math->sub($rlen, $length)), "\x00") . $out;
@@ -99,6 +102,7 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
 
     /**
      * @param string $algorithm
+     *
      * @return int
      */
     private function getHashLength($algorithm)
@@ -108,6 +112,7 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
 
     /**
      * @param \GMP $q
+     *
      * @return \GMP
      */
     public function generate(\GMP $q)
@@ -127,7 +132,7 @@ class HmacRandomNumberGenerator implements RandomNumberGeneratorInterface
         $v = hash_hmac($this->algorithm, $v, $k, true);
 
         $t = '';
-        for (;;) {
+        for (; ;) {
             $toff = gmp_init(0, 10);
             while ($this->math->cmp($toff, $rlen) < 0) {
                 $v = hash_hmac($this->algorithm, $v, $k, true);
