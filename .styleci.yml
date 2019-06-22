@@ -4,7 +4,7 @@ preset: recommended
 
 enabled:
  - concat_with_spaces
- - declare_strict_types
+
  
 disabled:
  - trailing_comma_in_multiline_array
