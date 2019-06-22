@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Primitives;
 
-use Mdanter\Ecc\Math\GmpMathInterface;
 use Mdanter\Ecc\Crypto\Key\PrivateKey;
 use Mdanter\Ecc\Crypto\Key\PublicKey;
+use Mdanter\Ecc\Math\GmpMathInterface;
 use Mdanter\Ecc\Random\RandomGeneratorFactory;
 use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
 
@@ -42,9 +44,11 @@ class GeneratorPoint extends Point
      * Verifies validity of given coordinates against the current point and its point.
      *
      * @todo   Check if really necessary here (only used for testing in lib)
-     * @param  \GMP $x
-     * @param  \GMP $y
-     * @return boolean
+     *
+     * @param \GMP $x
+     * @param \GMP $y
+     *
+     * @return bool
      */
     public function isValid(\GMP $x, \GMP $y)
     {
@@ -58,13 +62,13 @@ class GeneratorPoint extends Point
             return false;
         }
 
-        if (! $curve->contains($x, $y)) {
+        if (!$curve->contains($x, $y)) {
             return false;
         }
 
         $point = $curve->getPoint($x, $y)->mul($n);
 
-        if (! $point->isInfinity()) {
+        if (!$point->isInfinity()) {
             return false;
         }
 
@@ -85,6 +89,7 @@ class GeneratorPoint extends Point
      * @param \GMP $x
      * @param \GMP $y
      * @param \GMP $order
+     *
      * @return PublicKey
      */
     public function getPublicKeyFrom(\GMP $x, \GMP $y, \GMP $order = null)
@@ -95,6 +100,7 @@ class GeneratorPoint extends Point
 
     /**
      * @param \GMP $secretMultiplier
+     *
      * @return PrivateKey
      */
     public function getPrivateKeyFrom(\GMP $secretMultiplier)

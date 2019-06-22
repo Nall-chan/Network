@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS;
 
 /**
- * Simple buffering
+ * Simple buffering.
  */
 class Buffer
 {

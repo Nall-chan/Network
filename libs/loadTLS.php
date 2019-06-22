@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class AutoloaderTLS
 {
     private $namespace;
@@ -11,7 +13,7 @@ class AutoloaderTLS
 
     public function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register([$this, 'loadClass']);
     }
 
     public function loadClass($className)

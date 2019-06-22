@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *
@@ -20,7 +22,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Asse
     private $value;
     private $constraints;
 
-    public function __construct($message, $code, $propertyPath, $value, array $constraints = array())
+    public function __construct($message, $code, $propertyPath, $value, array $constraints = [])
     {
         parent::__construct($message, $code);
 

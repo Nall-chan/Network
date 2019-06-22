@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\PrivateKey;
 
 use Mdanter\Ecc\Crypto\Key\PrivateKeyInterface;
 
 /**
- * PEM Private key formatter
+ * PEM Private key formatter.
  *
  * @link https://tools.ietf.org/html/rfc5915
  */
@@ -25,22 +27,24 @@ class PemPrivateKeySerializer implements PrivateKeySerializerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Serializer\PrivateKeySerializerInterface::serialize()
      */
     public function serialize(PrivateKeyInterface $key)
     {
         $privateKeyInfo = $this->derSerializer->serialize($key);
 
-        $content  = '-----BEGIN EC PRIVATE KEY-----'.PHP_EOL;
-        $content .= trim(chunk_split(base64_encode($privateKeyInfo), 64, PHP_EOL)).PHP_EOL;
+        $content = '-----BEGIN EC PRIVATE KEY-----' . PHP_EOL;
+        $content .= trim(chunk_split(base64_encode($privateKeyInfo), 64, PHP_EOL)) . PHP_EOL;
         $content .= '-----END EC PRIVATE KEY-----';
 
         return $content;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Serializer\PrivateKeySerializerInterface::parse()
      */
     public function parse($formattedKey)

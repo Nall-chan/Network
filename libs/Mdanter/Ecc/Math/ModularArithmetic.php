@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Math;
 
 class ModularArithmetic
@@ -16,7 +18,7 @@ class ModularArithmetic
 
     /**
      * @param GmpMathInterface $adapter
-     * @param \GMP $modulus
+     * @param \GMP             $modulus
      */
     public function __construct(GmpMathInterface $adapter, \GMP $modulus)
     {
@@ -27,6 +29,7 @@ class ModularArithmetic
     /**
      * @param \GMP $augend
      * @param \GMP $addend
+     *
      * @return \GMP
      */
     public function add(\GMP $augend, \GMP $addend)
@@ -37,6 +40,7 @@ class ModularArithmetic
     /**
      * @param \GMP $minuend
      * @param \GMP $subtrahend
+     *
      * @return \GMP
      */
     public function sub(\GMP $minuend, \GMP $subtrahend)
@@ -47,6 +51,7 @@ class ModularArithmetic
     /**
      * @param \GMP $multiplier
      * @param \GMP $muliplicand
+     *
      * @return \GMP
      */
     public function mul(\GMP $multiplier, \GMP $muliplicand)
@@ -57,6 +62,7 @@ class ModularArithmetic
     /**
      * @param \GMP $dividend
      * @param \GMP $divisor
+     *
      * @return \GMP
      */
     public function div(\GMP $dividend, \GMP $divisor)
@@ -67,6 +73,7 @@ class ModularArithmetic
     /**
      * @param \GMP $base
      * @param \GMP $exponent
+     *
      * @return \GMP
      */
     public function pow(\GMP $base, \GMP $exponent)

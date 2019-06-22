@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Crypto\EcDH;
 
-/**
+/*
  * *********************************************************************
  * Copyright (C) 2012 Matyas Danter
  *
@@ -43,27 +45,25 @@ use Mdanter\Ecc\Primitives\PointInterface;
 class EcDH implements EcDHInterface
 {
     /**
-     * Adapter used for math calculations
+     * Adapter used for math calculations.
      *
      * @var GmpMathInterface
      */
     private $adapter;
 
     /**
-     * Secret key between the two parties
+     * Secret key between the two parties.
      *
      * @var PointInterface
      */
     private $secretKey = null;
 
     /**
-     *
      * @var PublicKeyInterface
      */
     private $recipientKey;
 
     /**
-     *
      * @var PrivateKeyInterface
      */
     private $senderKey;
@@ -79,7 +79,8 @@ class EcDH implements EcDHInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\EcDH\EcDHInterface::calculateSharedKey()
      */
     public function calculateSharedKey()
@@ -90,7 +91,8 @@ class EcDH implements EcDHInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\EcDH\EcDHInterface::createMultiPartyKey()
      */
     public function createMultiPartyKey()
@@ -101,7 +103,8 @@ class EcDH implements EcDHInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\EcDH\EcDHInterface::setRecipientKey()
      */
     public function setRecipientKey(PublicKeyInterface $key = null)
@@ -111,7 +114,8 @@ class EcDH implements EcDHInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Crypto\EcDH\EcDHInterface::setSenderKey()
      */
     public function setSenderKey(PrivateKeyInterface $key)
@@ -120,9 +124,6 @@ class EcDH implements EcDHInterface
         return $this;
     }
 
-    /**
-     *
-     */
     private function calculateKey()
     {
         $this->checkExchangeState();
@@ -135,6 +136,7 @@ class EcDH implements EcDHInterface
     /**
      * Verifies that the shared secret is known, or that the required keys are available
      * to calculate the shared secret.
+     *
      * @throws \RuntimeException when the exchange has not been made.
      */
     private function checkExchangeState()

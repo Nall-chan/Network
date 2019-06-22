@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Curves;
 
 use Mdanter\Ecc\Math\GmpMathInterface;
@@ -9,6 +11,7 @@ class CurveFactory
 {
     /**
      * @param $name
+     *
      * @return NamedCurveFp|\Mdanter\Ecc\Primitives\CurveFp|\Mdanter\Ecc\Primitives\CurveFpInterface
      */
     public static function getCurveByName($name)
@@ -43,6 +46,7 @@ class CurveFactory
 
     /**
      * @param $name
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public static function getGeneratorByName($name)

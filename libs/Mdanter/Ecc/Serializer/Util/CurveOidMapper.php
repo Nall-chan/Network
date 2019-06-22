@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\Util;
 
 use FG\ASN1\Universal\ObjectIdentifier;
-use Mdanter\Ecc\Curves\NamedCurveFp;
 use Mdanter\Ecc\Curves\CurveFactory;
+use Mdanter\Ecc\Curves\NamedCurveFp;
 use Mdanter\Ecc\Curves\NistCurve;
 use Mdanter\Ecc\Curves\SecgCurve;
 use Mdanter\Ecc\Primitives\CurveFpInterface;
@@ -32,32 +34,32 @@ class CurveOidMapper
     /**
      * @var array
      */
-    private static $oidMap = array(
-        NistCurve::NAME_P192 => self::NIST_P192_OID,
-        NistCurve::NAME_P224 => self::NIST_P224_OID,
-        NistCurve::NAME_P256 => self::NIST_P256_OID,
-        NistCurve::NAME_P384 => self::NIST_P384_OID,
-        NistCurve::NAME_P521 => self::NIST_P521_OID,
+    private static $oidMap = [
+        NistCurve::NAME_P192       => self::NIST_P192_OID,
+        NistCurve::NAME_P224       => self::NIST_P224_OID,
+        NistCurve::NAME_P256       => self::NIST_P256_OID,
+        NistCurve::NAME_P384       => self::NIST_P384_OID,
+        NistCurve::NAME_P521       => self::NIST_P521_OID,
         SecgCurve::NAME_SECP_112R1 => self::SECP_112R1_OID,
         SecgCurve::NAME_SECP_256K1 => self::SECP_256K1_OID,
         SecgCurve::NAME_SECP_256R1 => self::SECP_256R1_OID,
         SecgCurve::NAME_SECP_384R1 => self::SECP_384R1_OID,
-    );
+    ];
 
     /**
      * @var array
      */
-    private static $sizeMap = array(
-        NistCurve::NAME_P192 => 24,
-        NistCurve::NAME_P224 => 28,
-        NistCurve::NAME_P256 => 32,
-        NistCurve::NAME_P384 => 48,
-        NistCurve::NAME_P521 => 66,
+    private static $sizeMap = [
+        NistCurve::NAME_P192       => 24,
+        NistCurve::NAME_P224       => 28,
+        NistCurve::NAME_P256       => 32,
+        NistCurve::NAME_P384       => 48,
+        NistCurve::NAME_P521       => 66,
         SecgCurve::NAME_SECP_112R1 => 14,
         SecgCurve::NAME_SECP_256K1 => 32,
         SecgCurve::NAME_SECP_256R1 => 32,
         SecgCurve::NAME_SECP_384R1 => 48,
-    );
+    ];
 
     /**
      * @return array
@@ -69,6 +71,7 @@ class CurveOidMapper
 
     /**
      * @param CurveFpInterface $curve
+     *
      * @return mixed
      */
     public static function getByteSize(CurveFpInterface $curve)
@@ -82,6 +85,7 @@ class CurveOidMapper
 
     /**
      * @param NamedCurveFp $curve
+     *
      * @return ObjectIdentifier
      */
     public static function getCurveOid(NamedCurveFp $curve)
@@ -97,6 +101,7 @@ class CurveOidMapper
 
     /**
      * @param ObjectIdentifier $oid
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public static function getCurveFromOid(ObjectIdentifier $oid)
@@ -113,6 +118,7 @@ class CurveOidMapper
 
     /**
      * @param ObjectIdentifier $oid
+     *
      * @return \Mdanter\Ecc\Primitives\GeneratorPoint
      */
     public static function getGeneratorFromOid(ObjectIdentifier $oid)

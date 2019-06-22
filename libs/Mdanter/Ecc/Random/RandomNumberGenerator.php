@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Random;
 
 use Mdanter\Ecc\Math\GmpMathInterface;
@@ -14,6 +16,7 @@ class RandomNumberGenerator implements RandomNumberGeneratorInterface
 
     /**
      * RandomNumberGenerator constructor.
+     *
      * @param GmpMathInterface $adapter
      */
     public function __construct(GmpMathInterface $adapter)
@@ -23,6 +26,7 @@ class RandomNumberGenerator implements RandomNumberGeneratorInterface
 
     /**
      * @param \GMP $max
+     *
      * @return \GMP
      */
     public function generate(\GMP $max)
@@ -32,7 +36,7 @@ class RandomNumberGenerator implements RandomNumberGeneratorInterface
 
         // Generate an integer of size >= $numBits
         //$bytes = random_bytes($numBytes);
-        $bytes =openssl_random_pseudo_bytes($numBytes);
+        $bytes = openssl_random_pseudo_bytes($numBytes);
         $value = $this->adapter->stringToInt($bytes);
 
         $mask = gmp_sub(gmp_pow(2, $numBits), 1);

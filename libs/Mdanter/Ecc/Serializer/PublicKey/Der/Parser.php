@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\PublicKey\Der;
 
 use FG\ASN1\Object;
 use FG\ASN1\Universal\Sequence;
+use Mdanter\Ecc\Crypto\Key\PublicKey;
 use Mdanter\Ecc\Math\GmpMathInterface;
-use Mdanter\Ecc\Serializer\Util\CurveOidMapper;
 use Mdanter\Ecc\Primitives\GeneratorPoint;
-use Mdanter\Ecc\Serializer\PublicKey\DerPublicKeySerializer;
 use Mdanter\Ecc\Serializer\Point\PointSerializerInterface;
 use Mdanter\Ecc\Serializer\Point\UncompressedPointSerializer;
-use Mdanter\Ecc\Crypto\Key\PublicKey;
+use Mdanter\Ecc\Serializer\PublicKey\DerPublicKeySerializer;
+use Mdanter\Ecc\Serializer\Util\CurveOidMapper;
 
 class Parser
 {
-
     /**
      * @var GmpMathInterface
      */
@@ -27,7 +28,8 @@ class Parser
 
     /**
      * Parser constructor.
-     * @param GmpMathInterface $adapter
+     *
+     * @param GmpMathInterface              $adapter
      * @param PointSerializerInterface|null $pointSerializer
      */
     public function __construct(GmpMathInterface $adapter, PointSerializerInterface $pointSerializer = null)
@@ -38,14 +40,16 @@ class Parser
 
     /**
      * @param string $binaryData
-     * @return PublicKey
+     *
      * @throws \FG\ASN1\Exception\ParserException
+     *
+     * @return PublicKey
      */
     public function parse($binaryData)
     {
         $asnObject = Object::fromBinary($binaryData);
 
-        if (! ($asnObject instanceof Sequence) || $asnObject->getNumberofChildren() != 2) {
+        if (!($asnObject instanceof Sequence) || $asnObject->getNumberofChildren() != 2) {
             throw new \RuntimeException('Invalid data.');
         }
 
@@ -67,6 +71,7 @@ class Parser
     /**
      * @param GeneratorPoint $generator
      * @param $data
+     *
      * @return PublicKey
      */
     public function parseKey(GeneratorPoint $generator, $data)

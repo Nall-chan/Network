@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * The MIT License (MIT)
  *
@@ -72,7 +74,7 @@ final class AESGCM
      */
     private static function encryptWithPHP71($K, $key_length, $IV, $P = null, $A = null, $tag_length = 128)
     {
-        $mode = 'aes-'.($key_length).'-gcm';
+        $mode = 'aes-' . ($key_length) . '-gcm';
         $T = null;
         $C = openssl_encrypt($P, $mode, $K, OPENSSL_RAW_DATA, $IV, $T, $A, $tag_length / 8);
         Assertion::true(false !== $C, 'Unable to encrypt the data.');
@@ -98,7 +100,7 @@ final class AESGCM
         $u = self::calcVector($C);
         $c_len_padding = self::addPadding($C);
 
-        $S = self::getHash($H, $A.str_pad('', $v / 8, "\0").$C.str_pad('', $u / 8, "\0").$a_len_padding.$c_len_padding);
+        $S = self::getHash($H, $A . str_pad('', $v / 8, "\0") . $C . str_pad('', $u / 8, "\0") . $a_len_padding . $c_len_padding);
         $T = self::getMSB($tag_length, self::getGCTR($K, $key_length, $J0, $S));
 
         return [$C, $T];
@@ -191,7 +193,7 @@ final class AESGCM
      */
     private static function decryptWithPHP71($K, $key_length, $IV, $C, $A, $T)
     {
-        $mode = 'aes-'.($key_length).'-gcm';
+        $mode = 'aes-' . ($key_length) . '-gcm';
         $P = openssl_decrypt(null === $C ? '' : $C, $mode, $K, OPENSSL_RAW_DATA, $IV, $T, $A);
         Assertion::true(false !== $P, 'Unable to decrypt or to verify the tag.');
 
@@ -218,7 +220,7 @@ final class AESGCM
         $u = self::calcVector($C);
         $c_len_padding = self::addPadding($C);
 
-        $S = self::getHash($H, $A.str_pad('', $v / 8, "\0").$C.str_pad('', $u / 8, "\0").$a_len_padding.$c_len_padding);
+        $S = self::getHash($H, $A . str_pad('', $v / 8, "\0") . $C . str_pad('', $u / 8, "\0") . $a_len_padding . $c_len_padding);
         $T1 = self::getMSB($tag_length, self::getGCTR($K, $key_length, $J0, $S));
         Assertion::eq($T1, $T, 'Unable to decrypt or to verify the tag.');
 
@@ -256,18 +258,18 @@ final class AESGCM
      */
     private static function common($K, $key_length, $IV, $A)
     {
-        $H = openssl_encrypt(str_repeat("\0", 16), 'aes-'.($key_length).'-ecb', $K, OPENSSL_NO_PADDING | OPENSSL_RAW_DATA); //---
+        $H = openssl_encrypt(str_repeat("\0", 16), 'aes-' . ($key_length) . '-ecb', $K, OPENSSL_NO_PADDING | OPENSSL_RAW_DATA); //---
         $iv_len = self::getLength($IV);
 
         if (96 === $iv_len) {
-            $J0 = $IV.pack('H*', '00000001');
+            $J0 = $IV . pack('H*', '00000001');
         } else {
             $s = self::calcVector($IV);
             Assertion::eq(($s + 64) % 8, 0, 'Unable to decrypt or to verify the tag.');
 
             $packed_iv_len = pack('N', $iv_len);
             $iv_len_padding = str_pad($packed_iv_len, 8, "\0", STR_PAD_LEFT);
-            $hash_X = $IV.str_pad('', ($s + 64) / 8, "\0").$iv_len_padding;
+            $hash_X = $IV . str_pad('', ($s + 64) / 8, "\0") . $iv_len_padding;
             $J0 = self::getHash($H, $hash_X);
         }
         $v = self::calcVector($A);
@@ -342,7 +344,7 @@ final class AESGCM
     {
         $lsb = self::getLSB($s_bits, $x);
         $X = self::toUInt32Bits($lsb) + 1;
-        $res = self::getMSB(self::getLength($x) - $s_bits, $x).pack('N', $X);
+        $res = self::getMSB(self::getLength($x) - $s_bits, $x) . pack('N', $X);
 
         return $res;
     }
@@ -367,7 +369,7 @@ final class AESGCM
      */
     private static function getProduct($X, $Y)
     {
-        $R = pack('H*', 'E1').str_pad('', 15, "\0");
+        $R = pack('H*', 'E1') . str_pad('', 15, "\0");
         $Z = str_pad('', 16, "\0");
         $V = $Y;
 
@@ -456,7 +458,7 @@ final class AESGCM
         for ($i = 2; $i <= $n; $i++) {
             $CB[$i] = self::getInc(32, $CB[$i - 1]);
         }
-        $mode = 'aes-'.($key_length).'-ecb';
+        $mode = 'aes-' . ($key_length) . '-ecb';
         for ($i = 1; $i < $n; $i++) {
             $C = openssl_encrypt($CB[$i], $mode, $K, OPENSSL_NO_PADDING | OPENSSL_RAW_DATA);
             $Y[$i] = self::getBitXor(mb_substr($X, ($i - 1) * 16, 16, '8bit'), $C);

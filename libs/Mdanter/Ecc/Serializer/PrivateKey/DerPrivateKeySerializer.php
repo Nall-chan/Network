@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\PrivateKey;
 
+use FG\ASN1\ExplicitlyTaggedObject;
 use FG\ASN1\Object;
-use FG\ASN1\Universal\Sequence;
-use FG\ASN1\Universal\Integer;
 use FG\ASN1\Universal\BitString;
+use FG\ASN1\Universal\Integer;
 use FG\ASN1\Universal\OctetString;
+use FG\ASN1\Universal\Sequence;
 use Mdanter\Ecc\Crypto\Key\PrivateKeyInterface;
 use Mdanter\Ecc\Math\GmpMathInterface;
 use Mdanter\Ecc\Math\MathAdapterFactory;
-use Mdanter\Ecc\Serializer\Util\CurveOidMapper;
-use Mdanter\Ecc\Serializer\PublicKey\PemPublicKeySerializer;
 use Mdanter\Ecc\Serializer\PublicKey\DerPublicKeySerializer;
-use FG\ASN1\ExplicitlyTaggedObject;
+use Mdanter\Ecc\Serializer\PublicKey\PemPublicKeySerializer;
+use Mdanter\Ecc\Serializer\Util\CurveOidMapper;
 
 /**
- * PEM Private key formatter
+ * PEM Private key formatter.
  *
  * @link https://tools.ietf.org/html/rfc5915
  */
@@ -45,7 +47,8 @@ class DerPrivateKeySerializer implements PrivateKeySerializerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Serializer\PrivateKeySerializerInterface::serialize()
      */
     public function serialize(PrivateKeyInterface $key)
@@ -62,6 +65,7 @@ class DerPrivateKeySerializer implements PrivateKeySerializerInterface
 
     /**
      * @param PrivateKeyInterface $key
+     *
      * @return BitString
      */
     private function encodePubKey(PrivateKeyInterface $key)
@@ -73,6 +77,7 @@ class DerPrivateKeySerializer implements PrivateKeySerializerInterface
 
     /**
      * @param PrivateKeyInterface $key
+     *
      * @return string
      */
     private function formatKey(PrivateKeyInterface $key)
@@ -82,15 +87,17 @@ class DerPrivateKeySerializer implements PrivateKeySerializerInterface
 
     /**
      * @param string $data
-     * {@inheritDoc}
+     *                     {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\Serializer\PrivateKeySerializerInterface::parse()
+     *
      * @throws \FG\ASN1\Exception\ParserException
      */
     public function parse($data)
     {
         $asnObject = Object::fromBinary($data);
 
-        if (! ($asnObject instanceof Sequence) || $asnObject->getNumberofChildren() !== 4) {
+        if (!($asnObject instanceof Sequence) || $asnObject->getNumberofChildren() !== 4) {
             throw new \RuntimeException('Invalid data.');
         }
 

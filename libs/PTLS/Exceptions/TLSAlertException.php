@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Exceptions;
 
-use PTLS\Core;
 use PTLS\Content\Alert;
 use PTLS\ContentType;
+use PTLS\Core;
 
 class TLSAlertException extends \Exception
 {
@@ -15,7 +17,7 @@ class TLSAlertException extends \Exception
     {
         $this->output = null;
         $this->alert = $alert;
-        $message = $this->alert->toString() . " " . $message;
+        $message = $this->alert->toString() . ' ' . $message;
         parent::__construct($message, $alert->getDescCode());
     }
 

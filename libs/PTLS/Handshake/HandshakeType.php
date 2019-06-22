@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
 /**
@@ -25,18 +27,18 @@ namespace PTLS\Handshake;
  *              case client_key_exchange: ClientKeyExchange;
  *              case finished:            Finished;
  *          } body;
- *      } Handshake;
+ *      } Handshake;.
  *
  * NO support for certificate_request(13) and certificate_verify(15)
  */
 class HandshakeType
 {
-    const HELLO_REQUEST       = 0;
-    const CLIENT_HELLO        = 1;
-    const SERVER_HELLO        = 2;
-    const CERTIFICATE         = 11;
+    const HELLO_REQUEST = 0;
+    const CLIENT_HELLO = 1;
+    const SERVER_HELLO = 2;
+    const CERTIFICATE = 11;
     const SERVER_KEY_EXCHANGE = 12;
-    const SERVER_HELLO_DONE   = 14;
+    const SERVER_HELLO_DONE = 14;
     const CLIENT_KEY_EXCHANGE = 16;
-    const FINISHED            = 20;
+    const FINISHED = 20;
 }

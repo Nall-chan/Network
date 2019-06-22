@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* * @addtogroup network
  * @{
  *
@@ -17,7 +19,7 @@ $autoloader = new AutoloaderTLS('PTLS');
 $autoloader->register();
 
 /**
- * Der Typ des Paketes
+ * Der Typ des Paketes.
  */
 class SocketType
 {
@@ -29,6 +31,7 @@ class SocketType
      *  Liefert den Klartext zu einem Pakettyp.
      *
      * @param int $Type
+     *
      * @return string
      */
     public static function ToString(int $Type)
@@ -64,6 +67,7 @@ class WebSocketState
      *  Liefert den Klartext zu einem Status.
      *
      * @param int $Code
+     *
      * @return string
      */
     public static function ToString(int $Code)
@@ -119,7 +123,7 @@ class HTTP_ERROR_CODES
 }
 
 /**
- * Alle OpCodes für einen Websocket-Frame
+ * Alle OpCodes für einen Websocket-Frame.
  */
 class WebSocketOPCode
 {
@@ -131,9 +135,10 @@ class WebSocketOPCode
     const pong = 0xA;
 
     /**
-     *  Liefert den Klartext zu einem OPCode
+     *  Liefert den Klartext zu einem OPCode.
      *
      * @param int $Code
+     *
      * @return string
      */
     public static function ToString(int $Code)
@@ -158,7 +163,7 @@ class WebSocketOPCode
 }
 
 /**
- * Wert bei Maskierung
+ * Wert bei Maskierung.
  */
 class WebSocketMask
 {
@@ -173,9 +178,9 @@ class WebSocketFrame extends stdClass
     public $Fin = false;
     public $OpCode = WebSocketOPCode::continuation;
     public $Mask = false;
-    public $MaskKey = "";
-    public $Payload = "";
-    public $PayloadRAW = "";
+    public $MaskKey = '';
+    public $Payload = '';
+    public $PayloadRAW = '';
     public $Tail = null;
 
     /**
@@ -221,10 +226,10 @@ class WebSocketFrame extends stdClass
         $len = ord($Frame[1]) & 0x7F;
         $start = 2;
         if ($len == 126) {
-            $len = unpack("n", substr($Frame, 2, 2))[1];
+            $len = unpack('n', substr($Frame, 2, 2))[1];
             $start = 4;
         } elseif ($len == 127) {
-            $len = unpack("J", substr($Frame, 2, 8))[1];
+            $len = unpack('J', substr($Frame, 2, 8))[1];
             $start = 10;
         }
         if ($this->Mask) {
@@ -245,19 +250,18 @@ class WebSocketFrame extends stdClass
     }
 
     /**
-     * Liefert den Byte-String für den Versand an den IO-Parent
-     *
+     * Liefert den Byte-String für den Versand an den IO-Parent.
      */
     public function ToFrame($Masked = false)
     {
         $Frame = chr(($this->Fin ? 0x80 : 0x00) | $this->OpCode);
         $len = strlen($this->Payload);
-        $len2 = "";
+        $len2 = '';
         if ($len > 0xFFFF) {
-            $len2 = pack("J", $len);
+            $len2 = pack('J', $len);
             $len = 127;
         } elseif ($len > 125) {
-            $len2 = pack("n", $len);
+            $len2 = pack('n', $len);
             $len = 126;
         }
         $this->Mask = $Masked;
@@ -284,56 +288,54 @@ class Websocket_Client
 {
     /**
      * IP-Adresse des Node.
+     *
      * @var string
-     * @access public
      */
     public $ClientIP;
 
     /**
-     * Port des Client
+     * Port des Client.
+     *
      * @var int
-     * @access public
      */
     public $ClientPort;
 
     /**
-     * Verbindungsstatus des Client
+     * Verbindungsstatus des Client.
+     *
      * @var WebSocketState
-     * @access public
      */
     public $State;
 
     /**
      * Letzer Zeitpunkt der Datenübertragung.
+     *
      * @var Timestamp
-     * @access public
      */
     public $Timestamp;
 
     /**
-     * True wenn Client TLS spricht-
+     * True wenn Client TLS spricht-.
+     *
      * @var UseTLS
-     * @access public
      */
     public $UseTLS;
 
     /**
      * Liefert die Daten welche behalten werden müssen.
-     * @access public
      */
     public function __sleep()
     {
-        return array('ClientIP', 'ClientPort', 'State', 'Timestamp', 'UseTLS');
+        return ['ClientIP', 'ClientPort', 'State', 'Timestamp', 'UseTLS'];
     }
 
     /**
      * Erzeugt ein Websocket_Client-Objekt aus den übergebenden Daten.
      *
-     * @access public
-     * @param string $ClientIP Die IP-Adresse des Clients.
-     * @param int $ClientPort Der Empfangs-Port des Clients.
-     * @param WebSocketState $State Der Status des Clients.
-     * @param bool $UseTLS True wenn Client TLS nutzt, sonst false.
+     * @param string         $ClientIP   Die IP-Adresse des Clients.
+     * @param int            $ClientPort Der Empfangs-Port des Clients.
+     * @param WebSocketState $State      Der Status des Clients.
+     * @param bool           $UseTLS     True wenn Client TLS nutzt, sonst false.
      */
     public function __construct(string $ClientIP, int $ClientPort, $State = WebSocketState::HandshakeReceived, $UseTLS = false)
     {
@@ -347,29 +349,27 @@ class Websocket_Client
 
 /**
  * WebSocket_ClientList ist eine Klasse welche ein Array von Websocket_Clients enthält.
- *
  */
 class WebSocket_ClientList
 {
     /**
      * Array mit allen Items.
+     *
      * @var array
-     * @access public
      */
-    private $Items = array();
+    private $Items = [];
 
     /**
      * Liefert die Daten welche behalten werden müssen.
-     * @access public
      */
     public function __sleep()
     {
-        return array('Items');
+        return ['Items'];
     }
 
     /**
      * Update für einen Eintrag in $Items.
-     * @access public
+     *
      * @param Websocket_Client $Client Das neue Client-Objekt
      */
     public function Update(Websocket_Client $Client)
@@ -379,7 +379,7 @@ class WebSocket_ClientList
 
     /**
      * Löscht einen Eintrag aus $Items.
-     * @access public
+     *
      * @param Websocket_Client $Client Der Index des zu löschenden Items.
      */
     public function Remove(Websocket_Client $Client)
@@ -391,8 +391,9 @@ class WebSocket_ClientList
 
     /**
      * Liefert einen bestimmten Eintrag aus den Items anhand der IP-Adresse.
-     * @access public
+     *
      * @param Websocket_Client $Client Der zu suchende Client
+     *
      * @return Websocket_Client Das Original Objekt aus dem Buffer.
      */
     public function GetByIpPort(Websocket_Client $Client)
@@ -405,11 +406,12 @@ class WebSocket_ClientList
 
     /**
      * Liefert ein Array mit allen Clients.
+     *
      * @return Websocket_Client[] Ein Array mit allen Websocket_Client-Objekten.
      */
     public function GetClients()
     {
-        $list = array();
+        $list = [];
         foreach ($this->Items as $Client) {
             $list[$Client->ClientPort . $Client->ClientPort] = $Client;
         }
@@ -418,8 +420,9 @@ class WebSocket_ClientList
 
     /**
      * Liefert einen bestimmten Eintrag wo als nächstes das Timeout auftritt.
-     * @access public
+     *
      * @param int $Offset Offset
+     *
      * @return Websocket_Client Der Client mit dem erstmöglichen Timeout.
      */
     public function GetNextTimeout($Offset = 0)
@@ -442,4 +445,4 @@ class WebSocket_ClientList
     }
 }
 
-/** @} */
+/* @} */

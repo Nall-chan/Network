@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\Point;
 
 use Mdanter\Ecc\Math\GmpMathInterface;
@@ -21,6 +23,7 @@ class CompressedPointSerializer implements PointSerializerInterface
 
     /**
      * CompressedPointSerializer constructor.
+     *
      * @param GmpMathInterface $adapter
      */
     public function __construct(GmpMathInterface $adapter)
@@ -31,6 +34,7 @@ class CompressedPointSerializer implements PointSerializerInterface
 
     /**
      * @param PointInterface $point
+     *
      * @return string
      */
     public function getPrefix(PointInterface $point)
@@ -44,6 +48,7 @@ class CompressedPointSerializer implements PointSerializerInterface
 
     /**
      * @param PointInterface $point
+     *
      * @return string
      */
     public function serialize(PointInterface $point)
@@ -58,7 +63,8 @@ class CompressedPointSerializer implements PointSerializerInterface
 
     /**
      * @param CurveFpInterface $curve
-     * @param string $data - hex serialized compressed point
+     * @param string           $data  - hex serialized compressed point
+     *
      * @return PointInterface
      */
     public function unserialize(CurveFpInterface $curve, $data)

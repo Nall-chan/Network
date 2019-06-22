@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc;
 
 use Mdanter\Ecc\Crypto\Signature\Signer;
@@ -21,6 +23,7 @@ class EccFactory
      * @param $debug [optional] Set to true to get a trace of all mathematical operations
      *
      * @throws \RuntimeException
+     *
      * @return GmpMathInterface
      */
     public static function getAdapter($debug = false)
@@ -31,7 +34,8 @@ class EccFactory
     /**
      * Returns a factory to create NIST Recommended curves and generators.
      *
-     * @param  GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     * @param GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     *
      * @return NistCurve
      */
     public static function getNistCurves(GmpMathInterface $adapter = null)
@@ -42,7 +46,8 @@ class EccFactory
     /**
      * Returns a factory to return SECG Recommended curves and generators.
      *
-     * @param  GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     * @param GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     *
      * @return SecgCurve
      */
     public static function getSecgCurves(GmpMathInterface $adapter = null)
@@ -53,10 +58,11 @@ class EccFactory
     /**
      * Creates a new curve from arbitrary parameters.
      *
-     * @param  \GMP             $prime
-     * @param  \GMP             $a
-     * @param  \GMP             $b
-     * @param  GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     * @param \GMP             $prime
+     * @param \GMP             $a
+     * @param \GMP             $b
+     * @param GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapter().
+     *
      * @return \Mdanter\Ecc\Primitives\CurveFpInterface
      */
     public static function createCurve($bitSize, \GMP $prime, \GMP $a, \GMP $b, GmpMathInterface $adapter = null)
@@ -65,8 +71,8 @@ class EccFactory
     }
 
     /**
+     * @param GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapteR()
      *
-     * @param  GmpMathInterface $adapter [optional] Defaults to the return value of EccFactory::getAdapteR()
      * @return \Mdanter\Ecc\Crypto\Signature\Signer
      */
     public static function getSigner(GmpMathInterface $adapter = null)

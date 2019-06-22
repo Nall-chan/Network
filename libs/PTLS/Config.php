@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS;
 
 use PTLS\Exceptions\TLSException;
@@ -35,13 +37,13 @@ class Config
     private function encodeServerConfig(array $arrConfig)
     {
         if (!isset($arrConfig['key_pair_files'])) {
-            throw new TLSException("No keyPairFiles");
+            throw new TLSException('No keyPairFiles');
         }
 
         $keyPairFiles = $arrConfig['key_pair_files'];
 
         if (!isset($keyPairFiles['cert']) || !isset($keyPairFiles['key'])) {
-            throw new TLSException("Invalid keyPair");
+            throw new TLSException('Invalid keyPair');
         }
 
         $pemCrtFiles = $keyPairFiles['cert'];
@@ -54,7 +56,7 @@ class Config
 
     public function get($key, $default = null)
     {
-        return (isset($this->config[$key]) ? $this->config[$key] : $default);
+        return isset($this->config[$key]) ? $this->config[$key] : $default;
     }
 
     public function isServer()

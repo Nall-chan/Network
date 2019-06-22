@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
-use PTLS\Core;
-use PTLS\X509;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
+use PTLS\X509;
 
 class ClientKeyExchange extends HandshakeAbstract
 {
@@ -129,9 +131,9 @@ class ClientKeyExchange extends HandshakeAbstract
 
         foreach (['OUT' => $connOut, 'IN' => $connIn] as $key => $conn) {
             $arr[$key] = [
-                'Random' => base64_encode($conn->random),
+                'Random'        => base64_encode($conn->random),
                 'CipherChanged' => (($conn->isCipherChanged) ? 'True' : 'False'),
-                'Key' => ('MAC:       ' . base64_encode($connOut->MAC)
+                'Key'           => ('MAC:       ' . base64_encode($connOut->MAC)
                 . 'IV:        ' . base64_encode($connOut->IV)
                 . 'MasterKEY: ' . base64_encode($connOut->Key)),
             ];
@@ -141,7 +143,7 @@ class ClientKeyExchange extends HandshakeAbstract
                 . 'OUT: ' . explode("\n", $arr['OUT']) . "\n";
 
         return "[HandshakeType::ClientKeyExchange]\n"
-                . "Lengh:                   " . $this->length . "\n"
+                . 'Lengh:                   ' . $this->length . "\n"
                 . $output;
     }
 }

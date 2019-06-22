@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
-use PTLS\Core;
-use PTLS\Prf;
 use PTLS\CipherSuites;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
 
 class ClientHello extends HandshakeAbstract
 {
     /**
-     * For Debug
+     * For Debug.
      */
     private $requestedExtensions;
     private $requestCipherIDs;
@@ -23,11 +24,11 @@ class ClientHello extends HandshakeAbstract
 
     /**
      * Client Hello
-     * https://tools.ietf.org/html/rfc5246#section-7.4.1.2
+     * https://tools.ietf.org/html/rfc5246#section-7.4.1.2.
      */
     public function encode($data)
     {
-        $core    = $this->core;
+        $core = $this->core;
         $connIn = $core->getInDuplex();
 
         $data = $this->encodeHeader($data);
@@ -65,9 +66,9 @@ class ClientHello extends HandshakeAbstract
         for ($i = 0; $i < $cipherLength; $i += 2) {
             // https://tools.ietf.org/html/rfc5246#section-7.4.1.2
             $cipher1 = Core::_unpack('C', $data[$i]);
-            $cipher2 = Core::_unpack('C', $data[$i+1]);
+            $cipher2 = Core::_unpack('C', $data[$i + 1]);
 
-            $cipherIDs[] = [$cipher1 , $cipher2];
+            $cipherIDs[] = [$cipher1, $cipher2];
         }
 
         $this->requestCipherIDs = $cipherIDs;
@@ -78,7 +79,7 @@ class ClientHello extends HandshakeAbstract
         $compressionMethod = Core::_unpack('C', $data[1]);
 
         if ($compressionMethod != 0x00) {
-            throw new TLSAlertException(Alert::create(Alert::HANDSHAKE_FAILURE), "compressionMethod is not null");
+            throw new TLSAlertException(Alert::create(Alert::HANDSHAKE_FAILURE), 'compressionMethod is not null');
         }
 
         $core->setCompressionMethod($compressionMethod);
@@ -95,7 +96,7 @@ class ClientHello extends HandshakeAbstract
         $cipherID = CipherSuites::pickCipherID($core, $cipherIDs);
 
         if (is_null($cipherID)) {
-            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "Cipher Suite not found");
+            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), 'Cipher Suite not found');
         }
 
         $core->cipherSuite = new CipherSuites($cipherID);
@@ -105,12 +106,12 @@ class ClientHello extends HandshakeAbstract
     {
         $core = $this->core;
         $connOut = $core->getOutDuplex();
-       
+
         list($vMajor, $vMinor) = $core->getVersion();
- 
+
         // Set client random
         $connOut->random = Core::getRandom(32);
- 
+
         // Set TLS Version
         $data = Core::_pack('C', $vMajor) . Core::_pack('C', $vMinor);
 
@@ -159,26 +160,26 @@ class ClientHello extends HandshakeAbstract
         $connIn = $this->core->getInDuplex();
 
         $protoVersion = $core->getProtocolVersion();
-        $sessionID    = base64_encode($core->getSessionID());
+        $sessionID = base64_encode($core->getSessionID());
         $compressionMethod = $core->getCompressionMethod();
 
         $cipherSuites = [];
 
         // [$cipher1 , $cipher2]
         foreach ($this->requestCipherIDs as $value) {
-            $cipherSuites[] = "0x" . dechex($value[0]) . dechex($value[1]);
+            $cipherSuites[] = '0x' . dechex($value[0]) . dechex($value[1]);
         }
 
         $extensions = [];
 
         // ['type' => $extType, 'data' => $extData]
         foreach ($this->requestedExtensions as $value) {
-            $extensions[]= "Type: " . dechex($value['type'])
+            $extensions[] = 'Type: ' . dechex($value['type'])
                          . ' Data Length: ' . strlen($value['data']);
         }
 
         return "[HandshakeType::ServerHello]\n"
-             . "Lengh:            " . $this->length . "\n"
+             . 'Lengh:            ' . $this->length . "\n"
              . "Protocol Version: $protoVersion \n"
              . "Session ID:       $sessionID \n"
              . "[CipherSuites]\n"

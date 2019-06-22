@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
-use PTLS\Core;
-use PTLS\ProtocolAbstract;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
+use PTLS\ProtocolAbstract;
 
 abstract class HandshakeAbstract extends ProtocolAbstract
 {
     protected $msgType;
     protected $core;
-    
+
     public function __construct(Core $core)
     {
         $this->core = $core;
@@ -21,14 +23,14 @@ abstract class HandshakeAbstract extends ProtocolAbstract
     {
         // https://tools.ietf.org/html/rfc5246#section-7.4
         $this->msgType = $msgType = Core::_unpack('C', $data[0]);
-        $this->length  = $length  = Core::_unpack('N', $data[1] . $data[2] . $data[3] . 0x00) >> 8;
+        $this->length = $length = Core::_unpack('N', $data[1] . $data[2] . $data[3] . 0x00) >> 8;
 
         $data = substr($data, 4, $length);
-  
+
         $this->payload = $data;
 
         if ($this->length != strlen($data)) {
-            throw new TLSAlertException(Alert::create(Alert::ILLEGAL_PARAMETER), "Invalid Handshake payload: " . $this->length);
+            throw new TLSAlertException(Alert::create(Alert::ILLEGAL_PARAMETER), 'Invalid Handshake payload: ' . $this->length);
         }
 
         return $data;
@@ -61,22 +63,22 @@ abstract class HandshakeAbstract extends ProtocolAbstract
     }
 
     /**
-     * for Client Hello and Server Hello
+     * for Client Hello and Server Hello.
      */
     protected function encodeExtensions($data)
     {
         $extensions = [];
 
         for ($j = 0; $j < strlen($data);) {
-            $extType = Core::_unpack('n', $data[$j] . $data[$j+1]);
-            $extDataLen = Core::_unpack('n', $data[$j+2] . $data[$j+3]);
+            $extType = Core::_unpack('n', $data[$j] . $data[$j + 1]);
+            $extDataLen = Core::_unpack('n', $data[$j + 2] . $data[$j + 3]);
 
             if (0 == $extDataLen) {
                 $j += 2 + 2;
                 continue;
             }
 
-            $extData = substr($data, $j+4, $extDataLen);
+            $extData = substr($data, $j + 4, $extDataLen);
 
             $j += 2 + 2 + $extDataLen;
 

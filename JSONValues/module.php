@@ -1,6 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/../libs/NetworkTraits.php");
+declare(strict_types=1);
+
+require_once __DIR__ . '/../libs/NetworkTraits.php';
 
 class JSONValues extends IPSModule
 {
@@ -10,7 +12,7 @@ class JSONValues extends IPSModule
     public function Create()
     {
         parent::Create();
-        $this->RegisterPropertyString("Items", json_encode(array()));
+        $this->RegisterPropertyString('Items', json_encode([]));
     }
 
     public function ApplyChanges()
@@ -36,7 +38,7 @@ class JSONValues extends IPSModule
         $ConfigItems = array_column($Items, 'Type', 'Item');
 
         foreach ($ConfigItems as $Item => $Typ) {
-            if ($Item == "") {
+            if ($Item == '') {
                 continue;
             }
             $Ident = $this->generateIdent($Item);
@@ -81,6 +83,6 @@ class JSONValues extends IPSModule
         if (preg_match('/^[a-zA-Z0-9]+$/', $Name)) {
             return $Name;
         }
-        return preg_replace("/[^a-z0-9]+/i", "", $Name);
+        return preg_replace('/[^a-z0-9]+/i', '', $Name);
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace PTLS\Extensions;
+declare(strict_types=1);
 
-use PTLS\Core;
+namespace PTLS\Extensions;
 
 /**
  * https://tools.ietf.org/html/rfc5246#section-7.4.1.4
- * Hello Extensions
+ * Hello Extensions.
  */
 class TLSExtensions
 {
-    const TYPE_ELLIPTIC_CURVES  = 10;
+    const TYPE_ELLIPTIC_CURVES = 10;
     const TYPE_EC_POINT_FORMATS = 11;
     const TYPE_SIGNATURE_ALGORITHM = 13;
 
@@ -55,7 +55,7 @@ class TLSExtensions
         // $extensions[] = ['type' => $extType, 'data' => $extData];
         foreach ($extensions as $extension) {
             if (!isset($extension['type']) || !isset($extension['data'])) {
-                throw new Exception("Invalid Extension Paramenter");
+                throw new Exception('Invalid Extension Paramenter');
             }
 
             $type = $extension['type'];
@@ -71,9 +71,9 @@ class TLSExtensions
                 $ins = $this->instances[$className];
 
                 if (!$ins instanceof ExtensionAbstract) {
-                    throw new Exception("Not ExtensionAbstract");
+                    throw new Exception('Not ExtensionAbstract');
                 }
-                call_user_func(array($ins, $method), $type, $data);// fix php 5.6
+                call_user_func([$ins, $method], $type, $data); // fix php 5.6
                 //[$ins, $method]($type, $data);
             }
         }
@@ -89,7 +89,7 @@ class TLSExtensions
 
         foreach ($this->instances as $className => $ins) {
             //$out .= [$ins, $method]();
-            $out .= call_user_func(array($ins, $method)); // fix php 5.6
+            $out .= call_user_func([$ins, $method]); // fix php 5.6
         }
 
         return $out;
@@ -107,13 +107,13 @@ class TLSExtensions
     }
 
     /**
-     * API call
+     * API call.
      */
     public function call($className, $method, $default, ...$args)
     {
         if (isset($this->instances[$className]) &&
             is_callable([$this->instances[$className], $method])) {
-            return call_user_func(array($this->instances[$className], $method), ...$args);
+            return call_user_func([$this->instances[$className], $method], ...$args);
 //            return [$this->instances[$className], $method](...$args);
         }
 

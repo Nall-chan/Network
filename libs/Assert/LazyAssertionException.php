@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * Assert
+ * Assert.
  *
  * LICENSE
  *
@@ -19,7 +21,7 @@ class LazyAssertionException extends InvalidArgumentException
     /**
      * @var InvalidArgumentException[]
      */
-    private $errors = array();
+    private $errors = [];
 
     /**
      * @param InvalidArgumentException[] $errors

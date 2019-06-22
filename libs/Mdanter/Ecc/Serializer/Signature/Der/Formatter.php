@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Serializer\Signature\Der;
 
 use FG\ASN1\Universal\Integer;
@@ -10,6 +12,7 @@ class Formatter
 {
     /**
      * @param SignatureInterface $signature
+     *
      * @return Sequence
      */
     public function toAsn(SignatureInterface $signature)
@@ -22,6 +25,7 @@ class Formatter
 
     /**
      * @param SignatureInterface $signature
+     *
      * @return string
      */
     public function serialize(SignatureInterface $signature)

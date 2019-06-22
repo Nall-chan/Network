@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Content;
 
 use PTLS\Core;
@@ -26,6 +28,6 @@ class ApplicationData extends ProtocolAbstract
     public function debugInfo()
     {
         return  "[ApplicationData]\n"
-              . "Data Length: " . $this->core->getBufferIn()->length();
+              . 'Data Length: ' . $this->core->getBufferIn()->length();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Curves;
 
 use Mdanter\Ecc\Math\GmpMathInterface;

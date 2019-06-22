@@ -1,6 +1,8 @@
 <?php
 
-include_once(__DIR__ . "/../libs/NetworkTraits.php");
+declare(strict_types=1);
+
+include_once __DIR__ . '/../libs/NetworkTraits.php';
 
 /*
  * @addtogroup network
@@ -18,11 +20,12 @@ include_once(__DIR__ . "/../libs/NetworkTraits.php");
  * DHCPSniffer Klasse implementiert einen Sniffer für DHCP Requests.
  * Erweitert IPSModule.
  *
- * @package       Network
  * @author        Michael Tröger <micha@nall-chan.net>
  * @copyright     2017 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
+ *
  * @version       1.0
+ *
  * @example <b>Ohne</b>
  */
 class DHCPSniffer extends ipsmodule
@@ -31,8 +34,6 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function Create()
     {
@@ -42,22 +43,20 @@ class DHCPSniffer extends ipsmodule
         $this->RegisterPropertyInteger('Action', 0);
         $instance = IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] == 0) {
-            $ids = IPS_GetInstanceListByModuleID("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
+            $ids = IPS_GetInstanceListByModuleID('{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}');
             foreach ($ids as $id) {
                 if (IPS_GetObject($id)['ObjectIdent'] == 'DHCPSniffer') {
                     IPS_ConnectInstance($this->InstanceID, $id);
                     return;
                 }
             }
-            $this->RequireParent("{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}");
+            $this->RequireParent('{BAB408E0-0A0F-48C3-B14E-9FB2FA81F66A}');
             IPS_SetIdent(IPS_GetInstance($this->InstanceID)['ConnectionID'], 'DHCPSniffer');
         }
     }
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function ApplyChanges()
     {
@@ -65,24 +64,24 @@ class DHCPSniffer extends ipsmodule
 
         parent::ApplyChanges();
 
-        if (IPS_GetKernelRunlevel() <> KR_READY) {
+        if (IPS_GetKernelRunlevel() != KR_READY) {
             return;
         }
         $Mac = $this->ReadPropertyString('Address');
         if ($Mac == '') {
-            $Mac = "FFFFFFFFFFFF";
+            $Mac = 'FFFFFFFFFFFF';
         }
-        $Mac = str_replace(array(' ', ':', '-'), array('', '', ''), $Mac);
+        $Mac = str_replace([' ', ':', '-'], ['', '', ''], $Mac);
         $Mac = hex2bin($Mac);
 
         if (strlen($Mac) != 6) {
-            $Mac = "FFFFFFFFFFFF";
+            $Mac = 'FFFFFFFFFFFF';
             $this->SetStatus(IS_EBASE + 1);
         } else {
             $this->SetStatus(IS_ACTIVE);
         }
 
-        $MacJSONencoded = array();
+        $MacJSONencoded = [];
         for ($index = 0; $index < 6; $index++) {
             $MacJSONencoded[$index] = substr(json_encode(utf8_encode($Mac[$index]), JSON_UNESCAPED_UNICODE), 1, -1);
             if (strlen($MacJSONencoded[$index]) == 6) {
@@ -143,8 +142,6 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Interne Funktion des SDK.
-     *
-     * @access public
      */
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
@@ -157,7 +154,6 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Wird ausgeführt wenn der Kernel hochgefahren wurde.
-     * @access protected
      */
     protected function KernelReady()
     {
@@ -168,12 +164,11 @@ class DHCPSniffer extends ipsmodule
      * Interne Funktion des SDK.
      * Wird von der Console aufgerufen, wenn 'unser' IO-Parent geöffnet wird.
      * Außerdem nutzen wir sie in Applychanges, da wir dort die Daten zum konfigurieren nutzen.
-     * @access public
      */
     public function GetConfigurationForParent()
     {
         $Config['Port'] = 68;
-        $Config['MulticastIP'] = "224.0.0.50";
+        $Config['MulticastIP'] = '224.0.0.50';
         $Config['BindPort'] = 67;
         $Config['EnableBroadcast'] = true;
         $Config['EnableReuseAddress'] = true;
@@ -184,7 +179,6 @@ class DHCPSniffer extends ipsmodule
     /**
      * Empfängt Daten vom Parent.
      *
-     * @access public
      * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
      */
     public function ReceiveData($JSONString)
@@ -219,8 +213,6 @@ class DHCPSniffer extends ipsmodule
 
     /**
      * Beschreibt die Statusvariable.
-     *
-     * @access protected
      */
     protected function SendEvent()
     {

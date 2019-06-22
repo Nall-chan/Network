@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Content;
 
-use PTLS\Core;
 use PTLS\ContentType;
-use PTLS\Handshake\HandshakeType;
+use PTLS\Core;
 use PTLS\Exceptions\TLSAlertException;
 use PTLS\Exceptions\TLSException;
+use PTLS\Handshake\HandshakeType;
 
 abstract class ContentAbstract
 {
@@ -25,7 +27,7 @@ abstract class ContentAbstract
     }
 
     /**
-     * https://tools.ietf.org/html/rfc5246#section-6.2.1
+     * https://tools.ietf.org/html/rfc5246#section-6.2.1.
      *
      *      enum {
      *          change_cipher_spec(20), alert(21), handshake(22),
@@ -49,7 +51,7 @@ abstract class ContentAbstract
                 $this->encodeChangeCipherSpec($payload);
                 $record->cipherChanged();
                 break;
-        
+
             case ContentType::ALERT:
                 $this->encodeAlert($payload);
                 break;
@@ -87,7 +89,7 @@ abstract class ContentAbstract
         $core = $this->core;
 
         if ($this->expectedHandshakeType != HandshakeType::FINISHED || $core->isHandshaked) {
-            throw new TLSException("Invalid message");
+            throw new TLSException('Invalid message');
         }
 
         $changeCipherSpec = new ChangeCipherSpec();
@@ -101,7 +103,7 @@ abstract class ContentAbstract
         $core = $this->core;
 
         if (!$core->isHandshaked) {
-            throw new TLSException("Handshake Imcomplete");
+            throw new TLSException('Handshake Imcomplete');
         }
 
         if (is_null($this->appData)) {
@@ -123,7 +125,7 @@ abstract class ContentAbstract
         $core->isClosed = true;
 
         if ($alert->getDescCode() != Alert::CLOSE_NOTIFY) {
-            throw new TLSAlertException($alert, "Alert received from peer");
+            throw new TLSAlertException($alert, 'Alert received from peer');
         }
     }
 

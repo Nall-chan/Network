@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS;
 
 use AESGCM\AESGCM;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\Exceptions\TLSAlertException;
 
 class AEADGcm
 {
@@ -12,11 +14,10 @@ class AEADGcm
     const TAG_LEN = 16;
 
     /**
-     * PHP supports AES GCM from version 7.1
+     * PHP supports AES GCM from version 7.1.
      *
      * https://github.com/php/php-src/pull/1716
      * https://wiki.php.net/rfc/openssl_aead
-     *
      */
     private static function useOpenSSL()
     {
@@ -24,10 +25,9 @@ class AEADGcm
     }
 
     /**
-     * https://github.com/bukka/php-crypto
+     * https://github.com/bukka/php-crypto.
      *
      * Objective PHP binding of OpenSSL Crypto library
-     *
      */
     private static function useSO()
     {
@@ -48,14 +48,14 @@ class AEADGcm
 
     private static function getMethod($password)
     {
-        return "aes-" . self::bitLen($password) . "-gcm";
+        return 'aes-' . self::bitLen($password) . '-gcm';
     }
 
     public static function encrypt($data, $password, $IV, $AAD)
     {
         if (self::useOpenSSL()) {
             $method = self::getMethod($password);
-            $encrypt = openssl_encrypt($data, $method, $password, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $IV, $tag, $AAD);
+            $encrypt = openssl_encrypt($data, $method, $password, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $IV, $tag, $AAD);
         } elseif (self::useSO()) {
             try {
                 $cipher = \Crypto\Cipher::aes(\Crypto\Cipher::MODE_GCM, self::bitLen($password));

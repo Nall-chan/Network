@@ -1,6 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/../libs/NetworkTraits.php");
+declare(strict_types=1);
+
+require_once __DIR__ . '/../libs/NetworkTraits.php';
 
 class JSONFilter extends IPSModule
 {
@@ -11,9 +13,9 @@ class JSONFilter extends IPSModule
     {
         parent::Create();
 
-        $this->RegisterPropertyString("FilterItems", json_encode(array()));
-        $this->RegisterPropertyInteger("Condition", 0);
-        $this->RegisterPropertyInteger("Type", 0);
+        $this->RegisterPropertyString('FilterItems', json_encode([]));
+        $this->RegisterPropertyInteger('Condition', 0);
+        $this->RegisterPropertyInteger('Type', 0);
     }
 
     public function ApplyChanges()
@@ -23,15 +25,15 @@ class JSONFilter extends IPSModule
 
         if (count($Items) > 0) {
             foreach ($Items as $Item) {
-                $Value = "";
+                $Value = '';
                 switch ($Item['Type']) {
                     case 0:
                         if (is_numeric($Item['Value'])) {
-                            $Value = (bool) $Item['Value'] ? "true" : "false";
+                            $Value = (bool) $Item['Value'] ? 'true' : 'false';
                         } elseif (is_string($Item['Value'])) {
-                            $Value = strtolower($Item['Value']) == "true" ? "true" : "false";
+                            $Value = strtolower($Item['Value']) == 'true' ? 'true' : 'false';
                         } else {
-                            $Value = "false";
+                            $Value = 'false';
                         }
                         break;
                     case 1:
@@ -66,22 +68,22 @@ class JSONFilter extends IPSModule
                 $Types[$Item['Item']][] = $Value;
             }
             foreach ($Types as $Key => $Typ) {
-                if (sizeof($Typ) > 1) {
+                if (count($Typ) > 1) {
                     $ValueLine = '(' . implode('|', $Typ) . ')';
                 } else {
                     $ValueLine = $Typ[0];
                 }
 
-                if ($ValueLine != "") {
+                if ($ValueLine != '') {
                     $Lines[] = '.*\\\"' . $Key . '\\\":' . $ValueLine . '.*';
                 } else {
                     $Lines[] = '.*\\\"' . $Key . '\\\":.*';
                 }
             }
-            switch ($this->ReadPropertyInteger("Condition")) {
+            switch ($this->ReadPropertyInteger('Condition')) {
                 case 0: // and
                     $Line = implode(')(?=', $Lines);
-                    $Line = '.*(?=' . $Line . ").*";
+                    $Line = '.*(?=' . $Line . ').*';
                     break;
                 case 1: // or
                     $Line = implode('|', $Lines);
@@ -107,14 +109,13 @@ class JSONFilter extends IPSModule
         $this->SendDebug('Receive', $JSONString, 0);
         $AllData = utf8_decode(json_decode($JSONString)->Buffer);
         $this->SendDebug('Receive', $AllData, 0);
-        $FilterType = $this->ReadPropertyInteger("Type");
+        $FilterType = $this->ReadPropertyInteger('Type');
 
         if ($FilterType == 2) {
             $this->SendDebug('ForwardToChild', $JSONString, 0);
             $this->SendDataToChildren($JSONString);
             return;
         }
-
 
         if ($FilterType == 0) {
             $ReceiveItems = json_decode($AllData, true);
@@ -131,9 +132,9 @@ class JSONFilter extends IPSModule
             foreach (array_keys($Items) as $Item) {
                 $ReceiveItems[$Item] = $this->EncodeUTF8($ReceiveItems[$Item]);
 
-                $SendData["DataID"] = "{018EF6B5-AB94-40C6-AA53-46943E824ACF}";
-                $SendData["Buffer"] = json_encode($ReceiveItems[$Item]);
-                $this->SendDebug('Forward', $SendData["Buffer"], 0);
+                $SendData['DataID'] = '{018EF6B5-AB94-40C6-AA53-46943E824ACF}';
+                $SendData['Buffer'] = json_encode($ReceiveItems[$Item]);
+                $this->SendDebug('Forward', $SendData['Buffer'], 0);
                 $this->SendDataToChildren(json_encode($SendData));
             }
             return;

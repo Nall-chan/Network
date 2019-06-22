@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
-use PTLS\Core;
 use PTLS\CipherSuites;
-use PTLS\Exceptions\TLSAlertException;
 use PTLS\Content\Alert;
+use PTLS\Core;
+use PTLS\Exceptions\TLSAlertException;
 
 class ServerHello extends HandshakeAbstract
 {
     /**
-     * For Debug
+     * For Debug.
      */
     private $requestedExtensions;
 
@@ -21,7 +23,7 @@ class ServerHello extends HandshakeAbstract
 
     public function encode($data)
     {
-        $core  = $this->core;
+        $core = $this->core;
         $connIn = $core->getInDuplex();
 
         $data = $this->encodeHeader($data);
@@ -51,7 +53,7 @@ class ServerHello extends HandshakeAbstract
         $cipherSuite = new CipherSuites($cipherID);
 
         if (is_null($cipherSuite)) {
-            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), "cipherSuite is null");
+            throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR), 'cipherSuite is null');
         }
 
         $core->cipherSuite = $cipherSuite;
@@ -74,11 +76,11 @@ class ServerHello extends HandshakeAbstract
 
     public function decode()
     {
-        $core  = $this->core;
+        $core = $this->core;
 
         $extensions = $core->extensions;
-        $connOut    = $core->getOutDuplex();
-        $sessionID  = $core->getSessionID();
+        $connOut = $core->getOutDuplex();
+        $sessionID = $core->getSessionID();
 
         list($vMajor, $vMinor) = $core->getVersion();
 
@@ -138,19 +140,19 @@ class ServerHello extends HandshakeAbstract
         $connIn = $this->core->getInDuplex();
 
         $protoVersion = $core->getProtocolVersion();
-        $sessionID    = base64_encode($core->getSessionID());
-        $cipherSuite  = $core->cipherSuite->debugInfo();
+        $sessionID = base64_encode($core->getSessionID());
+        $cipherSuite = $core->cipherSuite->debugInfo();
 
         $extensions = [];
 
         // ['type' => $extType, 'data' => $extData]
         foreach ($this->requestedExtensions as $value) {
-            $extensions[]= "Type: " . dechex($value['type'])
+            $extensions[] = 'Type: ' . dechex($value['type'])
                          . ' Data Length: ' . strlen($value['data']);
         }
 
         return "[HandshakeType::ServerHello]\n"
-             . "Lengh:            " . $this->length . "\n"
+             . 'Lengh:            ' . $this->length . "\n"
              . "Protocol Version: $protoVersion \n"
              . "Session ID:       $sessionID\n"
              . "[Extensions]\n"

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Handshake;
 
 use PTLS\Core;
@@ -31,6 +33,6 @@ class ServerKeyExchange extends HandshakeAbstract
     public function debugInfo()
     {
         return "[HandshakeType::ServerKeyExchange]\n"
-             . "Lengh: " . $this->length . "\n";
+             . 'Lengh: ' . $this->length . "\n";
     }
 }

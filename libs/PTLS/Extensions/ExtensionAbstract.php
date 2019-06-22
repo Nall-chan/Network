@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Extensions;
 
 use PTLS\Core;
@@ -27,6 +29,8 @@ abstract class ExtensionAbstract
     }
 
     abstract public function onEncodeClientHello($type, $data);
+
     abstract public function onDecodeClientHello();
+
     abstract public function onDecodeServerHello();
 }

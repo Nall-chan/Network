@@ -1,28 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PTLS\Extensions;
 
+use PTLS\Content\Alert;
 use PTLS\Core;
-use PTLS\Handshake\HandshakeFactory;
-use PTLS\Handshake\HandshakeType;
 use PTLS\EcDH;
 use PTLS\Exceptions\TLSAlertException;
-use PTLS\Content\Alert;
+use PTLS\Handshake\HandshakeFactory;
+use PTLS\Handshake\HandshakeType;
 
 /**
-  * https://tools.ietf.org/html/rfc4492#section-5.1
-  *
-  * enum { elliptic_curves(10), ec_point_formats(11) } ExtensionType;
-  *
-  *   elliptic_curves (Supported Elliptic Curves Extension):   Indicates
-  *      the set of elliptic curves supported by the client.  For this
-  *      extension, the opaque extension_data field contains
-  *      EllipticCurveList.  See Section 5.1.1 for details.
-  *
-  *   ec_point_formats (Supported Point Formats Extension):   Indicates the
-  *      set of point formats that the client can parse.  For this
-  *      extension, the opaque extension_data field contains
-  *      ECPointFormatList.  See Section 5.1.2 for details.
+ * https://tools.ietf.org/html/rfc4492#section-5.1.
+ *
+ * enum { elliptic_curves(10), ec_point_formats(11) } ExtensionType;
+ *
+ *   elliptic_curves (Supported Elliptic Curves Extension):   Indicates
+ *      the set of elliptic curves supported by the client.  For this
+ *      extension, the opaque extension_data field contains
+ *      EllipticCurveList.  See Section 5.1.1 for details.
+ *
+ *   ec_point_formats (Supported Point Formats Extension):   Indicates the
+ *      set of point formats that the client can parse.  For this
+ *      extension, the opaque extension_data field contains
+ *      ECPointFormatList.  See Section 5.1.2 for details.
  */
 class Curve extends ExtensionAbstract
 {
@@ -62,7 +64,7 @@ class Curve extends ExtensionAbstract
                 $data = substr($data, 2);
 
                 for ($i = 0; $i < $length; $i += 2) {
-                    $namedCurveType = Core::_unpack('n', $data[$i] . $data[$i+1]);
+                    $namedCurveType = Core::_unpack('n', $data[$i] . $data[$i + 1]);
 
                     if (Ecdh::isSupported($namedCurveType)) {
                         $this->namedCurveType = $namedCurveType;
@@ -79,7 +81,7 @@ class Curve extends ExtensionAbstract
     }
 
     /**
-     * ec_point_formats(11)
+     * ec_point_formats(11).
      *
      * https://tools.ietf.org/html/rfc4492#section-5.1.2
      *
@@ -124,7 +126,7 @@ class Curve extends ExtensionAbstract
         $data = Core::_pack('C', 1) . Core::_pack('C', 0);
 
         $this->extType = TLSExtensions::TYPE_EC_POINT_FORMATS;
-        $this->length  = strlen($data);
+        $this->length = strlen($data);
 
         return $this->decodeHeader() . $data;
     }
@@ -144,7 +146,7 @@ class Curve extends ExtensionAbstract
         $namedCurveData = Core::_pack('n', strlen($namedCurveTypes)) . $namedCurveTypes;
 
         $this->extType = TLSExtensions::TYPE_ELLIPTIC_CURVES;
-        $this->length  = strlen($namedCurveData);
+        $this->length = strlen($namedCurveData);
 
         $data .= $this->decodeHeader() . $namedCurveData;
 
@@ -177,14 +179,14 @@ class Curve extends ExtensionAbstract
 
         if ($curveType != 0x03) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR),
-                "Not named curve type: " + $curveType);
+                'Not named curve type: ' + $curveType);
         }
 
         $namedCurveType = Core::_unpack('n', $data[1] . $data[2]);
 
         if (!EcDH::isSupported($namedCurveType)) {
             throw new TLSAlertException(Alert::create(Alert::INTERNAL_ERROR),
-                "Unknow named curve: " + $namedCurveType);
+                'Unknow named curve: ' + $namedCurveType);
         }
 
         $this->namedCurveType = $namedCurveType;
@@ -250,7 +252,7 @@ class Curve extends ExtensionAbstract
           *    SHA(ClientHello.random + ServerHello.random +
           *                                      ServerKeyExchange.params);
          */
-        $connIn  = $core->getInDuplex();
+        $connIn = $core->getInDuplex();
         $connOut = $core->getOutDuplex();
 
         $dataSign = $connIn->random . $connOut->random . $data;
@@ -266,7 +268,7 @@ class Curve extends ExtensionAbstract
 
         // Append signature
         $data .= Core::_pack('n', strlen($signature)) . $signature;
-        
+
         $hs = HandShakeFactory::getInstance($core, HandshakeType::SERVER_KEY_EXCHANGE);
 
         $hs->setMsgType(HandshakeType::SERVER_KEY_EXCHANGE);
@@ -277,7 +279,7 @@ class Curve extends ExtensionAbstract
 
     /**
      * https://tools.ietf.org/html/rfc4492#section-2
-     * Called from HandshakeClientKeyExchange
+     * Called from HandshakeClientKeyExchange.
      */
     public function calculatePremaster($publicKeyBin)
     {

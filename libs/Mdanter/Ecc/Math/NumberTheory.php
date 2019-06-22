@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Math;
 
 /***********************************************************************
@@ -25,7 +27,7 @@ namespace Mdanter\Ecc\Math;
      ************************************************************************/
 
 /**
- * Implementation of some number theoretic algorithms
+ * Implementation of some number theoretic algorithms.
  *
  * @author Matyas Danter
  */
@@ -53,6 +55,7 @@ class NumberTheory
      * @param \GMP[] $poly
      * @param $polymod
      * @param $p
+     *
      * @return array
      */
     public function polynomialReduceMod($poly, $polymod, $p)
@@ -92,11 +95,12 @@ class NumberTheory
      * @param $m2
      * @param $polymod
      * @param $p
+     *
      * @return array
      */
     public function polynomialMultiplyMod($m1, $m2, $polymod, $p)
     {
-        $prod = array();
+        $prod = [];
         $cm1 = count($m1);
         $cm2 = count($m2);
         $zero = gmp_init(0, 10);
@@ -126,9 +130,10 @@ class NumberTheory
 
     /**
      * @param array $base
-     * @param \GMP $exponent
+     * @param \GMP  $exponent
      * @param array $polymod
-     * @param \GMP $p
+     * @param \GMP  $p
+     *
      * @return array|int
      */
     public function polynomialPowMod($base, \GMP $exponent, $polymod, \GMP $p)
@@ -149,7 +154,7 @@ class NumberTheory
             if ($adapter->equals($adapter->mod($k, $two), $one)) {
                 $s = $G;
             } else {
-                $s = array($one);
+                $s = [$one];
             }
 
             while ($adapter->cmp($k, $one) > 0) {
@@ -170,6 +175,7 @@ class NumberTheory
     /**
      * @param \GMP $a
      * @param \GMP $p
+     *
      * @return \GMP
      */
     public function squareRootModP(\GMP $a, \GMP $p)
@@ -193,7 +199,7 @@ class NumberTheory
 
             $jac = $math->jacobi($a, $p);
             if ($jac == -1) {
-                throw new \LogicException($math->toString($a)." has no square root modulo ".$math->toString($p));
+                throw new \LogicException($math->toString($a) . ' has no square root modulo ' . $math->toString($p));
             }
 
             if ($math->equals($math->mod($p, $four), gmp_init(3, 10))) {
@@ -239,10 +245,10 @@ class NumberTheory
                     $p
                 ) == -1
                 ) {
-                    $f = array($a, $math->sub($zero, $b), $one);
+                    $f = [$a, $math->sub($zero, $b), $one];
 
                     $ff = $this->polynomialPowMod(
-                        array($zero, $one),
+                        [$zero, $one],
                         $math->div(
                             $math->add(
                                 $p,

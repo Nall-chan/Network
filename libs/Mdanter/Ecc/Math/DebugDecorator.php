@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mdanter\Ecc\Math;
 
 use Mdanter\Ecc\Primitives\CurveFpInterface;
@@ -21,8 +23,8 @@ class DebugDecorator implements GmpMathInterface
     private $writer;
 
     /**
-     * @param GmpMathInterface     $adapter
-     * @param callable|null        $callback
+     * @param GmpMathInterface $adapter
+     * @param callable|null    $callback
      */
     public function __construct(GmpMathInterface $adapter, callable $callback = null)
     {
@@ -33,7 +35,6 @@ class DebugDecorator implements GmpMathInterface
     }
 
     /**
-     *
      * @param string $message
      */
     private function write($message)
@@ -42,9 +43,9 @@ class DebugDecorator implements GmpMathInterface
     }
 
     /**
+     * @param string $func
+     * @param array  $args
      *
-     * @param  string $func
-     * @param  array  $args
      * @return mixed
      */
     private function call($func, $args)
@@ -64,9 +65,9 @@ class DebugDecorator implements GmpMathInterface
             list(, $func) = explode('::', $func);
         }
 
-        $this->write($func.'('.implode(', ', $strArgs).')');
+        $this->write($func . '(' . implode(', ', $strArgs) . ')');
 
-        $res = call_user_func_array([ $this->adapter, $func ], $args);
+        $res = call_user_func_array([$this->adapter, $func], $args);
 
         if ($res instanceof \GMP) {
             $this->write(' => ' . var_export($this->adapter->toString($res), true) . PHP_EOL);
@@ -78,7 +79,8 @@ class DebugDecorator implements GmpMathInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::cmp()
      */
     public function cmp(\GMP $first, \GMP $other)
@@ -87,18 +89,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::cmp()
      */
     public function equals(\GMP $first, \GMP $other)
@@ -107,17 +109,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
                 $this,
                 'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::mod()
      */
     public function mod(\GMP $number, \GMP $modulus)
@@ -126,17 +129,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::add()
      */
     public function add(\GMP $augend, \GMP $addend)
@@ -145,17 +149,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::sub()
      */
     public function sub(\GMP $minuend, \GMP $subtrahend)
@@ -164,17 +169,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::mul()
      */
     public function mul(\GMP $multiplier, \GMP $multiplicand)
@@ -183,17 +189,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::div()
      */
     public function div(\GMP $dividend, \GMP $divisor)
@@ -202,17 +209,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::pow()
      */
     public function pow(\GMP $base, $exponent)
@@ -221,17 +229,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::bitwiseAnd()
      */
     public function bitwiseAnd(\GMP $first, \GMP $other)
@@ -240,17 +249,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\MathAdapter::toString()
      */
     public function toString(\GMP $value)
@@ -259,7 +269,8 @@ class DebugDecorator implements GmpMathInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::hexDec()
      */
     public function hexDec($hexString)
@@ -268,17 +279,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::decHex()
      */
     public function decHex($decString)
@@ -287,17 +299,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::powmod()
      */
     public function powmod(\GMP $base, \GMP $exponent, \GMP $modulus)
@@ -306,17 +319,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::isPrime()
      */
     public function isPrime(\GMP $n)
@@ -325,17 +339,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::nextPrime()
      */
     public function nextPrime(\GMP $currentPrime)
@@ -344,17 +359,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::inverseMod()
      */
     public function inverseMod(\GMP $a, \GMP $m)
@@ -363,17 +379,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::jacobi()
      */
     public function jacobi(\GMP $a, \GMP $p)
@@ -382,17 +399,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::intToString()
      */
     public function intToString(\GMP $x)
@@ -401,17 +419,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::stringToInt()
      */
     public function stringToInt($s)
@@ -420,17 +439,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::digestInteger()
      */
     public function digestInteger(\GMP $m)
@@ -439,17 +459,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::gcd2()
      */
     public function gcd2(\GMP $a, \GMP $m)
@@ -458,17 +479,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::rightShift()
      */
     public function rightShift(\GMP $number, $positions)
@@ -477,17 +499,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::leftShift()
      */
     public function leftShift(\GMP $number, $positions)
@@ -496,17 +519,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call',
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::bitwiseXor()
      */
     public function bitwiseXor(\GMP $first, \GMP $other)
@@ -515,17 +539,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call'
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::baseConvert()
      */
     public function baseConvert($value, $fromBase, $toBase)
@@ -534,17 +559,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call'
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::getEcMath()
      */
     public function getEcMath(GeneratorPoint $generatorPoint, $input)
@@ -553,17 +579,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call'
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::getPrimeFieldArithmetic()
      */
     public function getPrimeFieldArithmetic(CurveFpInterface $curve)
@@ -572,17 +599,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call'
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::getModularArithmetic()
      */
     public function getModularArithmetic(\GMP $modulus)
@@ -591,17 +619,18 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
                 $this,
                 'call'
-            ),
+            ],
             $func,
             $args
         );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \Mdanter\Ecc\GmpMathInterface::getNumberTheory()
      */
     public function getNumberTheory()
@@ -610,10 +639,10 @@ class DebugDecorator implements GmpMathInterface
         $args = func_get_args();
 
         return call_user_func(
-            array(
+            [
             $this,
             'call'
-            ),
+            ],
             $func,
             $args
         );
