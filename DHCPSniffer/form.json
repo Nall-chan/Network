@@ -7,15 +7,15 @@
                     "caption": "Protocol",
                     "options": [
                         {
-                            "label": "DHCP",
+                            "caption": "DHCP",
                             "value": 0
                         },
                         {
-                            "label": "BOOTP",
+                            "caption": "BOOTP",
                             "value": 1
                         },
                         {
-                            "label": "DHCP & BOOTP",
+                            "caption": "DHCP & BOOTP",
                             "value": 2
                         }
                     ]
@@ -29,15 +29,15 @@
                     "caption": "State",
                     "options": [
                         {
-                            "label": "Event (true)",
+                            "caption": "Event (true)",
                             "value": 0
                         },
                         {
-                            "label": "Impulse (monostabil)",
+                            "caption": "Impulse (monostabil)",
                             "value": 1
                         },
                         {
-                            "label": "Toggle (bistabil)",
+                            "caption": "Toggle (bistabil)",
                             "value": 2
                         }
                     ]

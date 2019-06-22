@@ -11,7 +11,7 @@
                         "direction": "ascending"
                     },
                     "columns": [{
-                            "label": "IPS Hook",
+                            "caption": "IPS Hook",
                             "name": "Hook",
                             "width": "300px",
                             "add": "/hook/",
@@ -20,7 +20,7 @@
                                 "type": "ValidationTextBox"
                             }
                         }, {
-                            "label": "Source",
+                            "caption": "Source",
                             "name": "Url",
                             "width": "auto",
                             "add": "http://",
@@ -29,7 +29,7 @@
                                 "type": "ValidationTextBox"
                             }
                         }, {
-                            "label": "force download",
+                            "caption": "force download",
                             "name": "forceDL",
                             "width": "150px",
                             "add": false,
@@ -38,7 +38,7 @@
                                 "type": "CheckBox"
                             }
                         }, {
-                            "label": "allow get query",
+                            "caption": "allow get query",
                             "name": "allowGet",
                             "width": "150px",
                             "add": true,
@@ -47,7 +47,7 @@
                                 "type": "CheckBox"
                             }
                         }, {
-                            "label": "no SSL checks",
+                            "caption": "no SSL checks",
                             "name": "weakSSL",
                             "width": "150px",
                             "add": false,

@@ -44,6 +44,7 @@ use PTLS\Exceptions\TLSAlertException;
  */
 class WebsocketClient extends IPSModule
 {
+
     use DebugHelper,
         InstanceStatus,
         BufferHelper,
@@ -190,7 +191,7 @@ class WebsocketClient extends IPSModule
         $OldState = $this->State;
 
 
-        if ((($OldState != WebSocketState::unknow) and ($OldState != WebSocketState::Connected)) or ($OldState == WebSocketState::init)) {
+        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
             return;
         }
 
@@ -220,7 +221,7 @@ class WebsocketClient extends IPSModule
                 $Open = false;
                 trigger_error('Invalid URL', E_USER_NOTICE);
             } else {
-                if (($this->ReadPropertyInteger('PingInterval') != 0) and ($this->ReadPropertyInteger('PingInterval') < 5)) {
+                if (($this->ReadPropertyInteger('PingInterval') != 0) and ( $this->ReadPropertyInteger('PingInterval') < 5)) {
                     $NewState = IS_EBASE + 4;
                     $Open = false;
                     trigger_error('Ping interval to small', E_USER_NOTICE);
@@ -380,6 +381,9 @@ class WebsocketClient extends IPSModule
 
         $SendKey = base64_encode(openssl_random_pseudo_bytes(12));
         $Key = base64_encode(sha1($SendKey . "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
+        if (array_key_exists('query', $URL)) {
+            $URL['path'] .= '?' . $URL['query'];
+        }
         $Header[] = 'GET ' . $URL['path'] . ' HTTP/1.1';
         $Header[] = 'Host: ' . $URL['host'];
         if ($this->ReadPropertyBoolean("BasisAuth")) {
@@ -646,7 +650,7 @@ class WebsocketClient extends IPSModule
         if ($this->UseTLS) {
             $Data = $this->TLSBuffer . utf8_decode($data->Buffer);
 
-            if (($this->State == WebSocketState::TLSisSend) or ($this->State == WebSocketState::TLSisReceived)) {
+            if (($this->State == WebSocketState::TLSisSend) or ( $this->State == WebSocketState::TLSisReceived)) {
                 $this->WaitForResponse(WebSocketState::TLSisSend);
                 $this->TLSBuffer = "";
                 $this->SendDebug('Receive TLS Handshake', $Data, 0);
@@ -836,6 +840,7 @@ class WebsocketClient extends IPSModule
             IPS_ConnectInstance($this->InstanceID, $parentID);
         }
     }
+
 }
 
 /** @} */

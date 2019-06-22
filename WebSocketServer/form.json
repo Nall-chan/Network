@@ -2,7 +2,7 @@
     "elements":
             [{
                     "type": "Label",
-                    "label": "Caution: Only use TLS with authentication if the port is accessible externally!"
+                    "caption": "Caution: Only use TLS with authentication if the port is accessible externally!"
                 }, {
                     "name": "Open",
                     "type": "CheckBox",
@@ -27,7 +27,7 @@
                     "caption": "Mode",
                     "options": [
                         {
-                            "label": "no TLS",
+                            "caption": "no TLS",
                             "value": [
                                 {
                                     "name": "TLS",
@@ -40,7 +40,7 @@
                             ]
                         },
                         {
-                            "label": "both",
+                            "caption": "both",
                             "value": [
                                 {
                                     "name": "TLS",
@@ -53,7 +53,7 @@
                             ]
                         },
                         {
-                            "label": "only TLS",
+                            "caption": "only TLS",
                             "value": [
                                 {
                                     "name": "TLS",
@@ -68,10 +68,10 @@
                     ]
                 }, {
                     "type": "Label",
-                    "label": "--------------------------------------------------"
+                    "caption": "--------------------------------------------------"
                 }, {
                     "type": "Label",
-                    "label": "Optional Certificate:"
+                    "caption": "Optional Certificate:"
                 }, {
                     "name": "CertFile",
                     "type": "SelectFile",
@@ -89,10 +89,10 @@
                     "caption": "Passphrase(optional)"
                 }, {
                     "type": "Label",
-                    "label": "--------------------------------------------------"
+                    "caption": "--------------------------------------------------"
                 }, {
                     "type": "Label",
-                    "label": "Optional HTTP Basic-Authentication:"
+                    "caption": "Optional HTTP Basic-Authentication:"
                 },
                 {
                     "name": "BasisAuth",

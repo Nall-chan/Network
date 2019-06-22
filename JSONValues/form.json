@@ -12,7 +12,7 @@
                         "direction": "ascending"
                     },
                     "columns": [{
-                            "label": "Item",
+                            "caption": "Item",
                             "name": "Item",
                             "width": "auto",
                             "add": "",
@@ -20,7 +20,7 @@
                                 "type": "ValidationTextBox"
                             }
                         }, {
-                            "label": "Type",
+                            "caption": "Type",
                             "name": "Type",
                             "width": "150px",
                             "add": 3,
@@ -29,19 +29,19 @@
                                 "caption": "Variabletyp",
                                 "options": [
                                     {
-                                        "label": "boolean",
+                                        "caption": "boolean",
                                         "value": 0
                                     },
                                     {
-                                        "label": "integer",
+                                        "caption": "integer",
                                         "value": 1
                                     },
                                     {
-                                        "label": "float",
+                                        "caption": "float",
                                         "value": 2
                                     },
                                     {
-                                        "label": "string",
+                                        "caption": "string",
                                         "value": 3
                                     }
                                 ]

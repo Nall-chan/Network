@@ -7,11 +7,11 @@
                     "caption": "Condition",
                     "options": [
                         {
-                            "label": "and",
+                            "caption": "and",
                             "value": 0
                         },
                         {
-                            "label": "or",
+                            "caption": "or",
                             "value": 1
                         }
                     ]
@@ -26,7 +26,7 @@
                         "direction": "ascending"
                     },
                     "columns": [{
-                            "label": "Item",
+                            "caption": "Item",
                             "name": "Item",
                             "width": "auto",
                             "add": "",
@@ -34,7 +34,7 @@
                                 "type": "ValidationTextBox"
                             }
                         }, {
-                            "label": "Value",
+                            "caption": "Value",
                             "name": "Value",
                             "width": "100px",
                             "add": "",
@@ -42,7 +42,7 @@
                                 "type": "ValidationTextBox"
                             }
                         }, {
-                            "label": "Type",
+                            "caption": "Type",
                             "name": "Type",
                             "width": "50px",
                             "add": 3,
@@ -51,25 +51,25 @@
                                 "caption": "Variabletyp",
                                 "options": [
                                     {
-                                        "label": "boolean",
+                                        "caption": "boolean",
                                         "value": 0
                                     },
                                     {
-                                        "label": "integer",
+                                        "caption": "integer",
                                         "value": 1
                                     },
                                     {
-                                        "label": "float",
+                                        "caption": "float",
                                         "value": 2
                                     },
                                     {
-                                        "label": "string",
+                                        "caption": "string",
                                         "value": 3
                                     }
                                 ]
                             }
                         }, {
-                            "label": "Condition",
+                            "caption": "Condition",
                             "name": "Condition",
                             "width": "50px",
                             "add": 0,
@@ -78,15 +78,15 @@
                                 "caption": "Condition",
                                 "options": [
                                     {
-                                        "label": "void",
+                                        "caption": "void",
                                         "value": 0
                                     },
                                     {
-                                        "label": "match",
+                                        "caption": "match",
                                         "value": 1
                                     },
                                     {
-                                        "label": "include (only string)",
+                                        "caption": "include (only string)",
                                         "value": 2
                                     }
                                 ]
@@ -100,15 +100,15 @@
                     "caption": "Filter of",
                     "options": [
                         {
-                            "label": "Sub-Item",
+                            "caption": "Sub-Item",
                             "value": 0
                         },
                         {
-                            "label": "Self-Item",
+                            "caption": "Self-Item",
                             "value": 1
                         },
                         {
-                            "label": "all",
+                            "caption": "all",
                             "value": 2
                         }
                     ]
