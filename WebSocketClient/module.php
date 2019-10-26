@@ -222,8 +222,7 @@ class WebsocketClient extends IPSModule
         }
         $OldState = $this->State;
         $this->SendDebug(__FUNCTION__, 'OldState:' . $OldState, 0);
-        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
-
+        if ((($OldState != WebSocketState::unknow) and ($OldState != WebSocketState::Connected)) or ($OldState == WebSocketState::init)) {
             return;
         }
 
