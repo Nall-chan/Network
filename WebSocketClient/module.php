@@ -419,7 +419,7 @@ class WebsocketClient extends IPSModule
             $URL['path'] = '/';
         }
 
-        $SendKey = base64_encode(openssl_random_pseudo_bytes(12));
+        $SendKey = base64_encode(openssl_random_pseudo_bytes(16));
         $Key = base64_encode(sha1($SendKey . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true));
         if (array_key_exists('query', $URL)) {
             $URL['path'] .= '?' . $URL['query'];

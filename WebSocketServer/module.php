@@ -1100,8 +1100,6 @@ class WebsocketServer extends IPSModule
             }
             if (@$this->SendPing($Client->ClientIP, $Client->ClientPort, '') === false) {
                 $this->SendDebug('TIMEOUT ' . $Client->ClientIP . ':' . $Client->ClientPort, 'Ping timeout', 0);
-                $this->RemoveOneClient($Client);
-                $this->CloseConnection($Client);
             }
         }
         $this->SendDebug('KeepAlive', 'end', 0);
@@ -1143,6 +1141,7 @@ class WebsocketServer extends IPSModule
         if ($Result !== $Text) {
             $this->SendDebug('Error in Pong ' . $Client->ClientIP . ':' . $Client->ClientPort, $Result, 0);
             trigger_error($this->Translate('Wrong pong received'), E_USER_NOTICE);
+            $this->RemoveOneClient($Client);
             $this->SendDisconnect($Client);
             return false;
         }

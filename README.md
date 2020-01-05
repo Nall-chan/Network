@@ -1,5 +1,5 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.20-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-2.21-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 [![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/104255893/shield?style=flat)](https://styleci.io/repos/104255893)  
@@ -72,8 +72,11 @@ Details sind in der Dokumentation der jeweiligen Module beschrieben.
 
 ### 2. Changlog
 
-Version 2.20:
- - Neu: Webhook Reverse Proxy
+Version 2.21:  
+ - Fix: Sec-WebSocket-Key hatte die falsche Länge.    
+
+Version 2.20:  
+ - Neu: Webhook Reverse Proxy  
 
 Version 2.01:  
  - Doku ergänzt  
