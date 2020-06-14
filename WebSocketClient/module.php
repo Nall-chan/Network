@@ -13,9 +13,9 @@ use PTLS\TLSContext;
  * @package       Network
  * @file          module.php
  * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
+ * @copyright     2020 Michael Tröger
  * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
+ * @version       2.4
  */
 
 /**
@@ -222,7 +222,7 @@ class WebsocketClient extends IPSModule
         }
         $OldState = $this->State;
         $this->SendDebug(__FUNCTION__, 'OldState:' . $OldState, 0);
-        if ((($OldState != WebSocketState::unknow) and ($OldState != WebSocketState::Connected)) or ($OldState == WebSocketState::init)) {
+        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
             return;
         }
 
@@ -745,7 +745,7 @@ class WebsocketClient extends IPSModule
                         break;
                     }
                 }
-                if (strlen($TLSData) > 0) {
+                if (strlen($TLSData) == 0) {
                     $this->TLSReceiveBuffer = '';
                 } else {
                     //$this->SendDebug('Receive TLS Part', $TLSData, 0);

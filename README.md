@@ -1,5 +1,5 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
-[![Version](https://img.shields.io/badge/Modul%20Version-2.3-blue.svg)]()
+[![Version](https://img.shields.io/badge/Modul%20Version-2.4-blue.svg)]()
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)  
 [![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/104255893/shield?style=flat)](https://styleci.io/repos/104255893)  
@@ -71,6 +71,9 @@ Details sind in der Dokumentation der jeweiligen Module beschrieben.
 | WebSocketInterfaceTest | Splitter | WSTest    | {FC11DB7C-4999-4EA7-B57A-82A878ADD273} |
 
 ### 2. Changlog
+
+Version 2.4:  
+ - Fix: WebSocketClient hat TLS-Pakete falsch zerlegt.  
 
 Version 2.3:  
  - Fix: DHCP-Sniffer hat während des Symcon Systemstart auf falsche DHCP Requests reagiert.

@@ -1109,12 +1109,12 @@ class WebsocketServer extends IPSModule
      * Versendet einen Ping an einen Client.
      *
      * @param string $ClientIP   Die IP-Adresse des Client.
-     * @param string $ClientPort Der Port des Client.
+     * @param int $ClientPort Der Port des Client.
      * @param string $Text       Der Payload des Ping.
      *
      * @return bool True bei Erfolg, im Fehlerfall wird eine Warnung und false ausgegeben.
      */
-    public function SendPing(string $ClientIP, string $ClientPort, string $Text)
+    public function SendPing(string $ClientIP, int $ClientPort, string $Text)
     {
         $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($ClientIP, $ClientPort));
         if ($Client === false) {

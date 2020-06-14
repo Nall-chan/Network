@@ -87,9 +87,9 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 ## 6. PHP-Befehlsreferenz
 
 ```php
-bool WSS_SendPing(integer $InstanzeID, string $ClientIP, string $Text);
+bool WSS_SendPing(integer $InstanzeID, string $ClientIP, int $ClientPort, string $Text);
 ```
- Senden die in `$Text` übergeben Daten als Payload eines Ping an die `$ClientIP` eines WebSocket-Clients.
+ Senden die in `$Text` übergeben Daten als Payload eines Ping an den in `$ClientIP` & `$ClientPort` angegeben WebSocket-Client.  
  Der Rückgabewert ist `True`, wenn der Client verbunden ist und den Ping beantwortet.  
 
 
