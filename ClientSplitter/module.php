@@ -66,6 +66,7 @@ class ClientSplitter extends IPSModule
         $this->SendDebug('Forward', $Data->Buffer, 0);
         $DataNew['DataID'] = '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}';
         $DataNew['Buffer'] = $Data->Buffer;
+        $DataNew['Type'] = 0;
         $DataNew['ClientIP'] = $this->ReadPropertyString('ClientIP');
         $DataNew['ClientPort'] = (int) $this->LastPort;
         $JSONStringNew = json_encode($DataNew);
