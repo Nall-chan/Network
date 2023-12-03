@@ -1,0 +1,9 @@
+[submodule "tests/stubs"]
+	path = tests/stubs
+	url = https://github.com/Nall-chan/SymconStubs
+[submodule ".vscode"]
+	path = .vscode
+	url = https://github.com/Nall-chan/SymconVSCTasks.git
+[submodule ".style"]
+	path = .style
+	url = https://github.com/Nall-chan/StylePHP

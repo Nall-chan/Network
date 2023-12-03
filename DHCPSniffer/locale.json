@@ -1,9 +1,9 @@
 {
-	"translations": {
-		"de": { 
-			"Protocol": "Protokoll",
-			"MAC Address":"MAC Adresse",
-			"Action":"Aktion"
-		}
-	}
+    "translations": {
+        "de": {
+            "Protocol": "Protokoll",
+            "MAC Address": "MAC Adresse",
+            "Action": "Aktion"
+        }
+    }
 }

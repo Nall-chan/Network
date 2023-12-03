@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../libs/NetworkTraits.php';
 require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
 
@@ -45,7 +47,6 @@ class TLSState
                 return 'init';
         }
     }
-
 }
 
 /**
@@ -78,11 +79,13 @@ class TLSState
  */
 class WebsocketClient extends IPSModule
 {
+    use DebugHelper;
 
-    use DebugHelper,
-        InstanceStatus,
-        BufferHelper,
-        Semaphore;
+    use InstanceStatus;
+
+    use BufferHelper;
+
+    use Semaphore;
     /**
      * Interne Funktion des SDK.
      */
@@ -124,6 +127,7 @@ class WebsocketClient extends IPSModule
                 if ($Data[0] != KR_READY) {
                     break;
                 }
+                // No break. Add additional comment above this line if intentional
             case IPS_KERNELSTARTED:
                 $this->KernelReady();
                 break;
@@ -149,22 +153,6 @@ class WebsocketClient extends IPSModule
                 }
                 break;
         }
-    }
-
-    /**
-     * Wird ausgeführt wenn der Kernel hochgefahren wurde.
-     */
-    protected function KernelReady()
-    {
-        @$this->ApplyChanges();
-    }
-
-    /**
-     * Wird ausgeführt wenn sich der Parent ändert.
-     */
-    protected function ForceRefresh()
-    {
-        $this->ApplyChanges();
     }
 
     /**
@@ -222,7 +210,7 @@ class WebsocketClient extends IPSModule
         }
         $OldState = $this->State;
         $this->SendDebug(__FUNCTION__, 'OldState:' . $OldState, 0);
-        if ((($OldState != WebSocketState::unknow) and ( $OldState != WebSocketState::Connected)) or ( $OldState == WebSocketState::init)) {
+        if ((($OldState != WebSocketState::unknow) && ($OldState != WebSocketState::Connected)) || ($OldState == WebSocketState::init)) {
             return;
         }
 
@@ -254,7 +242,7 @@ class WebsocketClient extends IPSModule
                 $Open = false;
                 trigger_error('Invalid URL', E_USER_NOTICE);
             } else {
-                if (($this->ReadPropertyInteger('PingInterval') != 0) and ( $this->ReadPropertyInteger('PingInterval') < 5)) {
+                if (($this->ReadPropertyInteger('PingInterval') != 0) && ($this->ReadPropertyInteger('PingInterval') < 5)) {
                     $NewState = IS_EBASE + 4;
                     $Open = false;
                     trigger_error('Ping interval to small', E_USER_NOTICE);
@@ -328,6 +316,241 @@ class WebsocketClient extends IPSModule
         $this->SetStatus($NewState);
     }
 
+    //################# DATAPOINTS CHILDS
+    /**
+     * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
+     *
+     * @param string $JSONString
+     * @result bool true wenn Daten gesendet werden konnten, sonst false.
+     */
+    public function ForwardData($JSONString)
+    {
+        if ($this->State != WebSocketState::Connected) {
+            trigger_error('Not connected', E_USER_NOTICE);
+            return false;
+        }
+        $Data = json_decode($JSONString);
+        if ($Data->DataID == '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}') { //Raw weitersenden
+            $this->SendText(utf8_decode($Data->Buffer));
+        }
+        if ($Data->DataID == '{BC49DE11-24CA-484D-85AE-9B6F24D89321}') { // WSC send
+            $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Data->Fin);
+        }
+        return true;
+    }
+
+    //################# DATAPOINTS PARENT
+    /**
+     * Empfängt Daten vom Parent.
+     *
+     * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
+     * @result bool True wenn Daten verarbeitet wurden, sonst false.
+     */
+    public function ReceiveData($JSONString)
+    {
+        $data = json_decode($JSONString);
+        if ($this->UseTLS) { // TLS aktiv
+            $Data = $this->TLSReceiveBuffer . utf8_decode($data->Buffer);
+            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (substr($Data, 1, 2) == "\x03\x03")) {
+                $TLSData = $Data;
+                $Data = '';
+
+                while (strlen($TLSData) > 0) {
+                    $len = unpack('n', substr($TLSData, 3, 2))[1] + 5;
+                    if (strlen($TLSData) >= $len) {
+                        $Part = substr($TLSData, 0, $len);
+                        $TLSData = substr($TLSData, $len);
+                        if ($this->TLSState == TLSState::init) {
+                            if (!$this->WriteTLSReceiveData($Part)) {
+                                break;
+                            }
+                        } elseif ($this->TLSState == TLSState::Connected) {
+                            $this->SendDebug('Receive TLS Frame', $Part, 0);
+                            try {
+                                $TLS = $this->GetTLSContext();
+                                $TLS->encode($Part);
+                                $Data .= $TLS->input();
+                                $this->SetTLSContext($TLS);
+                            } catch (\PTLS\Exceptions\TLSAlertException $e) {
+                                $this->SendDebug('Error', $e->getMessage(), 0);
+                                $out = $e->decode();
+                                if (($out !== null) && (strlen($out) > 0)) {
+                                    $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
+                                    $JSON['Buffer'] = utf8_encode($out);
+                                    $JsonString = json_encode($JSON);
+                                    parent::SendDataToParent($JsonString);
+                                }
+                                trigger_error($e->getMessage(), E_USER_NOTICE);
+                                $this->TLSState = TLSState::unknow;
+                                $this->TLSReceiveBuffer = '';
+                                return;
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (strlen($TLSData) == 0) {
+                    $this->TLSReceiveBuffer = '';
+                } else {
+                    //$this->SendDebug('Receive TLS Part', $TLSData, 0);
+                    $this->TLSReceiveBuffer = $TLSData;
+                }
+            } else { // Anfang (inkl. Buffer) paßt nicht
+                $this->TLSReceiveBuffer = '';
+                return;
+            }
+        } else { // ende TLS
+            $Data = utf8_decode($data->Buffer);
+        }
+
+        $Data = $this->Buffer . $Data;
+        if ($Data == '') {
+            return;
+        }
+        switch ($this->State) {
+            case WebSocketState::HandshakeSend:
+                if (strpos($Data, "\r\n\r\n") !== false) {
+                    $this->Handshake = $Data;
+                    $this->State = WebSocketState::HandshakeReceived;
+                    $Data = '';
+                } else {
+                    $this->SendDebug('Receive inclomplete Handshake', $Data, 0);
+                }
+                $this->Buffer = $Data;
+                break;
+            case WebSocketState::Connected:
+                $this->SendDebug('ReceivePacket', $Data, 1);
+                while (true) {
+                    if (strlen($Data) < 2) {
+                        break;
+                    }
+                    $Frame = new WebSocketFrame($Data);
+                    if ($Data == $Frame->Tail) {
+                        break;
+                    }
+                    $Data = $Frame->Tail;
+                    $Frame->Tail = null;
+                    $this->DecodeFrame($Frame);
+                }
+                $this->Buffer = $Data;
+                break;
+            case WebSocketState::CloseSend:
+                $this->SendDebug('Receive', 'Server answer client stream close !', 0);
+                $this->State = WebSocketState::CloseReceived;
+                break;
+        }
+    }
+
+    //################# PUBLIC
+    /**
+     * Versendet RawData mit OpCode an den IO.
+     *
+     * @param string $Text
+     */
+    public function SendText(string $Text)
+    {
+        if ($this->State != WebSocketState::Connected) {
+            trigger_error('Not connected', E_USER_NOTICE);
+            return false;
+        }
+        $this->Send($Text, $this->ReadPropertyInteger('Frame'));
+        return true;
+    }
+
+    /**
+     * Versendet ein String.
+     *
+     * @param bool   $Fin
+     * @param int    $OPCode
+     * @param string $Text
+     */
+    public function SendPacket(bool $Fin, int $OPCode, string $Text)
+    {
+        if (($OPCode < 0) || ($OPCode > 2)) {
+            trigger_error('OpCode invalid', E_USER_NOTICE);
+            return false;
+        }
+        if ($this->State != WebSocketState::Connected) {
+            trigger_error('Not connected', E_USER_NOTICE);
+            return false;
+        }
+        $this->Send($Text, $OPCode, $Fin);
+        return true;
+    }
+
+    /**
+     * Wird durch den Timer aufgerufen und senden einen Ping an den Server.
+     */
+    public function Keepalive()
+    {
+        $result = @$this->SendPing($this->ReadPropertyString('PingPayload'));
+        if ($result !== true) {
+            $this->SetStatus(IS_EBASE + 1);
+            $this->SetTimerInterval('KeepAlive', 0);
+            trigger_error('Ping timeout', E_USER_NOTICE);
+        }
+    }
+
+    /**
+     * Versendet einen Ping an den Server.
+     *
+     * @param string $Text Der zu versendene Payload im Ping.
+     *
+     * @return bool True wenn Ping bestätigt wurde, sonst false.
+     */
+    public function SendPing(string $Text)
+    {
+        $this->Send($Text, WebSocketOPCode::ping);
+        $Result = $this->WaitForPong();
+        if ($Result === false) {
+            trigger_error('Timeout', E_USER_NOTICE);
+            return false;
+        }
+
+        if ($Result != $Text) {
+            trigger_error('Wrong pong received', E_USER_NOTICE);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Wird ausgeführt wenn der Kernel hochgefahren wurde.
+     */
+    protected function KernelReady()
+    {
+        @$this->ApplyChanges();
+    }
+
+    /**
+     * Wird ausgeführt wenn sich der Parent ändert.
+     */
+    protected function ForceRefresh()
+    {
+        $this->ApplyChanges();
+    }
+
+    /**
+     * Sendet ein Paket an den Parent.
+     *
+     * @param string $Data
+     */
+    protected function SendDataToParent($Data)
+    {
+        $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
+        if ($this->UseTLS) {
+            $TLS = $this->GetTLSContext();
+            $this->SendDebug('Send TLS', $Data, 0);
+            $Data = $TLS->output($Data)->decode();
+            $this->SetTLSContext($TLS);
+        }
+        $JSON['Buffer'] = utf8_encode($Data);
+        $JsonString = json_encode($JSON);
+        $this->SendDebug('Send Packet', $Data, 1);
+        parent::SendDataToParent($JsonString);
+    }
+
     //################# PRIVATE
     /**
      * Baut eine TLS Verbindung auf.
@@ -367,7 +590,7 @@ class WebsocketClient extends IPSModule
             } catch (TLSAlertException $e) {
                 $this->SendDebug('Error', $e->getMessage(), 1);
                 $out = $e->decode();
-                if (($out !== null) and ( strlen($out) > 0)) {
+                if (($out !== null) && (strlen($out) > 0)) {
                     $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
                     $JSON['Buffer'] = utf8_encode($out);
                     $JsonString = json_encode($JSON);
@@ -380,7 +603,7 @@ class WebsocketClient extends IPSModule
             }
 
             $SendData = $TLS->decode();
-            if (($SendData !== null) and ( strlen($SendData) > 0)) {
+            if (($SendData !== null) && (strlen($SendData) > 0)) {
                 $this->SendDebug('TLS loop ' . $loop, $SendData, 0);
                 $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
                 $JSON['Buffer'] = utf8_encode($SendData);
@@ -653,29 +876,6 @@ class WebsocketClient extends IPSModule
         return false;
     }
 
-    //################# DATAPOINTS CHILDS
-    /**
-     * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
-     *
-     * @param string $JSONString
-     * @result bool true wenn Daten gesendet werden konnten, sonst false.
-     */
-    public function ForwardData($JSONString)
-    {
-        if ($this->State != WebSocketState::Connected) {
-            trigger_error('Not connected', E_USER_NOTICE);
-            return false;
-        }
-        $Data = json_decode($JSONString);
-        if ($Data->DataID == '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}') { //Raw weitersenden
-            $this->SendText(utf8_decode($Data->Buffer));
-        }
-        if ($Data->DataID == '{BC49DE11-24CA-484D-85AE-9B6F24D89321}') { // WSC send
-            $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Data->Fin);
-        }
-        return true;
-    }
-
     /**
      * Sendet die Rohdaten an die Childs.
      *
@@ -694,204 +894,8 @@ class WebsocketClient extends IPSModule
         $this->SendDataToChildren($Data);
     }
 
-    //################# DATAPOINTS PARENT
     /**
-     * Empfängt Daten vom Parent.
      *
-     * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
-     * @result bool True wenn Daten verarbeitet wurden, sonst false.
-     */
-    public function ReceiveData($JSONString)
-    {
-        $data = json_decode($JSONString);
-        if ($this->UseTLS) { // TLS aktiv
-            $Data = $this->TLSReceiveBuffer . utf8_decode($data->Buffer);
-            if ((ord($Data[0]) >= 0x14) && (ord($Data[0]) <= 0x18) && (substr($Data, 1, 2) == "\x03\x03")) {
-                $TLSData = $Data;
-                $Data = '';
-
-                while (strlen($TLSData) > 0) {
-                    $len = unpack('n', substr($TLSData, 3, 2))[1] + 5;
-                    if (strlen($TLSData) >= $len) {
-                        $Part = substr($TLSData, 0, $len);
-                        $TLSData = substr($TLSData, $len);
-                        if ($this->TLSState == TLSState::init) {
-                            if (!$this->WriteTLSReceiveData($Part)) {
-                                break;
-                            }
-                        } elseif ($this->TLSState == TLSState::Connected) {
-                            $this->SendDebug('Receive TLS Frame', $Part, 0);
-                            try {
-                                $TLS = $this->GetTLSContext();
-                                $TLS->encode($Part);
-                                $Data .= $TLS->input();
-                                $this->SetTLSContext($TLS);
-                            } catch (\PTLS\Exceptions\TLSAlertException $e) {
-                                $this->SendDebug('Error', $e->getMessage(), 0);
-                                $out = $e->decode();
-                                if (($out !== null) and ( strlen($out) > 0)) {
-                                    $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
-                                    $JSON['Buffer'] = utf8_encode($out);
-                                    $JsonString = json_encode($JSON);
-                                    parent::SendDataToParent($JsonString);
-                                }
-                                trigger_error($e->getMessage(), E_USER_NOTICE);
-                                $this->TLSState = TLSState::unknow;
-                                $this->TLSReceiveBuffer = '';
-                                return;
-                            }
-                        }
-                    } else {
-                        break;
-                    }
-                }
-                if (strlen($TLSData) == 0) {
-                    $this->TLSReceiveBuffer = '';
-                } else {
-                    //$this->SendDebug('Receive TLS Part', $TLSData, 0);
-                    $this->TLSReceiveBuffer = $TLSData;
-                }
-            } else { // Anfang (inkl. Buffer) paßt nicht
-                $this->TLSReceiveBuffer = '';
-                return;
-            }
-        } else { // ende TLS
-            $Data = utf8_decode($data->Buffer);
-        }
-
-        $Data = $this->Buffer . $Data;
-        if ($Data == '') {
-            return;
-        }
-        switch ($this->State) {
-            case WebSocketState::HandshakeSend:
-                if (strpos($Data, "\r\n\r\n") !== false) {
-                    $this->Handshake = $Data;
-                    $this->State = WebSocketState::HandshakeReceived;
-                    $Data = '';
-                } else {
-                    $this->SendDebug('Receive inclomplete Handshake', $Data, 0);
-                }
-                $this->Buffer = $Data;
-                break;
-            case WebSocketState::Connected:
-                $this->SendDebug('ReceivePacket', $Data, 1);
-                while (true) {
-                    if (strlen($Data) < 2) {
-                        break;
-                    }
-                    $Frame = new WebSocketFrame($Data);
-                    if ($Data == $Frame->Tail) {
-                        break;
-                    }
-                    $Data = $Frame->Tail;
-                    $Frame->Tail = null;
-                    $this->DecodeFrame($Frame);
-                }
-                $this->Buffer = $Data;
-                break;
-            case WebSocketState::CloseSend:
-                $this->SendDebug('Receive', 'Server answer client stream close !', 0);
-                $this->State = WebSocketState::CloseReceived;
-                break;
-        }
-    }
-
-    /**
-     * Sendet ein Paket an den Parent.
-     *
-     * @param string $Data
-     */
-    protected function SendDataToParent($Data)
-    {
-        $JSON['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
-        if ($this->UseTLS) {
-            $TLS = $this->GetTLSContext();
-            $this->SendDebug('Send TLS', $Data, 0);
-            $Data = $TLS->output($Data)->decode();
-            $this->SetTLSContext($TLS);
-        }
-        $JSON['Buffer'] = utf8_encode($Data);
-        $JsonString = json_encode($JSON);
-        $this->SendDebug('Send Packet', $Data, 1);
-        parent::SendDataToParent($JsonString);
-    }
-
-    //################# PUBLIC
-    /**
-     * Versendet RawData mit OpCode an den IO.
-     *
-     * @param string $Text
-     */
-    public function SendText(string $Text)
-    {
-        if ($this->State != WebSocketState::Connected) {
-            trigger_error('Not connected', E_USER_NOTICE);
-            return false;
-        }
-        $this->Send($Text, $this->ReadPropertyInteger('Frame'));
-        return true;
-    }
-
-    /**
-     * Versendet ein String.
-     *
-     * @param bool   $Fin
-     * @param int    $OPCode
-     * @param string $Text
-     */
-    public function SendPacket(bool $Fin, int $OPCode, string $Text)
-    {
-        if (($OPCode < 0) || ($OPCode > 2)) {
-            trigger_error('OpCode invalid', E_USER_NOTICE);
-            return false;
-        }
-        if ($this->State != WebSocketState::Connected) {
-            trigger_error('Not connected', E_USER_NOTICE);
-            return false;
-        }
-        $this->Send($Text, $OPCode, $Fin);
-        return true;
-    }
-
-    /**
-     * Wird durch den Timer aufgerufen und senden einen Ping an den Server.
-     */
-    public function Keepalive()
-    {
-        $result = @$this->SendPing($this->ReadPropertyString('PingPayload'));
-        if ($result !== true) {
-            $this->SetStatus(IS_EBASE + 1);
-            $this->SetTimerInterval('KeepAlive', 0);
-            trigger_error('Ping timeout', E_USER_NOTICE);
-        }
-    }
-
-    /**
-     * Versendet einen Ping an den Server.
-     *
-     * @param string $Text Der zu versendene Payload im Ping.
-     *
-     * @return bool True wenn Ping bestätigt wurde, sonst false.
-     */
-    public function SendPing(string $Text)
-    {
-        $this->Send($Text, WebSocketOPCode::ping);
-        $Result = $this->WaitForPong();
-        if ($Result === false) {
-            trigger_error('Timeout', E_USER_NOTICE);
-            return false;
-        }
-
-        if ($Result != $Text) {
-            trigger_error('Wrong pong received', E_USER_NOTICE);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 
      * @return \PTLS\TLSContext
      */
     private function GetTLSContext()
@@ -901,7 +905,7 @@ class WebsocketClient extends IPSModule
     }
 
     /**
-     * 
+     *
      * @param \PTLS\TLSContext $TLS
      */
     private function SetTLSContext($TLS)
@@ -909,7 +913,6 @@ class WebsocketClient extends IPSModule
         $this->Multi_TLS = $TLS;
         $this->unlock('TLS');
     }
-
 }
 
 /* @} */

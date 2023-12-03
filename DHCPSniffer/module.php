@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 include_once __DIR__ . '/../libs/NetworkTraits.php';
 
 /*
@@ -148,14 +150,6 @@ class DHCPSniffer extends ipsmodule
     }
 
     /**
-     * Wird ausgeführt wenn der Kernel hochgefahren wurde.
-     */
-    protected function KernelReady()
-    {
-        $this->ApplyChanges();
-    }
-
-    /**
      * Interne Funktion des SDK.
      * Wird von der Console aufgerufen, wenn 'unser' IO-Parent geöffnet wird.
      * Außerdem nutzen wir sie in Applychanges, da wir dort die Daten zum konfigurieren nutzen.
@@ -180,6 +174,7 @@ class DHCPSniffer extends ipsmodule
     {
         $Data = utf8_decode(json_decode($JSONString)->Buffer);
         $this->SendDebug('Data', $Data, 1);
+        $this->LogMessage(bin2hex($Data), KL_MESSAGE);
         $isDHCP = (substr($Data, 236, 4) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63));
         $isDHCPRequest = (substr($Data, 236, 7) === chr(0x63) . chr(0x82) . chr(0x53) . chr(0x63) . chr(0x35) . chr(0x01) . chr(0x03));
         $this->SendDebug('isDHCP', $isDHCP, 0);
@@ -198,12 +193,19 @@ class DHCPSniffer extends ipsmodule
             case 2: // both
                 if ($isDHCPRequest) {
                     $this->SendEvent();
-                }
-                if (!$isDHCP) {
+                } elseif (!$isDHCP) {
                     $this->SendEvent();
                 }
                 break;
         }
+    }
+
+    /**
+     * Wird ausgeführt wenn der Kernel hochgefahren wurde.
+     */
+    protected function KernelReady()
+    {
+        $this->ApplyChanges();
     }
 
     /**
@@ -214,25 +216,15 @@ class DHCPSniffer extends ipsmodule
         $this->SendDebug('FIRE', 'EVENT', 0);
         switch ($this->ReadPropertyInteger('Action')) {
             case 0: //EVENT
-                $vid = @$this->GetIDForIdent('EVENT');
-                if ($vid > 0) {
-                    SetValueBoolean($vid, true);
-                }
+                $this->SetValue('EVENT', true);
                 break;
             case 1: // IMPULSE
-                $vid = @$this->GetIDForIdent('IMPULSE');
-                if ($vid > 0) {
-                    SetValueBoolean($vid, true);
-                    IPS_Sleep(1);
-                    SetValueBoolean($vid, false);
-                }
-
+                $this->SetValue('EVENT', true);
+                IPS_Sleep(1);
+                $this->SetValue('EVENT', false);
                 break;
             case 2: // Toggle
-                $vid = @$this->GetIDForIdent('TOGGLE');
-                if ($vid > 0) {
-                    SetValueBoolean($vid, !GetValueBoolean($vid));
-                }
+                $this->SetValue('EVENT', !$this->GetValue('EVENT'));
                 break;
         }
     }

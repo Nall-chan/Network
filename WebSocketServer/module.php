@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 // TODO KeepAlive defekt
 require_once __DIR__ . '/../libs/NetworkTraits.php';
 require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
-
 
 /*
  * @addtogroup network
@@ -46,11 +47,13 @@ require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
  */
 class WebsocketServer extends IPSModule
 {
+    use DebugHelper;
 
-    use DebugHelper,
-        InstanceStatus,
-        BufferHelper,
-        Semaphore;
+    use InstanceStatus;
+
+    use BufferHelper;
+
+    use Semaphore;
     /**
      * Interne Funktion des SDK.
      */
@@ -85,6 +88,7 @@ class WebsocketServer extends IPSModule
                 if ($Data[0] != KR_READY) {
                     break;
                 }
+                // No break. Add additional comment above this line if intentional
             case IPS_KERNELSTARTED:
                 $this->ApplyChanges();
                 break;
@@ -163,7 +167,7 @@ class WebsocketServer extends IPSModule
         $this->SetTimerInterval('KeepAlivePing', 0);
 
         $OldParentID = $this->ParentID;
-        if ($this->HasActiveParent() and ( $OldParentID > 0)) {
+        if ($this->HasActiveParent() && ($OldParentID > 0)) {
             $this->DisconnectAllClients();
         }
 
@@ -179,7 +183,7 @@ class WebsocketServer extends IPSModule
             if (!file_exists($basedir)) {
                 mkdir($basedir);
             }
-            if (($this->ReadPropertyString('CertFile') == '') and ( $this->ReadPropertyString('KeyFile') == '')) {
+            if (($this->ReadPropertyString('CertFile') == '') && ($this->ReadPropertyString('KeyFile') == '')) {
                 return $this->CreateNewCert($basedir);
             }
 
@@ -236,12 +240,12 @@ class WebsocketServer extends IPSModule
         if (!$Open) {
             $NewState = IS_INACTIVE;
         } else {
-            if (($Port < 1) or ( $Port > 65535)) {
+            if (($Port < 1) || ($Port > 65535)) {
                 $NewState = IS_EBASE + 2;
                 $Open = false;
                 trigger_error($this->Translate('Port invalid'), E_USER_NOTICE);
             } else {
-                if (($this->PingInterval != 0) and ( $this->PingInterval < 5)) {
+                if (($this->PingInterval != 0) && ($this->PingInterval < 5)) {
                     $this->PingInterval = 0;
                     $NewState = IS_EBASE + 4;
                     $Open = false;
@@ -275,6 +279,177 @@ class WebsocketServer extends IPSModule
 
         $this->SetStatus($NewState);
         $this->NoNewClients = false;
+    }
+
+    //################# DATAPOINTS CHILDS
+    /**
+     * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
+     *
+     * @param string $JSONString
+     * @result bool true wenn Daten gesendet werden konnten, sonst false.
+     */
+    public function ForwardData($JSONString)
+    {
+        $Data = json_decode($JSONString);
+        if ($Data->DataID == '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}') {
+            $this->SendDebug('Forward Broadcast', utf8_decode($Data->Buffer), 0);
+            $Clients = $this->Multi_Clients;
+            foreach ($Clients as $Client) {
+                $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
+                $Data->Fin = true;
+                $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Client, $Data->Fin);
+            }
+            return true;
+        }
+
+        $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($Data->ClientIP, $Data->ClientPort));
+        if ($Client === false) {
+            trigger_error($this->Translate('Unknow client') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
+            return false;
+        }
+        if ($Client->State != WebSocketState::Connected) {
+            trigger_error($this->Translate('Client not connected') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
+            return false;
+        }
+        $this->SendDebug('Forward', utf8_decode($Data->Buffer), 0);
+
+        if ($Data->DataID == '{714B71FB-3D11-41D1-AFAC-E06F1E983E09}') {
+            if ($Data->FrameTyp == WebSocketOPCode::close) {
+                return $this->SendDisconnect($Client);
+            }
+            if ($Data->FrameTyp == WebSocketOPCode::ping) {
+                return $this->SendPing($Client->ClientIP, $Client->ClientPort, utf8_decode($Data->Buffer));
+            }
+            if (($Data->FrameTyp < 0) || ($Data->FrameTyp > 2)) {
+                trigger_error($this->Translate('FrameTyp invalid') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
+                return false;
+            }
+        } else { //{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}
+            if (property_exists($Data, 'Type')) {
+                if ($Data->Type == 2) {
+                    return $this->SendDisconnect($Client);
+                }
+            }
+            //Type fehlt
+            $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
+            $Data->Fin = true;
+        }
+
+        $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Client, $Data->Fin);
+        return true;
+    }
+
+    //################# DATAPOINTS PARENT
+    /**
+     * Empfängt Daten vom Parent.
+     *
+     * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
+     */
+    public function ReceiveData($JSONString)
+    {
+        $data = json_decode($JSONString);
+        unset($data->DataID);
+        //$this->SendDebug('incoming', $data, 0);
+        $Payload = utf8_decode($data->Buffer);
+        $Clients = $this->Multi_Clients;
+        $IncomingClient = new Websocket_Client($data->ClientIP, $data->ClientPort, WebSocketState::init);
+        $Client = $Clients->GetByIpPort($IncomingClient);
+        $this->SendDebug(($Client ? 'OLD' : 'NEW') . ' CLIENT', SocketType::ToString($data->Type), 0);
+        switch ($data->Type) {
+            case 0: /* Data */
+                if ($Client === false) {
+                    $this->SendDebug('no Connection for Data found', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
+                    $this->CloseConnection($IncomingClient);
+                } else {
+                    $this->ProcessIncomingData($Client, $Payload);
+                    $Clients->Update($Client);
+                }
+                break;
+            case 1: /* Connected */
+                if (!$this->NoNewClients) {
+                    $this->SendDebug('new Connection', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
+                    $this->ClearClientBuffer($IncomingClient);
+                    $Clients->Update($IncomingClient);
+                }
+                break;
+            case 2: /* Disconnected */
+                if ($Client === false) {
+                    $this->SendDebug('no Connection to disconnect found', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
+                } else {
+                    $Clients->Remove($Client);
+                    $this->ClearClientBuffer($Client);
+                }
+                break;
+        }
+        $this->Multi_Clients = $Clients;
+        $this->SetNextTimer();
+    }
+
+    //################# PUBLIC
+    /**
+     * Wird vom Timer aufgerufen.
+     * Sendet einen Ping an den Client welcher als nächstes das Timeout erreicht.
+     */
+    public function KeepAlive()
+    {
+        $this->SendDebug('KeepAlive', 'start', 0);
+        $this->SetTimerInterval('KeepAlivePing', 0);
+        $Client = true;
+
+        while ($Client) {
+            $Clients = $this->Multi_Clients;
+            $Client = $Clients->GetNextTimeout(1);
+            if ($Client === false) {
+                break;
+            }
+            if (@$this->SendPing($Client->ClientIP, $Client->ClientPort, '') === false) {
+                $this->SendDebug('TIMEOUT ' . $Client->ClientIP . ':' . $Client->ClientPort, 'Ping timeout', 0);
+            }
+        }
+        $this->SendDebug('KeepAlive', 'end', 0);
+    }
+
+    /**
+     * Versendet einen Ping an einen Client.
+     *
+     * @param string $ClientIP   Die IP-Adresse des Client.
+     * @param int $ClientPort Der Port des Client.
+     * @param string $Text       Der Payload des Ping.
+     *
+     * @return bool True bei Erfolg, im Fehlerfall wird eine Warnung und false ausgegeben.
+     */
+    public function SendPing(string $ClientIP, int $ClientPort, string $Text)
+    {
+        $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($ClientIP, $ClientPort));
+        if ($Client === false) {
+            $this->SendDebug('Unknow client', $ClientIP . ':' . $ClientPort, 0);
+            trigger_error($this->Translate('Unknow client') . ': ' . $ClientIP . ':' . $ClientPort, E_USER_NOTICE);
+            return false;
+        }
+        if ($Client->State != WebSocketState::Connected) {
+            $this->SendDebug('Client not connected', $ClientIP . ':' . $ClientPort, 0);
+            trigger_error($this->Translate('Client not connected') . ': ' . $ClientIP . ':' . $ClientPort, E_USER_NOTICE);
+            return false;
+        }
+        $this->SendDebug('Send Ping' . $Client->ClientIP . ':' . $Client->ClientPort, $Text, 0);
+        $this->Send($Text, WebSocketOPCode::ping, $Client);
+        $Result = $this->WaitForPong($Client);
+        $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = '';
+        if ($Result === false) {
+            $this->SendDebug('Timeout ' . $Client->ClientIP . ':' . $Client->ClientPort, '', 0);
+            trigger_error($this->Translate('Timeout'), E_USER_NOTICE);
+            $this->RemoveOneClient($Client);
+            $this->CloseConnection($Client);
+            return false;
+        }
+        if ($Result !== $Text) {
+            $this->SendDebug('Error in Pong ' . $Client->ClientIP . ':' . $Client->ClientPort, $Result, 0);
+            trigger_error($this->Translate('Wrong pong received'), E_USER_NOTICE);
+            $this->RemoveOneClient($Client);
+            $this->SendDisconnect($Client);
+            return false;
+        }
+        return true;
     }
 
     //################# PRIVATE
@@ -521,7 +696,7 @@ class WebsocketServer extends IPSModule
     private function MakeJSON(Websocket_Client $Client, string $Data, $UseTLS = true, int $Type = SocketType::Data)
     {
         if ($Type == SocketType::Data) {
-            if ($UseTLS and $Client->UseTLS) {
+            if ($UseTLS && $Client->UseTLS) {
                 $this->SendDebug('Send TLS', $Data, 0);
 
                 try {
@@ -769,64 +944,6 @@ class WebsocketServer extends IPSModule
         }
     }
 
-    //################# DATAPOINTS CHILDS
-    /**
-     * Interne Funktion des SDK. Nimmt Daten von Childs entgegen und sendet Diese weiter.
-     *
-     * @param string $JSONString
-     * @result bool true wenn Daten gesendet werden konnten, sonst false.
-     */
-    public function ForwardData($JSONString)
-    {
-        $Data = json_decode($JSONString);
-        if ($Data->DataID == '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}') {
-            $this->SendDebug('Forward Broadcast', utf8_decode($Data->Buffer), 0);
-            $Clients = $this->Multi_Clients;
-            foreach ($Clients as $Client) {
-                $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
-                $Data->Fin = true;
-                $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Client, $Data->Fin);
-            }
-            return true;
-        }
-
-        $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($Data->ClientIP, $Data->ClientPort));
-        if ($Client === false) {
-            trigger_error($this->Translate('Unknow client') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
-            return false;
-        }
-        if ($Client->State != WebSocketState::Connected) {
-            trigger_error($this->Translate('Client not connected') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
-            return false;
-        }
-        $this->SendDebug('Forward', utf8_decode($Data->Buffer), 0);
-
-        if ($Data->DataID == '{714B71FB-3D11-41D1-AFAC-E06F1E983E09}') {
-            if ($Data->FrameTyp == WebSocketOPCode::close) {
-                return $this->SendDisconnect($Client);
-            }
-            if ($Data->FrameTyp == WebSocketOPCode::ping) {
-                return $this->SendPing($Client->ClientIP, $Client->ClientPort, utf8_decode($Data->Buffer));
-            }
-            if (($Data->FrameTyp < 0) || ($Data->FrameTyp > 2)) {
-                trigger_error($this->Translate('FrameTyp invalid') . ': ' . $Data->ClientIP . ':' . $Data->ClientPort, E_USER_NOTICE);
-                return false;
-            }
-        } else { //{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}
-            if (property_exists($Data, 'Type')) {
-                if ($Data->Type == 2) {
-                    return $this->SendDisconnect($Client);
-                }
-            }
-            //Type fehlt
-            $Data->FrameTyp = $this->{'OpCode' . $Client->ClientIP . $Client->ClientPort};
-            $Data->Fin = true;
-        }
-
-        $this->Send(utf8_decode($Data->Buffer), $Data->FrameTyp, $Client, $Data->Fin);
-        return true;
-    }
-
     /**
      * Sendet die Rohdaten an die Childs.
      *
@@ -880,24 +997,24 @@ class WebsocketServer extends IPSModule
     {
         $this->SendDebug('Receive ' . $Client->ClientIP . ':' . $Client->ClientPort, $Payload, 0);
         if ($Client->State == WebSocketState::init) { //new
-            if ($this->UseTLS and ( (ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03))) { //valid header wenn TLS is active
+            if ($this->UseTLS && ((ord($Payload[0]) >= 0x14) && (ord($Payload[0]) <= 0x18) && (ord($Payload[1]) == 0x03))) { //valid header wenn TLS is active
                 $Client->State = WebSocketState::TLSisReceived;
                 $Client->UseTLS = true;
                 $this->{'BufferTLS' . $Client->ClientIP . $Client->ClientPort} = '';
                 $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = '';
                 // TLS Config
                 $TLSconfig = \PTLS\TLSContext::getServerConfig([
-                            'key_pair_files' => [
-                                'cert' => [$this->CertData],
-                                'key'  => [$this->KeyData, $this->KeyPassword]
-                            ]
+                    'key_pair_files' => [
+                        'cert' => [$this->CertData],
+                        'key'  => [$this->KeyData, $this->KeyPassword]
+                    ]
                 ]);
                 $this->SendDebug('NEW TLSContex', '', 0);
                 //$this->lock($Client->ClientIP . $Client->ClientPort);
                 $this->lock($Client->ClientIP . $Client->ClientPort);
                 $TLS = \PTLS\TLSContext::createTLS($TLSconfig);
             }
-            if ($this->UsePlain and ( preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Payload, $match))) { //valid header wenn Plain is active
+            if ($this->UsePlain && (preg_match("/^GET ?([^?#]*) HTTP\/1.1\r\n/", $Payload, $match))) { //valid header wenn Plain is active
                 $Client->State = WebSocketState::HandshakeReceived;
                 $Client->UseTLS = false;
                 $this->{'Buffer' . $Client->ClientIP . $Client->ClientPort} = '';
@@ -1034,120 +1151,6 @@ class WebsocketServer extends IPSModule
         $SendSocketClose = $this->MakeJSON($Client, '', false, SocketType::Disconnected);
         $this->SendDataToParent($SendSocketClose);
     }
-
-    //################# DATAPOINTS PARENT
-    /**
-     * Empfängt Daten vom Parent.
-     *
-     * @param string $JSONString Das empfangene JSON-kodierte Objekt vom Parent.
-     */
-    public function ReceiveData($JSONString)
-    {
-        $data = json_decode($JSONString);
-        unset($data->DataID);
-        //$this->SendDebug('incoming', $data, 0);
-        $Payload = utf8_decode($data->Buffer);
-        $Clients = $this->Multi_Clients;
-        $IncomingClient = new Websocket_Client($data->ClientIP, $data->ClientPort, WebSocketState::init);
-        $Client = $Clients->GetByIpPort($IncomingClient);
-        $this->SendDebug(($Client ? 'OLD' : 'NEW') . ' CLIENT', SocketType::ToString($data->Type), 0);
-        switch ($data->Type) {
-            case 0: /* Data */
-                if ($Client === false) {
-                    $this->SendDebug('no Connection for Data found', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
-                    $this->CloseConnection($IncomingClient);
-                } else {
-                    $this->ProcessIncomingData($Client, $Payload);
-                    $Clients->Update($Client);
-                }
-                break;
-            case 1: /* Connected */
-                if (!$this->NoNewClients) {
-                    $this->SendDebug('new Connection', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
-                    $this->ClearClientBuffer($IncomingClient);
-                    $Clients->Update($IncomingClient);
-                }
-                break;
-            case 2: /* Disconnected */
-                if ($Client === false) {
-                    $this->SendDebug('no Connection to disconnect found', $IncomingClient->ClientIP . ':' . $IncomingClient->ClientPort, 0);
-                } else {
-                    $Clients->Remove($Client);
-                    $this->ClearClientBuffer($Client);
-                }
-                break;
-        }
-        $this->Multi_Clients = $Clients;
-        $this->SetNextTimer();
-    }
-
-    //################# PUBLIC
-    /**
-     * Wird vom Timer aufgerufen.
-     * Sendet einen Ping an den Client welcher als nächstes das Timeout erreicht.
-     */
-    public function KeepAlive()
-    {
-        $this->SendDebug('KeepAlive', 'start', 0);
-        $this->SetTimerInterval('KeepAlivePing', 0);
-        $Client = true;
-
-        while ($Client) {
-            $Clients = $this->Multi_Clients;
-            $Client = $Clients->GetNextTimeout(1);
-            if ($Client === false) {
-                break;
-            }
-            if (@$this->SendPing($Client->ClientIP, $Client->ClientPort, '') === false) {
-                $this->SendDebug('TIMEOUT ' . $Client->ClientIP . ':' . $Client->ClientPort, 'Ping timeout', 0);
-            }
-        }
-        $this->SendDebug('KeepAlive', 'end', 0);
-    }
-
-    /**
-     * Versendet einen Ping an einen Client.
-     *
-     * @param string $ClientIP   Die IP-Adresse des Client.
-     * @param int $ClientPort Der Port des Client.
-     * @param string $Text       Der Payload des Ping.
-     *
-     * @return bool True bei Erfolg, im Fehlerfall wird eine Warnung und false ausgegeben.
-     */
-    public function SendPing(string $ClientIP, int $ClientPort, string $Text)
-    {
-        $Client = $this->Multi_Clients->GetByIpPort(new Websocket_Client($ClientIP, $ClientPort));
-        if ($Client === false) {
-            $this->SendDebug('Unknow client', $ClientIP . ':' . $ClientPort, 0);
-            trigger_error($this->Translate('Unknow client') . ': ' . $ClientIP . ':' . $ClientPort, E_USER_NOTICE);
-            return false;
-        }
-        if ($Client->State != WebSocketState::Connected) {
-            $this->SendDebug('Client not connected', $ClientIP . ':' . $ClientPort, 0);
-            trigger_error($this->Translate('Client not connected') . ': ' . $ClientIP . ':' . $ClientPort, E_USER_NOTICE);
-            return false;
-        }
-        $this->SendDebug('Send Ping' . $Client->ClientIP . ':' . $Client->ClientPort, $Text, 0);
-        $this->Send($Text, WebSocketOPCode::ping, $Client);
-        $Result = $this->WaitForPong($Client);
-        $this->{'Pong' . $Client->ClientIP . $Client->ClientPort} = '';
-        if ($Result === false) {
-            $this->SendDebug('Timeout ' . $Client->ClientIP . ':' . $Client->ClientPort, '', 0);
-            trigger_error($this->Translate('Timeout'), E_USER_NOTICE);
-            $this->RemoveOneClient($Client);
-            $this->CloseConnection($Client);
-            return false;
-        }
-        if ($Result !== $Text) {
-            $this->SendDebug('Error in Pong ' . $Client->ClientIP . ':' . $Client->ClientPort, $Result, 0);
-            trigger_error($this->Translate('Wrong pong received'), E_USER_NOTICE);
-            $this->RemoveOneClient($Client);
-            $this->SendDisconnect($Client);
-            return false;
-        }
-        return true;
-    }
-
 }
 
 /* @} */

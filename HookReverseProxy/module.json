@@ -1,11 +1,14 @@
 {
-	"id": "{26E5D8BC-8117-4DFB-9E85-66BB30F1CF95}",
-	"name": "HookReverseProxy",
-	"type": 0,
-	"vendor": "",
-	"aliases": ["Webhook Reverse Proxy"],
-	"parentRequirements": [],
-	"childRequirements": [],
-	"implemented": [],
-	"prefix": "HOOKPROXY"
+    "id": "{26E5D8BC-8117-4DFB-9E85-66BB30F1CF95}",
+    "name": "HookReverseProxy",
+    "type": 0,
+    "vendor": "",
+    "aliases": [
+        "Webhook Reverse Proxy"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "HOOKPROXY",
+    "url": "https://github.com/Nall-chan/Network"
 }

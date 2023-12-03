@@ -5,7 +5,7 @@
             "Active": "Aktiv",
             "Port": "Port",
             "URI": "URI",
-            "Timeout": "Timeout",
+            "Timeout": "Zeitüberschreitung",
             "Mode": "Modus",
             "no TLS": "kein TLS",
             "both": "beides",
@@ -27,7 +27,6 @@
             "Unknow client": "Unbekannter Client",
             "Client not connected": "Client nicht verbunden",
             "FrameTyp invalid": "FrameTyp ungültig",
-            "Timeout": "Zeitüberschreitung",
             "Wrong pong received": "Falschen pong empfangen"
         }
     }

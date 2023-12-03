@@ -1,4 +1,4 @@
-# DHCPSniffer (IPSNetwork)
+# DHCPSniffer (Network)
 
 Modul für IP-Symcon ab Version 4.3 ermöglicht es auf Events von Geräten zu reagieren, die eine Anfrage ins Netzwerk per DHCP oder dem Bootstrap Protocol stellen.
 So lässt sich zum Beispiel auf das Drücken eines Dashbuttons (siehe [Anhang](#7-anhang)) reagieren oder auf das Anmelden eines Geräts, wie ein Smartphone, in einem LAN.
@@ -43,7 +43,7 @@ In dem sich öffnenden Fenster folgende URL hinzufügen:
 ![Modules](../imgs/RepositoryURL.png?raw=true "URL Repository") 
 
 	
-    `https://github.com/Nall-chan/IPSNetwork`  
+    `https://github.com/Nall-chan/Network`  
     
 und mit _OK_ bestätigen.  
 
@@ -71,18 +71,18 @@ Auf die Variable kann dann ein Ereigniss gelegt werden, dass bei Variablenänder
 
 GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):  
 
-| Instanz          | GUID                                   |
-| :--------------: | :------------------------------------: |
-| DHCP Sniffer     | {E93BCE5E-BA95-424E-8C3A-BF6AEE6CB976} |
+|   Instanz    |                  GUID                  |
+| :----------: | :------------------------------------: |
+| DHCP Sniffer | {E93BCE5E-BA95-424E-8C3A-BF6AEE6CB976} |
 
 Eigenschaften des 'DHCP Sniffer' für Get/SetProperty-Befehle:  
 
 
-| Eigenschaft | Typ     | Standardwert | Funktion                                                        |
+| Eigenschaft |   Typ   | Standardwert |                            Funktion                             |
 | :---------: | :-----: | :----------: | :-------------------------------------------------------------: |
-| Protocol    | integer | 	       | Auswahl des Protokolls                                          |
-| Address     | string  |              | MAC Adresse des Geräts das ein Event in IP-Symcon auslösen soll |
-| Action      | integer |              | Art der Aktion, die ausgeführt werden soll                      |
+|  Protocol   | integer |              |                     Auswahl des Protokolls                      |
+|   Address   | string  |              | MAC Adresse des Geräts das ein Event in IP-Symcon auslösen soll |
+|   Action    | integer |              |           Art der Aktion, die ausgeführt werden soll            |
 
 
 

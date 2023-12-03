@@ -1,145 +1,143 @@
 {
-    "elements":
-            [
+    "elements": [
+        {
+            "name": "Open",
+            "type": "CheckBox",
+            "caption": "Open"
+        },
+        {
+            "type": "Label",
+            "caption": "Use ws:// or wss:// and :port when using none HTTP-default Ports."
+        },
+        {
+            "type": "Label",
+            "caption": "Example: wss://my.host.org:9091/websocket/"
+        },
+        {
+            "name": "URL",
+            "type": "ValidationTextBox",
+            "caption": "URL"
+        },
+        {
+            "type": "Label",
+            "caption": "--------------------------------------------------"
+        },
+        {
+            "type": "Label",
+            "caption": "Advanced settings:"
+        },
+        {
+            "name": "Protocol",
+            "type": "ValidationTextBox",
+            "caption": "Used protocol"
+        },
+        {
+            "name": "Version",
+            "type": "Select",
+            "caption": "Version",
+            "options": [
                 {
-                    "name": "Open",
-                    "type": "CheckBox",
-                    "caption": "Open"
+                    "caption": "6",
+                    "value": 6
                 },
                 {
-                    "type": "Label",
-                    "caption": "Use ws:// or wss:// and :port when using none HTTP-default Ports."
+                    "caption": "8",
+                    "value": 8
                 },
                 {
-                    "type": "Label",
-                    "caption": "Example: wss://my.host.org:9091/websocket/"
-                },
-                {
-                    "name": "URL",
-                    "type": "ValidationTextBox",
-                    "caption": "URL"
-                },
-                {
-                    "type": "Label",
-                    "caption": "--------------------------------------------------"
-                },
-                {
-                    "type": "Label",
-                    "caption": "Advanced settings:"
-                },
-                {
-                    "name": "Protocol",
-                    "type": "ValidationTextBox",
-                    "caption": "Used protocol"
-                },
-                {
-                    "name": "Version",
-                    "type": "Select",
-                    "caption": "Version",
-                    "options": [
-                        {
-                            "caption": "6",
-                            "value": 6
-                        },
-                        {
-                            "caption": "8",
-                            "value": 8
-                        },
-                        {
-                            "caption": "13",
-                            "value": 13
-                        }
-                    ]
-                },
-                {
-                    "name": "Origin",
-                    "type": "ValidationTextBox",
-                    "caption": "Send origin"
-                },
-                {
-                    "type": "Label",
-                    "caption": "Send Ping:"
-                },
-                {
-                    "name": "PingInterval",
-                    "type": "IntervalBox",
-                    "caption": "seconds"
-                },
-                {
-                    "name": "PingPayload",
-                    "type": "ValidationTextBox",
-                    "caption": "Ping payload"
-                },
-                {
-                    "name": "Frame",
-                    "type": "Select",
-                    "caption": "Default for SendText",
-                    "options": [
-                        {
-                            "caption": "text",
-                            "value": 1
-                        },
-                        {
-                            "caption": "binary",
-                            "value": 2
-                        }
-                    ]
-                },
-                {
-                    "type": "Label",
-                    "caption": "--------------------------------------------------"
-                },
-                {
-                    "type": "Label",
-                    "caption": "Optional HTTP Basic-Authentication:"
-                },
-                {
-                    "name": "BasisAuth",
-                    "type": "CheckBox",
-                    "caption": "Active"
-                },
-                {
-                    "name": "Username",
-                    "type": "ValidationTextBox",
-                    "caption": "Username"
-                },
-                {
-                    "name": "Password",
-                    "type": "PasswordTextBox",
-                    "caption": "Password"
-                }
-            ],
-    "status":
-            [
-                {
-                    "code": 102,
-                    "icon": "active",
-                    "caption": "Connected"
-                },
-                {
-                    "code": 104,
-                    "icon": "inactive",
-                    "caption": "Interface closed"
-                },
-                {
-                    "code": 201,
-                    "icon": "error",
-                    "caption": "Connection lost"
-                },
-                {
-                    "code": 202,
-                    "icon": "error",
-                    "caption": "URL invalid"
-                },
-                {
-                    "code": 203,
-                    "icon": "error",
-                    "caption": "Handshake error"
-                },
-                {
-                    "code": 204,
-                    "icon": "error",
-                    "caption": "Ping interval to small"
+                    "caption": "13",
+                    "value": 13
                 }
             ]
+        },
+        {
+            "name": "Origin",
+            "type": "ValidationTextBox",
+            "caption": "Send origin"
+        },
+        {
+            "type": "Label",
+            "caption": "Send Ping:"
+        },
+        {
+            "name": "PingInterval",
+            "type": "IntervalBox",
+            "caption": "seconds"
+        },
+        {
+            "name": "PingPayload",
+            "type": "ValidationTextBox",
+            "caption": "Ping payload"
+        },
+        {
+            "name": "Frame",
+            "type": "Select",
+            "caption": "Default for SendText",
+            "options": [
+                {
+                    "caption": "text",
+                    "value": 1
+                },
+                {
+                    "caption": "binary",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "type": "Label",
+            "caption": "--------------------------------------------------"
+        },
+        {
+            "type": "Label",
+            "caption": "Optional HTTP Basic-Authentication:"
+        },
+        {
+            "name": "BasisAuth",
+            "type": "CheckBox",
+            "caption": "Active"
+        },
+        {
+            "name": "Username",
+            "type": "ValidationTextBox",
+            "caption": "Username"
+        },
+        {
+            "name": "Password",
+            "type": "PasswordTextBox",
+            "caption": "Password"
+        }
+    ],
+    "status": [
+        {
+            "code": 102,
+            "icon": "active",
+            "caption": "Connected"
+        },
+        {
+            "code": 104,
+            "icon": "inactive",
+            "caption": "Interface closed"
+        },
+        {
+            "code": 201,
+            "icon": "error",
+            "caption": "Connection lost"
+        },
+        {
+            "code": 202,
+            "icon": "error",
+            "caption": "URL invalid"
+        },
+        {
+            "code": 203,
+            "icon": "error",
+            "caption": "Handshake error"
+        },
+        {
+            "code": 204,
+            "icon": "error",
+            "caption": "Ping interval to small"
+        }
+    ]
 }

@@ -1,4 +1,4 @@
-#  WebSocket-Server (IPSNetwork)
+#  WebSocket-Server (Network)
 
 Implementierung eines Server mit Websocket Protokoll in IPS.
 
@@ -29,7 +29,7 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSNetwork.git`  
+   `git://github.com/Nall-chan/Network.git`  
 
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
@@ -97,26 +97,26 @@ bool WSS_SendPing(integer $InstanzeID, string $ClientIP, int $ClientPort, string
 
 GUID des Moduls (z.B. wenn Instanz per PHP angelegt werden soll):  
 
-| Instanz          | GUID                                   |
+|     Instanz      |                  GUID                  |
 | :--------------: | :------------------------------------: |
 | Websocket Server | {7869923C-6E1D-4E66-A0BD-627FAD1679C2} |
 
 Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:  
 
-| Eigenschaft  | Typ     | Standardwert | Funktion                                                                      |
-| :----------: | :-----: | :----------: | :---------------------------------------------------------------------------: |
-| Open         | boolean | false        | false für inaktiv, true für aktiv                                             |
-| Port         | integer | 8080         | Port auf welchen der Server Verbindungen annimmt                              |
-| URI          | string  | /            | URI auf welche Clients sich verbinden dürfen                                  |
-| Interval     | integer | 0            | Timeout & Ping-Intervall wenn Clients keine Daten übertragen                  |
-| TLS          | boolean | false        | True wenn Transport-Socket-Layer Verbindungen erlaubt sind                    |
-| Plain        | boolean | true         | True wenn unverschlüsselte Verbindungen erlaubt sind                          |
-| CertFile     | string  | siehe *      | Pfad zum Zertifikat (IPS4.1) / Zertifikat base64 encodiert (IPS4.2>)          |
-| KeyFile      | string  | siehe *      | Pfad zum privaten Schlüssel (IPS4.1) / Schlüssel base64 encodiert (IPS4.2>)   |
-| KeyPassword  | string  | siehe *      | Passwort vom privaten Schlüssel                                               |
-| BasisAuth    | boolean | false        | true = Basis-Authentifizierung verwenden                                      |
-| Username     | string  |              | Benutzername für die Authentifizierung                                        |
-| Password     | string  |              | Passwort für die Authentifizierung                                            |
+| Eigenschaft |   Typ   | Standardwert |                                  Funktion                                   |
+| :---------: | :-----: | :----------: | :-------------------------------------------------------------------------: |
+|    Open     | boolean |    false     |                      false für inaktiv, true für aktiv                      |
+|    Port     | integer |     8080     |              Port auf welchen der Server Verbindungen annimmt               |
+|     URI     | string  |      /       |                URI auf welche Clients sich verbinden dürfen                 |
+|  Interval   | integer |      0       |        Timeout & Ping-Intervall wenn Clients keine Daten übertragen         |
+|     TLS     | boolean |    false     |         True wenn Transport-Socket-Layer Verbindungen erlaubt sind          |
+|    Plain    | boolean |     true     |            True wenn unverschlüsselte Verbindungen erlaubt sind             |
+|  CertFile   | string  |   siehe *    |    Pfad zum Zertifikat (IPS4.1) / Zertifikat base64 encodiert (IPS4.2>)     |
+|   KeyFile   | string  |   siehe *    | Pfad zum privaten Schlüssel (IPS4.1) / Schlüssel base64 encodiert (IPS4.2>) |
+| KeyPassword | string  |   siehe *    |                       Passwort vom privaten Schlüssel                       |
+|  BasisAuth  | boolean |    false     |                  true = Basis-Authentifizierung verwenden                   |
+|  Username   | string  |              |                   Benutzername für die Authentifizierung                    |
+|  Password   | string  |              |                     Passwort für die Authentifizierung                      |
 
 \* Sobald TLS auf True gesetzt wird und kein Zertifikat vorliegt, wird ein selbst-signiertes Zertifikat erzeugt und in der Instanz eingetragen.  
   Es ist jederzeit möglich das Zertifikat durch ein eigenes zu erstzen.  
@@ -129,57 +129,57 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
   Die Datensätze werden erst nach dem Empfang eines Fin als ein Block weitergeleitet.  
   Der WebSocket-Server buffert die Daten eigenständig bis zum nächten Paket mit gesetzten Fin-Flag.  
   
-| Parameter    | Typ     | Beschreibung                                                    |
-| :----------: | :-----: | :-------------------------------------------------------------: |
-| DataID       | string  | {8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}                          |
-| ClientIP     | string  | Die IP-Adresse des Client von welchem die Daten kommen          |
-| ClientPort   | string  | Die Port des Client von welchem die Daten kommen                |
-| FrameTyp     | integer | 0 = neu verbunden, 1 = text, 2 = binär, 8 = getrennt, 10 = pong |
-| Buffer       | string  | Payload, nur bei FrameTyp 1, 2 und 9                            |
+| Parameter  |   Typ   |                          Beschreibung                           |
+| :--------: | :-----: | :-------------------------------------------------------------: |
+|   DataID   | string  |             {8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}              |
+|  ClientIP  | string  |     Die IP-Adresse des Client von welchem die Daten kommen      |
+| ClientPort | string  |        Die Port des Client von welchem die Daten kommen         |
+|  FrameTyp  | integer | 0 = neu verbunden, 1 = text, 2 = binär, 8 = getrennt, 10 = pong |
+|   Buffer   | string  |              Payload, nur bei FrameTyp 1, 2 und 9               |
 
   ![](imgs/IfWSS.png)  
 
   Folgende GUID ist komplatible mit dem ServerSocket und kann ebenfalls zum empfang genutzt werden.  
 
-| Parameter    | Typ     | Beschreibung                                                    |
-| :----------: | :-----: | :-------------------------------------------------------------: |
-| DataID       | string  | {7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}                          |
-| ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
-| ClientPort   | string  | Die Port des Client zu welchem die Daten versendet werden       |
-| Type         | integer | 0 = Daten, 1 = neu verbunden, 2 = getrennt                      |
-| Buffer       | string  | Payload, nur wenn Type = 0 ist                                  |
+| Parameter  |   Typ   |                          Beschreibung                           |
+| :--------: | :-----: | :-------------------------------------------------------------: |
+|   DataID   | string  |             {7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}              |
+|  ClientIP  | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort | string  |    Die Port des Client zu welchem die Daten versendet werden    |
+|    Type    | integer |           0 = Daten, 1 = neu verbunden, 2 = getrennt            |
+|   Buffer   | string  |                 Payload, nur wenn Type = 0 ist                  |
 
 **Datenversand:**  
   Von der untergeordneten Instanz zum WebSocket-Server (SendDataToParent im fremden Modul).  
   Es wird true zurückgeliefert wenn die Funktion gemäß FrameTyp erfolgreich ausgeführt wurde.  
 
-| Parameter    | Typ     | Beschreibung                                                    |
-| :----------: | :-----: | :-------------------------------------------------------------: |
-| DataID       | string  | {714B71FB-3D11-41D1-AFAC-E06F1E983E09}                          |
-| ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
-| ClientPort   | string  | Die Port des Client von welchem die Daten kommen                |
-| FrameTyp     | integer | 0 = continuation, 1 = text, 2 = binär, 8 = close, 9 = ping      |
-| Fin          | bool    | true wenn Paket komplett, false wenn weitere Daten folgen       | 
-| Buffer       | string  | Payload, außer bei FrameTyp 8, dann leer                        |
+| Parameter  |   Typ   |                          Beschreibung                           |
+| :--------: | :-----: | :-------------------------------------------------------------: |
+|   DataID   | string  |             {714B71FB-3D11-41D1-AFAC-E06F1E983E09}              |
+|  ClientIP  | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort | string  |        Die Port des Client von welchem die Daten kommen         |
+|  FrameTyp  | integer |   0 = continuation, 1 = text, 2 = binär, 8 = close, 9 = ping    |
+|    Fin     |  bool   |    true wenn Paket komplett, false wenn weitere Daten folgen    |
+|   Buffer   | string  |            Payload, außer bei FrameTyp 8, dann leer             |
 
   ![](imgs/IfWSS2.png)  
 
   Folgende GUID ist komplatible mit dem ServerSocket und kann ebenfalls zum senden genutzt werden.  
 
-| Parameter    | Typ     | Beschreibung                                                    |
-| :----------: | :-----: | :-------------------------------------------------------------: |
-| DataID       | string  | {C8792760-65CF-4C53-B5C7-A30FCC84FEFE}                          |
-| ClientIP     | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
-| ClientPort   | string  | Die Port des Client zu welchem die Daten versendet werden       |
-| Type         | integer | 0 = Daten, 2 = Verbindung soll getrennt werden                  |
-| Buffer       | string  | Payload, außer bei Type 2, dann leer                            |
+| Parameter  |   Typ   |                          Beschreibung                           |
+| :--------: | :-----: | :-------------------------------------------------------------: |
+|   DataID   | string  |             {C8792760-65CF-4C53-B5C7-A30FCC84FEFE}              |
+|  ClientIP  | string  | Die IP-Adresse des Client zu welchem die Daten versendet werden |
+| ClientPort | string  |    Die Port des Client zu welchem die Daten versendet werden    |
+|    Type    | integer |         0 = Daten, 2 = Verbindung soll getrennt werden          |
+|   Buffer   | string  |              Payload, außer bei Type 2, dann leer               |
 
   Mit folgender GUID (Virtual-IO) wird der Payload immer an alle verbundenen Clients versenden.  
 
-| Parameter    | Typ     | Beschreibung                                                    |
-| :----------: | :-----: | :-------------------------------------------------------------: |
-| DataID       | string  | {79827379-F36E-4ADA-8A95-5F8D1DC92FA9}                          |
-| Buffer       | string  | Payload                                                         |
+| Parameter |  Typ   |              Beschreibung              |
+| :-------: | :----: | :------------------------------------: |
+|  DataID   | string | {79827379-F36E-4ADA-8A95-5F8D1DC92FA9} |
+|  Buffer   | string |                Payload                 |
 
 
 ## 9. Anhang
@@ -198,7 +198,7 @@ Version 1.2:
  - Mehrfache Verbindungen von einer IP sind nun möglich
 
 Version 1.1:  
- - In IPSNetwork-Library integriert
+ - In Network-Library integriert
 
 Version 1.0:  
  - Erstes offizielles Release

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 //declare(strict_types = 1);
 
 require_once __DIR__ . '/../libs/NetworkTraits.php';
@@ -34,9 +36,9 @@ require_once __DIR__ . '/../libs/WebhookHelper.php';
  */
 class HookReverseProxy extends IPSModule
 {
-    use BufferHelper,
-        DebugHelper,
-        WebhookHelper;
+    use BufferHelper;
+    use DebugHelper;
+    use WebhookHelper;
 
     /**
      * Interne Funktion des SDK.
@@ -81,6 +83,33 @@ class HookReverseProxy extends IPSModule
             foreach ($AddHooks as $AddHook) {
                 $this->RegisterHook($AddHook);
             }
+        }
+    }
+
+    /**
+     * Interne Funktion des SDK.
+     */
+    protected function ProcessHookdata()
+    {
+        // SSL fehlt
+        // Authentifizierung lokal einbauen
+        $HookData = $this->GetURL($_SERVER['HOOK']);
+        if ($HookData) {
+            $URLScheme = parse_url($HookData['Url'], PHP_URL_SCHEME);
+            if (in_array($URLScheme, ['http', 'https', 'ftp'])) {
+                return $this->DeliveryRemoteFile($HookData, $_GET);
+            }
+            return $this->DeliveryLocalFile($HookData['Url'], $HookData['forceDL']);
+        } else {
+            http_response_code(404);
+            header('Content-Type: text/plain');
+            header('Connection: close');
+            header('Server: Symcon ' . IPS_GetKernelVersion());
+            header('X-Powered-By: Hook Reverse Proxy');
+            header('Expires: 0');
+            header('Cache-Control: no-cache');
+            header('Content-Type: text/plain');
+            die('File not found!');
         }
     }
 
@@ -220,33 +249,6 @@ class HookReverseProxy extends IPSModule
             header('Cache-Control: no-cache');
             header('Content-Type: text/plain');
             die('Server error!');
-        }
-    }
-
-    /**
-     * Interne Funktion des SDK.
-     */
-    protected function ProcessHookdata()
-    {
-        // SSL fehlt
-        // Authentifizierung lokal einbauen
-        $HookData = $this->GetURL($_SERVER['HOOK']);
-        if ($HookData) {
-            $URLScheme = parse_url($HookData['Url'], PHP_URL_SCHEME);
-            if (in_array($URLScheme, ['http', 'https', 'ftp'])) {
-                return $this->DeliveryRemoteFile($HookData, $_GET);
-            }
-            return $this->DeliveryLocalFile($HookData['Url'], $HookData['forceDL']);
-        } else {
-            http_response_code(404);
-            header('Content-Type: text/plain');
-            header('Connection: close');
-            header('Server: Symcon ' . IPS_GetKernelVersion());
-            header('X-Powered-By: Hook Reverse Proxy');
-            header('Expires: 0');
-            header('Cache-Control: no-cache');
-            header('Content-Type: text/plain');
-            die('File not found!');
         }
     }
 

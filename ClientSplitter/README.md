@@ -1,4 +1,4 @@
-# ClientSplitter (IPSNetwork)
+# ClientSplitter (Network)
 
 Implementierung eines Splitters für ServerSocket und WebSocket-Server.  
 
@@ -31,7 +31,7 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSNetwork.git`  
+   `git://github.com/Nall-chan/Network.git`  
 
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
@@ -59,15 +59,15 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
 
 GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):  
 
-| Instanz          | GUID                                   |
-| :--------------: | :------------------------------------: |
-| Client Splitter  | {7A107D38-75ED-47CB-83F9-F41228CAEEFA} |
+|     Instanz     |                  GUID                  |
+| :-------------: | :------------------------------------: |
+| Client Splitter | {7A107D38-75ED-47CB-83F9-F41228CAEEFA} |
 
 Eigenschaften des 'Client Splitter' für Get/SetProperty-Befehle:  
 
-| Eigenschaft   | Typ     | Standardwert | Funktion                  |
-| :-----------: | :-----: | :----------: | :-----------------------: |
-| ClientIP      | string  |              | Die IP-Adresse des Client |
+| Eigenschaft |  Typ   | Standardwert |         Funktion          |
+| :---------: | :----: | :----------: | :-----------------------: |
+|  ClientIP   | string |              | Die IP-Adresse des Client |
 
 
 ## 8. Datenaustausch
@@ -79,7 +79,7 @@ Kompatibel zum Interface Virtual-IO.
 **Changlog:**  
 
 Version 1.1:  
- - In IPSNetwork-Library integriert
+ - In Network-Library integriert
 
 Version 1.0:  
  - Erstes offizielles Release

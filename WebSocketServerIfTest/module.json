@@ -3,9 +3,18 @@
     "name": "WebSocketInterfaceTest",
     "type": 2,
     "vendor": "",
-    "aliases": ["WebSocket-InterfaceTest"],
-    "parentRequirements": ["{BC49DE11-24CA-484D-85AE-9B6F24D89321}","{714B71FB-3D11-41D1-AFAC-E06F1E983E09}"],
+    "aliases": [
+        "WebSocket-InterfaceTest"
+    ],
+    "parentRequirements": [
+        "{BC49DE11-24CA-484D-85AE-9B6F24D89321}",
+        "{714B71FB-3D11-41D1-AFAC-E06F1E983E09}"
+    ],
     "childRequirements": [],
-    "implemented": ["{C51A4B94-8195-4673-B78D-04D91D52D2DD}","{8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}"],
-    "prefix": "WSTest"
+    "implemented": [
+        "{C51A4B94-8195-4673-B78D-04D91D52D2DD}",
+        "{8F1F6C32-B1AD-4B7F-8DFB-1244A96FCACF}"
+    ],
+    "prefix": "WSTEST",
+    "url": "https://github.com/Nall-chan/Network"
 }

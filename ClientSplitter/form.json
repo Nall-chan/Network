@@ -1,10 +1,9 @@
 {
-    "elements":
-            [
-                {
-                    "name": "ClientIP",
-                    "type": "ValidationTextBox",
-                    "caption": "Client IP:"
-                }
-            ]
+    "elements": [
+        {
+            "name": "ClientIP",
+            "type": "ValidationTextBox",
+            "caption": "Client IP:"
+        }
+    ]
 }

@@ -1,4 +1,4 @@
-#  WebSocket-Client (IPSNetwork)
+#  WebSocket-Client (Network)
 
 Implementierung eines Clients mit Websocket Protokoll in IPS.
 
@@ -30,7 +30,7 @@ Implementierung eines Clients mit Websocket Protokoll in IPS.
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSNetwork.git`  
+   `git://github.com/Nall-chan/Network.git`  
 
    **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
 
@@ -112,24 +112,24 @@ bool WSC_SendPing(integer $InstanzeID, string $Text);
 
 GUID des Moduls (z.B. wenn Instanz per PHP angelegt werden soll):  
 
-| Instanz          | GUID                                   |
+|     Instanz      |                  GUID                  |
 | :--------------: | :------------------------------------: |
 | Websocket Client | {3AB77A94-3467-4E66-8A73-840B4AD89582} |
 
 Eigenschaften des 'Websocket Client' für Get/SetProperty-Befehle:  
 
-| Eigenschaft  | Typ     | Standardwert | Funktion                                                                              |
-| :----------: | :-----: | :----------: | :-----------------------------------------------------------------------------------: |
-| Open         | boolean | false        | false für inaktiv, true für aktiv                                                     |
-| URL          | string  |              | Die URL auf die sich verbunden wird                                                   |
-| Version      | integer | 13           | Die WebSocket-Version 13, 8 oder 6                                                    | 
-| Origin       | string  |              | Das Origin Feld im Protokoll                                                          |
-| PingInterval | integer | 0            | In Sekunden, wann ein Ping an den Server gesendet wird                                |
-| PingPayload  | string  |              | Die im Ping zu versendenen Daten                                                      |
-| Frame        | integer | 1            | Format in welchen Daten versendet werden, wenn der Typ nicht bekannt ist (2 = binär)  |
-| BasisAuth    | boolean | false        | true = Basis-Authentifizierung verwenden                                              |
-| Username     | string  |              | Benutzername für die Authentifizierung                                                |
-| Password     | string  |              | Passwort für die Authentifizierung                                                    |
+| Eigenschaft  |   Typ   | Standardwert |                                       Funktion                                       |
+| :----------: | :-----: | :----------: | :----------------------------------------------------------------------------------: |
+|     Open     | boolean |    false     |                          false für inaktiv, true für aktiv                           |
+|     URL      | string  |              |                         Die URL auf die sich verbunden wird                          |
+|   Version    | integer |      13      |                          Die WebSocket-Version 13, 8 oder 6                          |
+|    Origin    | string  |              |                             Das Origin Feld im Protokoll                             |
+| PingInterval | integer |      0       |                In Sekunden, wann ein Ping an den Server gesendet wird                |
+| PingPayload  | string  |              |                           Die im Ping zu versendenen Daten                           |
+|    Frame     | integer |      1       | Format in welchen Daten versendet werden, wenn der Typ nicht bekannt ist (2 = binär) |
+|  BasisAuth   | boolean |    false     |                       true = Basis-Authentifizierung verwenden                       |
+|   Username   | string  |              |                        Benutzername für die Authentifizierung                        |
+|   Password   | string  |              |                          Passwort für die Authentifizierung                          |
 
 ## 8. Datenaustausch
 
@@ -139,11 +139,11 @@ Eigenschaften des 'Websocket Client' für Get/SetProperty-Befehle:
   Der WebSocket-Client buffert die Daten eigenständig bis zum nächten Paket mit gesetzten Fin-Flag.  
   Ping/Pong Funktionalität sowie das manuelle schließen der Verbindung sind aktuell nicht vorgesehen.  
 
-| Parameter    | Typ     | Beschreibung                                              |
-| :----------: | :-----: | :-------------------------------------------------------: |
-| DataID       | string  | {C51A4B94-8195-4673-B78D-04D91D52D2DD}                    |
-| FrameTyp     | integer | 1 = text, 2 = binär                                       |
-| Buffer       | string  | Payload                                                   |
+| Parameter |   Typ   |              Beschreibung              |
+| :-------: | :-----: | :------------------------------------: |
+|  DataID   | string  | {C51A4B94-8195-4673-B78D-04D91D52D2DD} |
+| FrameTyp  | integer |          1 = text, 2 = binär           |
+|  Buffer   | string  |                Payload                 |
 
   ![](imgs/IfWSC.png)  
 
@@ -152,12 +152,12 @@ Eigenschaften des 'Websocket Client' für Get/SetProperty-Befehle:
   Es ist empfohlen nur den FrameTyp 1 & 2 in Verbindung mit Fin = true zu nutzen!  
   Die Instanz meldet True zurück, solange sie Verbunden ist.  
   
-| Parameter    | Typ     | Beschreibung                                              |
-| :----------: | :-----: | :-------------------------------------------------------: |
-| DataID       | string  | {BC49DE11-24CA-484D-85AE-9B6F24D89321}                    |
-| FrameTyp     | integer | 0 = continuation, 1 = text, 2 = binär                     |
-| Fin          | bool    | true wenn Paket komplett, false wenn weitere Daten folgen | 
-| Buffer       | string  | Payload                                                   |
+| Parameter |   Typ   |                       Beschreibung                        |
+| :-------: | :-----: | :-------------------------------------------------------: |
+|  DataID   | string  |          {BC49DE11-24CA-484D-85AE-9B6F24D89321}           |
+| FrameTyp  | integer |           0 = continuation, 1 = text, 2 = binär           |
+|    Fin    |  bool   | true wenn Paket komplett, false wenn weitere Daten folgen |
+|  Buffer   | string  |                          Payload                          |
 
   ![](imgs/IfWSC2.png)  
 
@@ -166,7 +166,7 @@ Eigenschaften des 'Websocket Client' für Get/SetProperty-Befehle:
 **Changlog:**  
 
 Version 1.1:  
- - In IPSNetwork-Library integriert
+ - In Network-Library integriert
 
 Version 1.0:  
  - Erstes offizielles Release

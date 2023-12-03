@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* * @addtogroup network
  * @{
  *
@@ -237,7 +239,7 @@ class WebSocketFrame extends stdClass
         //Prüfen ob genug daten da sind !
         if (strlen($Frame) >= $start + $len) {
             $this->Payload = substr($Frame, $start, $len);
-            if ($this->Mask and ($len > 0)) {
+            if ($this->Mask && ($len > 0)) {
                 for ($i = 0; $i < strlen($this->Payload); $i++) {
                     $this->Payload[$i] = $this->Payload[$i] ^ $this->MaskKey[$i % 4];
                 }
@@ -263,7 +265,7 @@ class WebSocketFrame extends stdClass
             $len = 126;
         }
         $this->Mask = $Masked;
-        if ($this->Mask and ($len > 0)) {
+        if ($this->Mask && ($len > 0)) {
             $this->PayloadRAW = $this->Payload;
             $len = $len | WebSocketMask::mask;
             $this->MaskKey = openssl_random_pseudo_bytes(4);
@@ -320,14 +322,6 @@ class Websocket_Client
     public $UseTLS;
 
     /**
-     * Liefert die Daten welche behalten werden müssen.
-     */
-    public function __sleep()
-    {
-        return ['ClientIP', 'ClientPort', 'State', 'Timestamp', 'UseTLS'];
-    }
-
-    /**
      * Erzeugt ein Websocket_Client-Objekt aus den übergebenden Daten.
      *
      * @param string         $ClientIP   Die IP-Adresse des Clients.
@@ -342,6 +336,14 @@ class Websocket_Client
         $this->State = $State;
         $this->Timestamp = 0;
         $this->UseTLS = $UseTLS;
+    }
+
+    /**
+     * Liefert die Daten welche behalten werden müssen.
+     */
+    public function __sleep()
+    {
+        return ['ClientIP', 'ClientPort', 'State', 'Timestamp', 'UseTLS'];
     }
 }
 

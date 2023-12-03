@@ -1,141 +1,149 @@
 {
-    "elements":
-            [{
-                    "type": "Label",
-                    "caption": "Caution: Only use TLS with authentication if the port is accessible externally!"
-                }, {
-                    "name": "Open",
-                    "type": "CheckBox",
-                    "caption": "Active"
-                },
+    "elements": [
+        {
+            "type": "Label",
+            "caption": "Caution: Only use TLS with authentication if the port is accessible externally!"
+        },
+        {
+            "name": "Open",
+            "type": "CheckBox",
+            "caption": "Active"
+        },
+        {
+            "name": "Port",
+            "type": "NumberSpinner",
+            "caption": "Port"
+        },
+        {
+            "name": "URI",
+            "type": "ValidationTextBox",
+            "caption": "URI"
+        },
+        {
+            "name": "Interval",
+            "type": "NumberSpinner",
+            "caption": "Timeout"
+        },
+        {
+            "type": "Select",
+            "name": "Mode",
+            "caption": "Mode",
+            "options": [
                 {
-                    "name": "Port",
-                    "type": "NumberSpinner",
-                    "caption": "Port"
-                },
-                {
-                    "name": "URI",
-                    "type": "ValidationTextBox",
-                    "caption": "URI"
-                }, {
-                    "name": "Interval",
-                    "type": "NumberSpinner",
-                    "caption": "Timeout"
-                }, {
-                    "type": "Select",
-                    "name": "Mode",
-                    "caption": "Mode",
-                    "options": [
+                    "caption": "no TLS",
+                    "value": [
                         {
-                            "caption": "no TLS",
-                            "value": [
-                                {
-                                    "name": "TLS",
-                                    "value": false
-                                },
-                                {
-                                    "name": "Plain",
-                                    "value": true
-                                }
-                            ]
+                            "name": "TLS",
+                            "value": false
                         },
                         {
-                            "caption": "both",
-                            "value": [
-                                {
-                                    "name": "TLS",
-                                    "value": true
-                                },
-                                {
-                                    "name": "Plain",
-                                    "value": true
-                                }
-                            ]
-                        },
-                        {
-                            "caption": "only TLS",
-                            "value": [
-                                {
-                                    "name": "TLS",
-                                    "value": true
-                                },
-                                {
-                                    "name": "Plain",
-                                    "value": false
-                                }
-                            ]
+                            "name": "Plain",
+                            "value": true
                         }
                     ]
-                }, {
-                    "type": "Label",
-                    "caption": "--------------------------------------------------"
-                }, {
-                    "type": "Label",
-                    "caption": "Optional Certificate:"
-                }, {
-                    "name": "CertFile",
-                    "type": "SelectFile",
-                    "extensions": ".pem,.crt,.cer",
-                    "caption": "Certificate"
-                }, {
-                    "name": "KeyFile",
-                    "type": "SelectFile",
-                    "extensions": ".pem,.key",
-                    "caption": "Private key"
                 },
                 {
-                    "name": "KeyPassword",
-                    "type": "PasswordTextBox",
-                    "caption": "Passphrase(optional)"
-                }, {
-                    "type": "Label",
-                    "caption": "--------------------------------------------------"
-                }, {
-                    "type": "Label",
-                    "caption": "Optional HTTP Basic-Authentication:"
+                    "caption": "both",
+                    "value": [
+                        {
+                            "name": "TLS",
+                            "value": true
+                        },
+                        {
+                            "name": "Plain",
+                            "value": true
+                        }
+                    ]
                 },
                 {
-                    "name": "BasisAuth",
-                    "type": "CheckBox",
-                    "caption": "Active"
-                },
-                {
-                    "name": "Username",
-                    "type": "ValidationTextBox",
-                    "caption": "Username"
-                },
-                {
-                    "name": "Password",
-                    "type": "PasswordTextBox",
-                    "caption": "Password"
-                }
-            ],
-    "status":
-            [
-                {
-                    "code": 102,
-                    "icon": "active",
-                    "caption": "Interface open"
-                },
-                {
-                    "code": 104,
-                    "icon": "inactive",
-                    "caption": "Interface closed"
-                },
-                {
-                    "code": 201,
-                    "icon": "error",
-                    "caption": "Certificate or key missing or not found"
-                },
-                {
-                    "code": 202,
-                    "icon": "error",
-                    "caption": "Port invalid"
-                },
-                {
-                    "code": 204,
-                    "icon": "error",
-                    "caption": "Ping interval to small"
+                    "caption": "only TLS",
+                    "value": [
+                        {
+                            "name": "TLS",
+                            "value": true
+                        },
+                        {
+                            "name": "Plain",
+                            "value": false
+                        }
+                    ]
                 }
             ]
+        },
+        {
+            "type": "Label",
+            "caption": "--------------------------------------------------"
+        },
+        {
+            "type": "Label",
+            "caption": "Optional Certificate:"
+        },
+        {
+            "name": "CertFile",
+            "type": "SelectFile",
+            "extensions": ".pem,.crt,.cer",
+            "caption": "Certificate"
+        },
+        {
+            "name": "KeyFile",
+            "type": "SelectFile",
+            "extensions": ".pem,.key",
+            "caption": "Private key"
+        },
+        {
+            "name": "KeyPassword",
+            "type": "PasswordTextBox",
+            "caption": "Passphrase(optional)"
+        },
+        {
+            "type": "Label",
+            "caption": "--------------------------------------------------"
+        },
+        {
+            "type": "Label",
+            "caption": "Optional HTTP Basic-Authentication:"
+        },
+        {
+            "name": "BasisAuth",
+            "type": "CheckBox",
+            "caption": "Active"
+        },
+        {
+            "name": "Username",
+            "type": "ValidationTextBox",
+            "caption": "Username"
+        },
+        {
+            "name": "Password",
+            "type": "PasswordTextBox",
+            "caption": "Password"
+        }
+    ],
+    "status": [
+        {
+            "code": 102,
+            "icon": "active",
+            "caption": "Interface open"
+        },
+        {
+            "code": 104,
+            "icon": "inactive",
+            "caption": "Interface closed"
+        },
+        {
+            "code": 201,
+            "icon": "error",
+            "caption": "Certificate or key missing or not found"
+        },
+        {
+            "code": 202,
+            "icon": "error",
+            "caption": "Port invalid"
+        },
+        {
+            "code": 204,
+            "icon": "error",
+            "caption": "Ping interval to small"
+        }
+    ]
 }

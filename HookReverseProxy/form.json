@@ -1,63 +1,67 @@
 {
-    "elements":
-            [
+    "elements": [
+        {
+            "type": "List",
+            "name": "Hooks",
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Hook",
+                "direction": "ascending"
+            },
+            "columns": [
                 {
-                    "type": "List",
-                    "name": "Hooks",
+                    "caption": "IPS Hook",
+                    "name": "Hook",
+                    "width": "300px",
+                    "add": "/hook/",
+                    "edit": {
+                        "caption": "URI",
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Source",
+                    "name": "Url",
+                    "width": "auto",
+                    "add": "http://",
+                    "edit": {
+                        "caption": "URL or File",
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "force download",
+                    "name": "forceDL",
+                    "width": "150px",
+                    "add": false,
+                    "edit": {
+                        "caption": "force download",
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "allow get query",
+                    "name": "allowGet",
+                    "width": "150px",
                     "add": true,
-                    "delete": true,
-                    "sort": {
-                        "column": "Hook",
-                        "direction": "ascending"
-                    },
-                    "columns": [{
-                            "caption": "IPS Hook",
-                            "name": "Hook",
-                            "width": "300px",
-                            "add": "/hook/",
-                            "edit": {
-                                "caption": "URI",
-                                "type": "ValidationTextBox"
-                            }
-                        }, {
-                            "caption": "Source",
-                            "name": "Url",
-                            "width": "auto",
-                            "add": "http://",
-                            "edit": {
-                                "caption": "URL or File",
-                                "type": "ValidationTextBox"
-                            }
-                        }, {
-                            "caption": "force download",
-                            "name": "forceDL",
-                            "width": "150px",
-                            "add": false,
-                            "edit": {
-                                "caption": "force download",
-                                "type": "CheckBox"
-                            }
-                        }, {
-                            "caption": "allow get query",
-                            "name": "allowGet",
-                            "width": "150px",
-                            "add": true,
-                            "edit": {
-                                "caption": "allow get",
-                                "type": "CheckBox"
-                            }
-                        }, {
-                            "caption": "no SSL checks",
-                            "name": "weakSSL",
-                            "width": "150px",
-                            "add": false,
-                            "edit": {
-                                "caption": "no SSL checks",
-                                "type": "CheckBox"
-                            }
-                        }
-                    ],
-                    "values": []
+                    "edit": {
+                        "caption": "allow get",
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "no SSL checks",
+                    "name": "weakSSL",
+                    "width": "150px",
+                    "add": false,
+                    "edit": {
+                        "caption": "no SSL checks",
+                        "type": "CheckBox"
+                    }
                 }
-            ]
+            ],
+            "values": []
+        }
+    ]
 }
