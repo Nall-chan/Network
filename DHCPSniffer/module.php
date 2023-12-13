@@ -219,12 +219,12 @@ class DHCPSniffer extends ipsmodule
                 $this->SetValue('EVENT', true);
                 break;
             case 1: // IMPULSE
-                $this->SetValue('EVENT', true);
+                $this->SetValue('IMPULSE', true);
                 IPS_Sleep(1);
-                $this->SetValue('EVENT', false);
+                $this->SetValue('IMPULSE', false);
                 break;
             case 2: // Toggle
-                $this->SetValue('EVENT', !$this->GetValue('EVENT'));
+                $this->SetValue('TOGGLE', !$this->GetValue('TOGGLE'));
                 break;
         }
     }
