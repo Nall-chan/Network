@@ -6,19 +6,8 @@ require_once __DIR__ . '/../libs/NetworkTraits.php';
 require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
 
 use PTLS\Exceptions\TLSAlertException;
+use PTLS\TLS;
 use PTLS\TLSContext;
-
-/*
- * @addtogroup network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2020 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.4
- */
 
 /**
  * Der Status der Verbindung.
@@ -46,6 +35,7 @@ class TLSState
             case self::init:
                 return 'init';
         }
+        return 'unknown';
     }
 }
 
@@ -61,7 +51,7 @@ class TLSState
  *
  * @example <b>Ohne</b>
  *
- * @property WebSocketState $State
+ * @property int $State
  * @property string $Buffer
  * @property string $Handshake
  * @property string $Key
@@ -70,7 +60,7 @@ class TLSState
  * @property string  $PayloadReceiveBuffer
  * @property string  $PayloadSendBuffer
  * @property bool  $WaitForPong
- * @property TLSState $TLSState
+ * @property int $TLSState
  * @property string $WaitForTLSReceive
  * @property TLS $Multi_TLS TLS-Object
  * @property string $TLSReceiveData
@@ -287,7 +277,7 @@ class WebsocketClient extends IPSModule
         }
 
         if ($Open) {
-            if ($this->HasActiveParent($ParentID)) {
+            if ($this->HasActiveParent()) {
                 if ($this->UseTLS) {
                     if (!$this->CreateTLSConnection()) {
                         $this->SetStatus(IS_EBASE + 3);
@@ -774,7 +764,7 @@ class WebsocketClient extends IPSModule
      *
      * @param string $Payload Der Payload welche mit dem Pong versendet wird.
      */
-    private function SendPong(string $Payload = null)
+    private function SendPong(?string $Payload = null)
     {
         $this->Send($Payload, WebSocketOPCode::pong);
     }
@@ -896,7 +886,7 @@ class WebsocketClient extends IPSModule
 
     /**
      *
-     * @return \PTLS\TLSContext
+     * @return \PTLS\TLS
      */
     private function GetTLSContext()
     {
@@ -906,7 +896,7 @@ class WebsocketClient extends IPSModule
 
     /**
      *
-     * @param \PTLS\TLSContext $TLS
+     * @param \PTLS\TLS $TLS
      */
     private function SetTLSContext($TLS)
     {
@@ -914,5 +904,3 @@ class WebsocketClient extends IPSModule
         $this->unlock('TLS');
     }
 }
-
-/* @} */

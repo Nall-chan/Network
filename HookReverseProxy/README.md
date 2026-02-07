@@ -4,41 +4,43 @@
 [![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
 [![StyleCI](https://styleci.io/repos/104255893/shield?style=flat)](https://styleci.io/repos/104255893)  
 
-# Webhook Reverse Proxy
-Stellt interne Dateien und URLs als Webhook bereit  
+# WebHook Reverse Proxy
+Stellt interne Dateien und URLs als WebHook bereit  
 
 ## Dokumentation
 
 **Inhaltsverzeichnis**
 
-1. [Funktionsumfang](#1-funktionsumfang)  
-2. [Voraussetzungen](#2-voraussetzungen)  
-3. [Software-Installation](#3-software-installation) 
-4. [Einrichten der Instanz in IP-Symcon](#4-einrichten-der-instanz-in-ip-symcon)
-5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
-7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz) 
-8. [Anhang](#8-anhang)  
-    1. [Changelog](#1-changelog)  
-9. [Lizenz](#9-lizenz)
+- [WebHook Reverse Proxy](#webhook-reverse-proxy)
+  - [Dokumentation](#dokumentation)
+  - [1. Funktionsumfang](#1-funktionsumfang)
+  - [2. Voraussetzungen](#2-voraussetzungen)
+  - [3. Software-Installation](#3-software-installation)
+  - [4. Einrichten der Instanz in IP-Symcon](#4-einrichten-der-instanz-in-ip-symcon)
+  - [5. Statusvariablen und Profile](#5-statusvariablen-und-profile)
+  - [6. WebFront](#6-webfront)
+  - [7. PHP-Befehlsreferenz](#7-php-befehlsreferenz)
+  - [8. Anhang](#8-anhang)
+    - [1. Changelog](#1-changelog)
+  - [9. Lizenz](#9-lizenz)
 
 ## 1. Funktionsumfang
 
-Über Webhooks des IPS-WebServer sind folgende Funktionen realisiert:  
- - Bereitstellung von Lokale Dateien.  
- - Bereitstellung von im lokalen Netzwerk per http/https/ftp erreichbaren Dateien.  
- - Unterstützt Basic & Digist Authentification für die Quellen.
- - Überschreiben und erweitern von Get-Parametern ist möglich.  
+Über WebHooks des IPS-WebServer sind folgende Funktionen realisiert:  
+
+- Bereitstellung von Lokale Dateien.  
+- Bereitstellung von im lokalen Netzwerk per http/https/ftp erreichbaren Dateien.  
+- Unterstützt Basic & Digist Authentification für die Quellen.
+- Überschreiben und erweitern von Get-Parametern ist möglich.  
 
 ## 2. Voraussetzungen
 
- - IPS 4.3 oder höher  
+- IP-Symcon ab Version 6.0
 
 ## 3. Software-Installation
 
  Dieses Modul ist Bestandteil der [Network-Library](../).  
 
-**IPS 5.0:**  
    Bei privater Nutzung: Über das 'Module-Control' in IPS folgende URL hinzufügen.  
     `git://github.com/Nall-chan/Network.git`  
 
@@ -58,7 +60,7 @@ Werte pro Spalte:
 
 | Eigenschaft |  Typ   | Standardwert |                                      Funktion                                       |
 | :---------: | :----: | :----------: | :---------------------------------------------------------------------------------: |
-|    Hook     | string |    /hook/    |                     URI des Webhook. Muss mit /hook/ anfangen.                      |
+|    Hook     | string |    /hook/    |                     URI des WebHook. Muss mit /hook/ anfangen.                      |
 |     Url     | string |   http://    |            URL zur Quelle. Kann auch https oder eine lokale Datei sein.             |
 |   forceDL   |  bool  |    false     | Zwingt Browser die gelieferten Daten als Datei zu speichern und nicht darzustellen. |
 |  allowGet   |  bool  |     true     |        Erlaubt das Erweitern und Überscheiben von Parametern durch den Hook.        |
@@ -78,21 +80,23 @@ Entfällt.
 
 ## 8. Anhang
 
-
-
 ### 1. Changelog  
 
 Version 2.20:
- - Neu: Webhook Reverse Proxy
+
+- Neu: WebHook Reverse Proxy
 
 Version 2.01:  
- - Doku ergänzt  
+
+- Doku ergänzt  
 
 Version 2.0:  
- - WebSocket-Module in Network überführt  
+
+- WebSocket-Module in Network überführt  
 
 Version 1.0:  
- - Erstes offizielles Release  
+
+- Erstes offizielles Release  
 
 ## 9. Lizenz
 

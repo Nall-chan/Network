@@ -1,11 +1,9 @@
 {
     "id": "{26E5D8BC-8117-4DFB-9E85-66BB30F1CF95}",
-    "name": "HookReverseProxy",
+    "name": "WebHook Reverse Proxy",
     "type": 0,
     "vendor": "",
-    "aliases": [
-        "Webhook Reverse Proxy"
-    ],
+    "aliases": [],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],

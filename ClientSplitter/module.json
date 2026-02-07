@@ -1,11 +1,9 @@
 {
     "id": "{7A107D38-75ED-47CB-83F9-F41228CAEEFA}",
-    "name": "ClientSplitter",
+    "name": "Client Splitter",
     "type": 2,
     "vendor": "",
-    "aliases": [
-        "Client Splitter"
-    ],
+    "aliases": [],
     "parentRequirements": [
         "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
     ],

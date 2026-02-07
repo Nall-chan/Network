@@ -2,19 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * @addtogroup network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
- *
- */
-
 /**
  * WebSocketInterfaceTest Klasse zeigt die Verwendung des Datenaustausches mit einem WebSocket-Server oder -Client.
  * Erweitert IPSModule.
@@ -100,5 +87,3 @@ class WebSocketInterfaceTest extends IPSModule
         }
     }
 }
-
-/* @} */

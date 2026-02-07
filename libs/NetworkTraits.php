@@ -22,8 +22,7 @@ trait DebugHelper
      *
      * @param string               $Message Nachricht für Data.
      * @param WebSocketFrame|mixed $Data    Daten für die Ausgabe.
-     *
-     * @return int $Format Ausgabeformat für Strings.
+     * @param int $Format Ausgabeformat für Strings.
      */
     protected function SendDebug($Message, $Data, $Format)
     {

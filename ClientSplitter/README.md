@@ -6,16 +6,18 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
 
 **Inhaltsverzeichnis**
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Installation](#3-installation)
-4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
-5. [Einrichten eines Client-Splitter in IPS](#5-einrichten-eines-client-splitter-in-ips)
-6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz)
-7. [Parameter / Modul-Infos](#7-parameter--modul-infos)
-8. [Datenaustausch](#8-datenaustausch)
-9. [Anhang](#9-anhang)
-10. [Lizenz](#10-lizenz)
+- [ClientSplitter (Network)](#clientsplitter-network)
+  - [Dokumentation](#dokumentation)
+  - [1. Funktionsumfang](#1-funktionsumfang)
+  - [2. Voraussetzungen](#2-voraussetzungen)
+  - [3. Installation](#3-installation)
+  - [4. Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
+  - [5. Einrichten eines Client-Splitter in IPS](#5-einrichten-eines-client-splitter-in-ips)
+  - [6. PHP-Befehlsreferenz](#6-php-befehlsreferenz)
+  - [7. Parameter / Modul-Infos](#7-parameter--modul-infos)
+  - [8. Datenaustausch](#8-datenaustausch)
+  - [9. Anhang](#9-anhang)
+  - [10. Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -23,11 +25,10 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
   Somit können die Daten pro Client z.B. in einer RegisterVariable weiter verarbeitet werden.  
   Werden Daten an einen Client versendet, wird auch zielgerichtet nur an den einen Client geantwortet.  
 
-
 ## 2. Voraussetzungen
 
- - IPS ab Version 4.3  
- 
+- IP-Symcon ab Version 6.0
+
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
@@ -42,14 +43,12 @@ Implementierung eines Splitters für ServerSocket und WebSocket-Server.
   ![](imgs/daClientSplitter.png)  
   ![](imgs/phyCS.png)  
 
-
 ## 5. Einrichten eines Client-Splitter in IPS
 
   Unter Instanz hinzufügen (Splitter) wählen und ein 'Client Splitter' hinzufügen (Haken bei Alle Module anzeigen!).  
   Der Splitter erwartet in der Konfiguration eine IPv4 Adresse und leitet Daten nur dann an die untergeordneten Instanzen weiter, wenn die IP-Adresse übereinstimmt.  
   Der trennt also die Datenströme von verschiedenen Clients, welche sich auf den ServerSocket oder den WebSocket verbinden, auf und ermöglicht es die Daten sauber pro Client zu verarbeiten.   
   ![](imgs/ClientSplitter.png)  
-
 
 ## 6. PHP-Befehlsreferenz
 
@@ -69,7 +68,6 @@ Eigenschaften des 'Client Splitter' für Get/SetProperty-Befehle:
 | :---------: | :----: | :----------: | :-----------------------: |
 |  ClientIP   | string |              | Die IP-Adresse des Client |
 
-
 ## 8. Datenaustausch
 
 Kompatibel zum Interface Virtual-IO.
@@ -79,10 +77,12 @@ Kompatibel zum Interface Virtual-IO.
 **Changlog:**  
 
 Version 1.1:  
- - In Network-Library integriert
+
+- In Network-Library integriert
 
 Version 1.0:  
- - Erstes offizielles Release
+
+- Erstes offizielles Release
 
 ## 10. Lizenz
 

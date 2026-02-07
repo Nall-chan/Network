@@ -1,11 +1,9 @@
 {
     "id": "{FC11DB7C-4999-4EA7-B57A-82A878ADD273}",
-    "name": "WebSocketInterfaceTest",
+    "name": "WebSocket Interface Test",
     "type": 2,
     "vendor": "",
-    "aliases": [
-        "WebSocket-InterfaceTest"
-    ],
+    "aliases": [],
     "parentRequirements": [
         "{BC49DE11-24CA-484D-85AE-9B6F24D89321}",
         "{714B71FB-3D11-41D1-AFAC-E06F1E983E09}"

@@ -7,7 +7,8 @@
             "URL or File": "URL oder Datei",
             "force download": "Erzwinge Download",
             "allow get query": "Erlaube Get Anfragen",
-            "no SSL checks": "Keine SSL Überprüfung"
+            "no SSL checks": "Keine SSL Überprüfung",
+            "This module is free for non-commercial use,\r\nDonations in support of the author are accepted here:": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos,\r\nSchenkungen als Unterstützung für den Autor werden hier akzeptiert:"
         }
     }
 }

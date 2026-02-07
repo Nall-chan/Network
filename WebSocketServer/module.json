@@ -1,11 +1,9 @@
 {
     "id": "{7869923C-6E1D-4E66-A0BD-627FAD1679C2}",
-    "name": "WebsocketServer",
+    "name": "Websocket Server",
     "type": 2,
     "vendor": "",
-    "aliases": [
-        "Websocket Server"
-    ],
+    "aliases": [],
     "parentRequirements": [
         "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
     ],

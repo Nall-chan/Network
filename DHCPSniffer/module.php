@@ -4,18 +4,6 @@ declare(strict_types=1);
 
 include_once __DIR__ . '/../libs/NetworkTraits.php';
 
-/*
- * @addtogroup network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2020 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.2
- */
-
 /**
  * DHCPSniffer Klasse implementiert einen Sniffer für DHCP Requests.
  * Erweitert IPSModule.

@@ -1,11 +1,9 @@
 {
     "id": "{3AB77A94-3467-4E66-8A73-840B4AD89582}",
-    "name": "WebsocketClient",
+    "name": "Websocket Client",
     "type": 2,
     "vendor": "",
-    "aliases": [
-        "Websocket Client"
-    ],
+    "aliases": [],
     "parentRequirements": [
         "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"
     ],

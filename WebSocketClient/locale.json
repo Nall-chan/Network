@@ -24,7 +24,8 @@
             "Connection lost": "Verbindung verloren",
             "URL invalid": "URL ungültig",
             "Handshake error": "Fehler im Handshake",
-            "Ping interval to small": "Ping Intervall zu klein"
+            "Ping interval to small": "Ping Intervall zu klein",
+            "This module is free for non-commercial use,\r\nDonations in support of the author are accepted here:": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos,\r\nSchenkungen als Unterstützung für den Autor werden hier akzeptiert:"
         }
     }
 }

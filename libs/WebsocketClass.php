@@ -2,17 +2,6 @@
 
 declare(strict_types=1);
 
-/* * @addtogroup network
- * @{
- *
- * @package       Network
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
- * @example <b>Ohne</b>
- */
-
 require_once __DIR__ . '/loadTLS.php';
 $autoloader = new AutoloaderTLS('PTLS');
 
@@ -44,6 +33,7 @@ class SocketType
             case self::Disconnected:
                 return 'Disconnected';
         }
+        return 'unknown';
     }
 }
 
@@ -88,6 +78,7 @@ class WebSocketState
             case self:: TLSisReceived:
                 return 'TLSisReceived';
         }
+        return 'unknown';
     }
 }
 
@@ -186,7 +177,7 @@ class WebSocketFrame extends stdClass
     /**
      * Erzeugt einen Frame anhand der übergebenen Daten.
      *
-     * @param object|string|null|WebSocketOPCode Aus den übergeben Daten wird das Objekt erzeugt
+     * @param stdClass|string|null|WebSocketOPCode $Frame Aus den übergeben Daten wird das Objekt erzeugt
      * @param string $Payload Das Payload wenn Frame den WebSocketOPCode darstellt.
      */
     public function __construct($Frame = null, $Payload = null)
@@ -310,14 +301,14 @@ class Websocket_Client
     /**
      * Letzer Zeitpunkt der Datenübertragung.
      *
-     * @var Timestamp
+     * @var int
      */
     public $Timestamp;
 
     /**
      * True wenn Client TLS spricht-.
      *
-     * @var UseTLS
+     * @var bool
      */
     public $UseTLS;
 
@@ -326,7 +317,7 @@ class Websocket_Client
      *
      * @param string         $ClientIP   Die IP-Adresse des Clients.
      * @param int            $ClientPort Der Empfangs-Port des Clients.
-     * @param WebSocketState $State      Der Status des Clients.
+     * @param int            $State      Der Status des Clients.
      * @param bool           $UseTLS     True wenn Client TLS nutzt, sonst false.
      */
     public function __construct(string $ClientIP, int $ClientPort, $State = WebSocketState::HandshakeReceived, $UseTLS = false)
@@ -394,7 +385,7 @@ class WebSocket_ClientList
      *
      * @param Websocket_Client $Client Der zu suchende Client
      *
-     * @return Websocket_Client Das Original Objekt aus dem Buffer.
+     * @return bool|Websocket_Client Das Original Objekt aus dem Buffer.
      */
     public function GetByIpPort(Websocket_Client $Client)
     {
@@ -444,5 +435,3 @@ class WebSocket_ClientList
         return $FoundClient;
     }
 }
-
-/* @} */

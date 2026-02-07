@@ -2,26 +2,11 @@
 
 declare(strict_types=1);
 
-//declare(strict_types = 1);
-
 require_once __DIR__ . '/../libs/NetworkTraits.php';
 require_once __DIR__ . '/../libs/WebhookHelper.php';
 
-/*
- * @addtogroup Network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2018 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       2.20
- *
- */
-
 /**
- * HookReverseProxy Klasse
+ * WebHookReverseProxy Klasse
  * Erweitert IPSModule.
  *
  * @author        Michael Tröger <micha@nall-chan.net>
@@ -34,7 +19,7 @@ require_once __DIR__ . '/../libs/WebhookHelper.php';
  *
  * @property array $Hooks
  */
-class HookReverseProxy extends IPSModule
+class WebHookReverseProxy extends IPSModule
 {
     use BufferHelper;
     use DebugHelper;
@@ -48,19 +33,6 @@ class HookReverseProxy extends IPSModule
         parent::Create();
         $this->RegisterPropertyString('Hooks', '[]');
         $this->Hooks = [];
-    }
-
-    /**
-     * Interne Funktion des SDK.
-     */
-    public function Destroy()
-    {
-        if (!IPS_InstanceExists($this->InstanceID)) {
-            foreach ($this->Hooks as $Hook) {
-                $this->UnregisterHook($Hook['Hook']);
-            }
-        }
-        parent::Destroy();
     }
 
     /**
@@ -105,7 +77,7 @@ class HookReverseProxy extends IPSModule
             header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
-            header('X-Powered-By: Hook Reverse Proxy');
+            header('X-Powered-By: WebHook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
             header('Content-Type: text/plain');
@@ -137,7 +109,7 @@ class HookReverseProxy extends IPSModule
             header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
-            header('X-Powered-By: Hook Reverse Proxy');
+            header('X-Powered-By: WebHook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
             die('File not found!');
@@ -145,7 +117,7 @@ class HookReverseProxy extends IPSModule
         http_response_code(200);
         header('Connection: close');
         header('Server: Symcon ' . IPS_GetKernelVersion());
-        header('X-Powered-By: Hook Reverse Proxy');
+        header('X-Powered-By: WebHook Reverse Proxy');
         header('Expires: 0');
         header('Cache-Control: no-cache');
         if ($forceDL) {
@@ -210,7 +182,7 @@ class HookReverseProxy extends IPSModule
             header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
-            header('X-Powered-By: Hook Reverse Proxy');
+            header('X-Powered-By: WebHook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
             header('Content-Type: text/plain');
@@ -219,7 +191,7 @@ class HookReverseProxy extends IPSModule
         header($http_response_header[0]);
         header('Connection: close');
         header('Server: Symcon ' . IPS_GetKernelVersion());
-        header('X-Powered-By: Hook Reverse Proxy');
+        header('X-Powered-By: WebHook Reverse Proxy');
         header('Expires: 0');
         header('Cache-Control: no-cache');
         if ($HookData['forceDL']) {
@@ -244,7 +216,7 @@ class HookReverseProxy extends IPSModule
             header('Content-Type: text/plain');
             header('Connection: close');
             header('Server: Symcon ' . IPS_GetKernelVersion());
-            header('X-Powered-By: Hook Reverse Proxy');
+            header('X-Powered-By: WebHook Reverse Proxy');
             header('Expires: 0');
             header('Cache-Control: no-cache');
             header('Content-Type: text/plain');
@@ -283,5 +255,3 @@ class HookReverseProxy extends IPSModule
         return 'text/plain';
     }
 }
-
-/* @} */

@@ -4,19 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../libs/NetworkTraits.php';
 
-/*
- * @addtogroup network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>
- * @copyright     2017 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.0
- *
- */
-
 /**
  * ClientSplitter Klasse implementiert einen Splitter auf Basis der IP-Adresse eines Client.
  * Erweitert IPSModule.
@@ -93,5 +80,3 @@ class ClientSplitter extends IPSModule
         $this->SendDataToChildren($JSONStringNew);
     }
 }
-
-/* @} */

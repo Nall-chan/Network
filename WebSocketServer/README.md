@@ -6,16 +6,18 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 
 **Inhaltsverzeichnis**
 
-1. [Funktionsumfang](#1-funktionsumfang) 
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Installation](#3-installation)
-4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
-5. [Einrichten eines Websocket-Server in IPS](#5-einrichten-eines-websocket-server-in-ips)
-6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
-7. [Parameter / Modul-Infos](#7-parameter--modul-infos) 
-8. [Datenaustausch](#8-datenaustausch)
-9. [Anhang](#9-anhang)
-10. [Lizenz](#10-lizenz)
+- [WebSocket-Server (Network)](#websocket-server-network)
+  - [Dokumentation](#dokumentation)
+  - [1. Funktionsumfang](#1-funktionsumfang)
+  - [2. Voraussetzungen](#2-voraussetzungen)
+  - [3. Installation](#3-installation)
+  - [4. Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
+  - [5. Einrichten eines Websocket-Server in IPS](#5-einrichten-eines-websocket-server-in-ips)
+  - [6. PHP-Befehlsreferenz](#6-php-befehlsreferenz)
+  - [7. Parameter / Modul-Infos](#7-parameter--modul-infos)
+  - [8. Datenaustausch](#8-datenaustausch)
+  - [9. Anhang](#9-anhang)
+  - [10. Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
 
@@ -24,8 +26,8 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 
 ## 2. Voraussetzungen
 
- - IPS ab Version 5.0
- 
+- IP-Symcon ab Version 6.0
+
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
@@ -37,7 +39,7 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 
   **PHP-TLS**  
   https://github.com/rnaga/PHP-TLS  
-    Copyright (c) 2016 Ryohei Nagatsuka    
+    Copyright (c) 2016 Ryohei Nagatsuka  
 
   **Pure PHP Elliptic Curve Cryptography Library**  
   https://github.com/phpecc/phpecc  
@@ -89,9 +91,9 @@ Implementierung eines Server mit Websocket Protokoll in IPS.
 ```php
 bool WSS_SendPing(integer $InstanzeID, string $ClientIP, int $ClientPort, string $Text);
 ```
+
  Senden die in `$Text` übergeben Daten als Payload eines Ping an den in `$ClientIP` & `$ClientPort` angegeben WebSocket-Client.  
  Der Rückgabewert ist `True`, wenn der Client verbunden ist und den Ping beantwortet.  
-
 
 ## 7. Parameter / Modul-Infos
 
@@ -181,27 +183,30 @@ Eigenschaften des 'Websocket Server' für Get/SetProperty-Befehle:
 |  DataID   | string | {79827379-F36E-4ADA-8A95-5F8D1DC92FA9} |
 |  Buffer   | string |                Payload                 |
 
-
 ## 9. Anhang
 
 **Changlog:**  
 
-
 Version 1.4:  
- - Broadcast möglich  
- - ServerSocket Interface ermöglich jetzt das trennen von Clients  
+
+- Broadcast möglich  
+- ServerSocket Interface ermöglich jetzt das trennen von Clients  
 
 Version 1.3:  
- - Bessere Client Verwaltung und weiterleitung der Connect/Disconnect Events durch den neuen IPS ServerSocket  
+
+- Bessere Client Verwaltung und weiterleitung der Connect/Disconnect Events durch den neuen IPS ServerSocket  
 
 Version 1.2:  
- - Mehrfache Verbindungen von einer IP sind nun möglich
+
+- Mehrfache Verbindungen von einer IP sind nun möglich
 
 Version 1.1:  
- - In Network-Library integriert
+
+- In Network-Library integriert
 
 Version 1.0:  
- - Erstes offizielles Release
+
+- Erstes offizielles Release
 
 ## 10. Lizenz
 
@@ -211,7 +216,7 @@ Version 1.0:
   Librarys:  
   **PHP-TLS**  
   https://github.com/rnaga/PHP-TLS  
-    Copyright (c) 2016 Ryohei Nagatsuka    
+    Copyright (c) 2016 Ryohei Nagatsuka  
 
   **Pure PHP Elliptic Curve Cryptography Library**  
   https://github.com/phpecc/phpecc  

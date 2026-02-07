@@ -6,18 +6,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/../libs/NetworkTraits.php';
 require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
 
-/*
- * @addtogroup network
- * @{
- *
- * @package       Network
- * @file          module.php
- * @author        Michael Tröger <micha@nall-chan.net>get
- * @copyright     2018 Michael Tröger
- * @license       https://creativecommons.org/licenses/by-nc-sa/4.0/ CC BY-NC-SA 4.0
- * @version       1.4
- */
-
 /**
  * WebsocketServer Klasse implementiert das Websocket-Protokoll für einen ServerSocket.
  * Erweitert IPSModule.
@@ -36,7 +24,7 @@ require_once __DIR__ . '/../libs/WebsocketClass.php';  // diverse Klassen
  * @property string {$ClientIP.$ClientPort}
  * @property string {"Buffer".$ClientIP.$ClientPort} Buffer für Nutzdaten
  * @property string {"BufferTLS".$ClientIP.$ClientPort} Buffer für TLS-Nutzdaten
- * @property TLS {"Multi_TLS_".$ClientIP.$ClientPort} TLS-Object
+ * @property \PTLS\TLS {"Multi_TLS_".$ClientIP.$ClientPort} TLS-Object
  * @property array {"BufferListe_Multi_TLS_".$ClientIP.$ClientPort}
  * @property string $CertData
  * @property string $KeyData
@@ -223,8 +211,8 @@ class WebsocketServer extends IPSModule
                     throw new Exception('Private key missing or not found');
                 }
 
-//                if (strlen($this->ReadPropertyString("KeyPassword")) == 0)
-//                    throw new Exception('Password for private key missing');
+                //                if (strlen($this->ReadPropertyString("KeyPassword")) == 0)
+                //                    throw new Exception('Password for private key missing');
 
                 $this->KeyPassword = $this->ReadPropertyString('KeyPassword');
             } catch (Exception $exc) {
@@ -273,7 +261,7 @@ class WebsocketServer extends IPSModule
             }
         }
 
-        if ($Open && !$this->HasActiveParent($ParentID)) {
+        if ($Open && !$this->HasActiveParent()) {
             $NewState = IS_EBASE + 2;
         }
 
@@ -497,17 +485,17 @@ class WebsocketServer extends IPSModule
         $strCONFIG .= '[ x509v3 ]' . $newLine;
         $strCONFIG .= 'basicConstraints=CA:FALSE' . $newLine;
         $strCONFIG .= 'nsCertType       = server' . $newLine;
-        $strCONFIG .= 'keyUsage         = digitalSignature,nonRepudiation,keyEncipherment' . $newLine;
+        $strCONFIG .= 'keyUsage = digitalSignature,nonRepudiation,keyEncipherment' . $newLine;
         $strCONFIG .= 'extendedKeyUsage = msSGC,nsSGC,serverAuth' . $newLine;
         $strCONFIG .= 'subjectKeyIdentifier=hash' . $newLine;
-        $strCONFIG .= 'authorityKeyIdentifier=keyid,issuer:allways' . $newLine;
-        $strCONFIG .= 'issuerAltName = issuer:copy' . $newLine;
+        $strCONFIG .= 'authorityKeyIdentifier=keyid,issuer:always' . $newLine;
+        $strCONFIG .= 'issuerAltName=issuer:copy' . $newLine;
         $strCONFIG .= 'subjectAltName = IP:192.168.201.34' . $newLine;
         $strCONFIG .= $newLine;
-//        $strCONFIG .= '[alt_names]' . $newLine;
-//        $strCONFIG .= 'email = '.$EMAIL . $newLine;
-//        $strCONFIG .= 'IP = 192.168.201.34' . $newLine;
-//        $strCONFIG .= $newLine;
+        //        $strCONFIG .= '[alt_names]' . $newLine;
+        //        $strCONFIG .= 'email = '.$EMAIL . $newLine;
+        //        $strCONFIG .= 'IP = 192.168.201.34' . $newLine;
+        //        $strCONFIG .= $newLine;
 
         $fp = fopen($configfile, 'w');
         fwrite($fp, $strCONFIG);
@@ -519,16 +507,17 @@ class WebsocketServer extends IPSModule
             'localityName'           => 'none',
             'organizationName'       => 'Home',
             'organizationalUnitName' => 'IPS',
-            'commonName'             => "$CN",
-            'emailAddress'           => "$EMAIL"
+            'commonName'             => $CN,
+            'emailAddress'           => $EMAIL
         ];
 
         $config = [
-            'config'      => "$configfile",
-            'encrypt_key' => true];
+            'config'      => $configfile,
+            'encrypt_key' => true
+        ];
 
         $configKey = [
-            'config'           => "$configfile",
+            'config'           => $configfile,
             'encrypt_key'      => true,
             'digest_alg'       => 'sha512',
             'private_key_bits' => 2048,
@@ -577,7 +566,7 @@ class WebsocketServer extends IPSModule
      *
      * @param string $Data Die Daten des Clients.
      *
-     * @return bool|HTTP_ERROR_CODES True bei Erfolg, HTTP_ERROR_CODES bei Fehler, false wenn nicht genug Daten.
+     * @return bool|int True bei Erfolg, HTTP_ERROR_CODES bei Fehler, false wenn nicht genug Daten.
      */
     private function ReceiveHandshake(string $Data)
     {
@@ -650,7 +639,7 @@ class WebsocketServer extends IPSModule
     /**
      * Sendet den HTTP-Response an den Client.
      *
-     * @param HTTP_ERROR_CODES $Code   Der HTTP Code welcher versendet werden soll.
+     * @param int $Code   Der HTTP Code welcher versendet werden soll.
      * @param string           $Data   Die empfangenen Daten des Clients.
      * @param Websocket_Client $Client Der Client vom welchen die Daten empfangen wurden.
      */
@@ -689,7 +678,7 @@ class WebsocketServer extends IPSModule
      *
      * @param Websocket_Client $Client Der Client an welchen die Daten gesendet werden.
      * @param string           $Data   Die Nutzdaten
-     * @param type             $UseTLS Bei false wird TLS nicht benutzt, auch wenn der Client dies erwartet.
+     * @param bool             $UseTLS Bei false wird TLS nicht benutzt, auch wenn der Client dies erwartet.
      *
      * @return bool|string Der JSON-String zum versand an den IO, im Fehlerfall false.
      */
@@ -799,7 +788,7 @@ class WebsocketServer extends IPSModule
      * @param Websocket_Client $Client  Der Client an welchen das Pong versendet wird.
      * @param string           $Payload Der Payloaf des Pong.
      */
-    private function SendPong(Websocket_Client $Client, string $Payload = null)
+    private function SendPong(Websocket_Client $Client, ?string $Payload = null)
     {
         $this->Send($Payload, WebSocketOPCode::pong, $Client);
     }
@@ -1152,5 +1141,3 @@ class WebsocketServer extends IPSModule
         $this->SendDataToParent($SendSocketClose);
     }
 }
-
-/* @} */

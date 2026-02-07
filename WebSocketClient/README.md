@@ -6,27 +6,28 @@ Implementierung eines Clients mit Websocket Protokoll in IPS.
 
 **Inhaltsverzeichnis**
 
-1. [Funktionsumfang](#1-funktionsumfang) 
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Installation](#3-installation)
-4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
-5. [Einrichten eines Websocket-Client in IPS](#5-einrichten-eines-websocket-client-in-ips)
-6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz) 
-7. [Parameter / Modul-Infos](#7-parameter--modul-infos) 
-8. [Datenaustausch](#8-datenaustausch)
-9. [Anhang](#9-anhang)
-10. [Lizenz](#10-lizenz)
+- [WebSocket-Client (Network)](#websocket-client-network)
+  - [Dokumentation](#dokumentation)
+  - [1. Funktionsumfang](#1-funktionsumfang)
+  - [2. Voraussetzungen](#2-voraussetzungen)
+  - [3. Installation](#3-installation)
+  - [4. Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
+  - [5. Einrichten eines Websocket-Client in IPS](#5-einrichten-eines-websocket-client-in-ips)
+  - [6. PHP-Befehlsreferenz](#6-php-befehlsreferenz)
+  - [7. Parameter / Modul-Infos](#7-parameter--modul-infos)
+  - [8. Datenaustausch](#8-datenaustausch)
+  - [9. Anhang](#9-anhang)
+  - [10. Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
 
   Dieses Modul stellt einen WebSocket-Client in IPS bereit.  
   Es wird sowohl TLS als auch die Basis-Authentifizierung unterstützt.  
-    
 
 ## 2. Voraussetzungen
 
- - IPS ab Version 4.3  
- 
+- IP-Symcon ab Version 6.0
+
 ## 3. Installation
 
    Über das Modul-Control folgende URL hinzufügen.  
@@ -38,7 +39,7 @@ Implementierung eines Clients mit Websocket Protokoll in IPS.
 
   **PHP-TLS**  
   https://github.com/rnaga/PHP-TLS  
-    Copyright (c) 2016 Ryohei Nagatsuka    
+    Copyright (c) 2016 Ryohei Nagatsuka  
 
   **Pure PHP Elliptic Curve Cryptography Library**  
   https://github.com/phpecc/phpecc  
@@ -84,6 +85,7 @@ Implementierung eines Clients mit Websocket Protokoll in IPS.
 ```php
 bool WSC_SendText(integer $InstanzeID, string $Text);
 ```
+
  Sendet die in `$Text` übergeben Daten an den WebSocket-Server, dabei wird als Frame (binary / text) die Einstellung auf der Instanz genutzt.  
  Dieser WebSocket-Frame wird immer mit dem Fin-Flag gesendet.  
  Der Rückgabewert ist `True`, sofern der Client verbunden ist.  
@@ -91,6 +93,7 @@ bool WSC_SendText(integer $InstanzeID, string $Text);
 ```php
 bool WSC_SendPacket(integer $InstanzeID, bool $Fin, int $OPCode, string $Text);
 ```
+
  Sendet die in `$Text` übergeben Daten an den WebSocket-Server, dabei wird als Frame der übergeben `$OPCode` genutzt.  
  Der WebSocket-Frame wird nur mit dem Fin-Flag gesendet, wenn `$Fin` = `true` ist.  
  Die möglichen OPCodes sind:  
@@ -104,9 +107,9 @@ bool WSC_SendPacket(integer $InstanzeID, bool $Fin, int $OPCode, string $Text);
 ```php
 bool WSC_SendPing(integer $InstanzeID, string $Text);
 ```
+
  Senden die in `$Text` übergeben Daten als Payload des Ping den WebSocket-Server.  
  Der Rückgabewert ist `True`, wenn der Server den Ping beantwortet.  
-
 
 ## 7. Parameter / Modul-Infos
 
@@ -166,10 +169,12 @@ Eigenschaften des 'Websocket Client' für Get/SetProperty-Befehle:
 **Changlog:**  
 
 Version 1.1:  
- - In Network-Library integriert
+
+- In Network-Library integriert
 
 Version 1.0:  
- - Erstes offizielles Release
+
+- Erstes offizielles Release
 
 ## 10. Lizenz
 
@@ -179,7 +184,7 @@ Version 1.0:
   Librarys:  
   **PHP-TLS**  
   https://github.com/rnaga/PHP-TLS  
-    Copyright (c) 2016 Ryohei Nagatsuka    
+    Copyright (c) 2016 Ryohei Nagatsuka  
 
   **Pure PHP Elliptic Curve Cryptography Library**  
   https://github.com/phpecc/phpecc  
